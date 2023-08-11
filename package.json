@@ -1,0 +1,24 @@
+{
+  "name": "@mimic-fi/v3-subgraph",
+  "private": true,
+  "version": "0.0.1",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@mimic-fi/v3-authorizer": "0.1.0",
+    "@mimic-fi/v3-deployer": "0.1.0",
+    "@mimic-fi/v3-fee-controller": "0.1.0",
+    "@mimic-fi/v3-price-oracle": "0.1.0",
+    "@mimic-fi/v3-registry": "0.1.0",
+    "@mimic-fi/v3-relayer": "0.1.0",
+    "@mimic-fi/v3-smart-vault": "0.1.0",
+    "@mimic-fi/v3-tasks": "0.1.0"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.54.0",
+    "@graphprotocol/graph-ts": "^0.31.0",
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
+    "@typescript-eslint/parser": "^4.1.1",
+    "eslint": "^7.9.0",
+    "typescript": "~4.3.4"
+  }
+}

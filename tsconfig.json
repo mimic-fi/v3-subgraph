@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "target": "es2019",
+    "module": "commonjs",
+    "rootDir": "."
+  },
+}
