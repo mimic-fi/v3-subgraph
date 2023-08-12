@@ -47,6 +47,22 @@ type PriceOracle @entity {
   name: String!
   implementation: Implementation!
   environment: Environment!
+  feeds: [PriceOracleFeed!] @derivedFrom(field: "priceOracle")
+  signers: [PriceOracleSigner!] @derivedFrom(field: "priceOracle")
+}
+
+type PriceOracleSigner @entity {
+  id: ID!
+  priceOracle: PriceOracle!
+  signer: String!
+}
+
+type PriceOracleFeed @entity {
+  id: ID!
+  priceOracle: PriceOracle!
+  base: ERC20!
+  quote: ERC20!
+  feed: String!
 }
 
 type Task @entity {
@@ -62,4 +78,11 @@ type Implementation @entity {
   name: String!
   stateless: Boolean!
   deprecated: Boolean!
+}
+
+type ERC20 @entity {
+  id: ID!
+  name: String!
+  symbol: String!
+  decimals: Int!
 }

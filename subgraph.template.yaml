@@ -82,6 +82,30 @@ templates:
           handler: handleUnauthorized
       file: ./src/Authorizer.ts
   - kind: ethereum/contract
+    name: PriceOracle
+    network: {{network}}
+    source:
+      abi: PriceOracle
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - PriceOracle
+      abis:
+        - name: PriceOracle
+          file: ./node_modules/@mimic-fi/v3-price-oracle/artifacts/contracts/interfaces/IPriceOracle.sol/IPriceOracle.json
+        - name: ERC20
+          file: ./abis/IERC20.json
+      eventHandlers:
+        - event: SignerSet(indexed address,bool)
+          handler: handleSignerSet
+          receipt: true
+        - event: FeedSet(indexed address,indexed address,address)
+          handler: handleFeedSet
+          receipt: true
+      file: ./src/PriceOracle.ts
+  - kind: ethereum/contract
     name: SmartVault
     network: {{network}}
     source:

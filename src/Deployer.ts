@@ -1,6 +1,6 @@
 import { Address, Bytes, crypto, log } from '@graphprotocol/graph-ts'
 
-import { Authorizer as AuthorizerTemplate } from '../types/templates'
+import { Authorizer as AuthorizerTemplate, PriceOracle as PriceOracleTemplate } from '../types/templates'
 import { Authorizer, Environment, PriceOracle, SmartVault, Task } from '../types/schema'
 import { AuthorizerDeployed, PriceOracleDeployed, SmartVaultDeployed, TaskDeployed } from '../types/Deployer/Deployer'
 
@@ -34,6 +34,8 @@ export function handlePriceOracleDeployed(event: PriceOracleDeployed): void {
   priceOracle.implementation = implementation.id
   priceOracle.environment = environment.id
   priceOracle.save()
+
+  PriceOracleTemplate.create(event.params.instance)
 }
 
 export function handleSmartVaultDeployed(event: SmartVaultDeployed): void {
