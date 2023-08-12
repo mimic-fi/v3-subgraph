@@ -1,0 +1,28 @@
+specVersion: 0.0.6
+description: Mimic Finance V3
+repository: https://github.com/mimic-fi/v3-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Registry
+    network: {{network}}
+    source:
+      address: '{{registryAddress}}'
+      abi: Registry
+      startBlock: {{blockNumber}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Registry
+      abis:
+        - name: Registry
+          file: ./node_modules/@mimic-fi/v3-registry/artifacts/contracts/interfaces/IRegistry.sol/IRegistry.json
+      eventHandlers:
+        - event: Registered(indexed address,string,bool)
+          handler: handleRegistered
+        - event: Deprecated(indexed address)
+          handler: handleDeprecated
+      file: ./src/Registry.ts

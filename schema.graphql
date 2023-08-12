@@ -1,0 +1,6 @@
+type Implementation @entity {
+  id: ID!
+  name: String!
+  stateless: Boolean!
+  deprecated: Boolean!
+}
