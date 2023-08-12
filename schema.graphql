@@ -1,3 +1,45 @@
+type Environment @entity {
+  id: ID!
+  creator: String!
+  namespace: String!
+  authorizers: [Authorizer!] @derivedFrom(field: "environment")
+  priceOracles: [PriceOracle!] @derivedFrom(field: "environment")
+  smartVaults: [SmartVault!] @derivedFrom(field: "environment")
+  tasks: [Task!] @derivedFrom(field: "environment")
+}
+
+type SmartVault @entity {
+  id: ID!
+  name: String!
+  registry: String!
+  implementation: Implementation!
+  environment: Environment!
+  authorizer: Authorizer!
+  priceOracle: PriceOracle!
+}
+
+type Authorizer @entity {
+  id: ID!
+  name: String!
+  implementation: Implementation!
+  environment: Environment!
+}
+
+type PriceOracle @entity {
+  id: ID!
+  name: String!
+  implementation: Implementation!
+  environment: Environment!
+}
+
+type Task @entity {
+  id: ID!
+  name: String!
+  implementation: Implementation!
+  environment: Environment!
+  smartVault: SmartVault!
+}
+
 type Implementation @entity {
   id: ID!
   name: String!

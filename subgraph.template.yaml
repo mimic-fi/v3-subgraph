@@ -26,3 +26,68 @@ dataSources:
         - event: Deprecated(indexed address)
           handler: handleDeprecated
       file: ./src/Registry.ts
+  - kind: ethereum/contract
+    name: Deployer
+    network: {{network}}
+    source:
+      address: '{{deployerAddress}}'
+      abi: Deployer
+      startBlock: {{blockNumber}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Deployer
+      abis:
+        - name: Deployer
+          file: ./node_modules/@mimic-fi/v3-deployer/artifacts/contracts/interfaces/IDeployer.sol/IDeployer.json
+        - name: Authorizer
+          file: ./node_modules/@mimic-fi/v3-authorizer/artifacts/contracts/interfaces/IAuthorizer.sol/IAuthorizer.json
+        - name: PriceOracle
+          file: ./node_modules/@mimic-fi/v3-price-oracle/artifacts/contracts/interfaces/IPriceOracle.sol/IPriceOracle.json
+        - name: SmartVault
+          file: ./node_modules/@mimic-fi/v3-smart-vault/artifacts/contracts/interfaces/ISmartVault.sol/ISmartVault.json
+        - name: Task
+          file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
+      eventHandlers:
+        - event: AuthorizerDeployed(string,string,address,address)
+          handler: handleAuthorizerDeployed
+        - event: PriceOracleDeployed(string,string,address,address)
+          handler: handlePriceOracleDeployed
+        - event: SmartVaultDeployed(string,string,address,address)
+          handler: handleSmartVaultDeployed
+        - event: TaskDeployed(string,string,address,address)
+          handler: handleTaskDeployed
+      file: ./src/Deployer.ts
+templates:
+  - kind: ethereum/contract
+    name: SmartVault
+    network: {{network}}
+    source:
+      abi: SmartVault
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - SmartVault
+      abis:
+        - name: SmartVault
+          file: ./node_modules/@mimic-fi/v3-smart-vault/artifacts/contracts/interfaces/ISmartVault.sol/ISmartVault.json
+      file: ./src/SmartVault.ts
+  - kind: ethereum/contract
+    name: Task
+    network: {{network}}
+    source:
+      abi: Task
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Task
+      abis:
+        - name: Task
+          file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
+      file: ./src/Task.ts
