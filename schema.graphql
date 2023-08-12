@@ -23,6 +23,23 @@ type Authorizer @entity {
   name: String!
   implementation: Implementation!
   environment: Environment!
+  permissions: [Permission!] @derivedFrom(field: "authorizer")
+}
+
+type Permission @entity {
+  id: ID!
+  authorizer: Authorizer!
+  who: String!
+  where: String!
+  what: String!
+  params: [PermissionParam!] @derivedFrom(field: "permission")
+}
+
+type PermissionParam @entity {
+  id: ID!
+  permission: Permission!
+  op: String!
+  value: String!
 }
 
 type PriceOracle @entity {
