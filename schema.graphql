@@ -16,6 +16,10 @@ type SmartVault @entity {
   environment: Environment!
   authorizer: Authorizer!
   priceOracle: PriceOracle!
+  paused: Boolean!
+  tasks: [Task!] @derivedFrom(field: "smartVault")
+  movements: [Movement!] @derivedFrom(field: "smartVault")
+  transactions: [Transaction!] @derivedFrom(field: "smartVault")
 }
 
 type Authorizer @entity {
@@ -71,6 +75,37 @@ type Task @entity {
   implementation: Implementation!
   environment: Environment!
   smartVault: SmartVault!
+}
+
+type Movement @entity {
+  id: ID!
+  hash: String!
+  sender: String!
+  executedAt: BigInt!
+  token: ERC20!
+  amount: BigInt!
+  added: Boolean!
+  connector: String!
+  smartVault: SmartVault!
+}
+
+type Transaction @entity {
+  id: ID!
+  hash: String!
+  sender: String!
+  executedAt: BigInt!
+  type: TransactionType!
+  fee: BigInt!
+  smartVault: SmartVault!
+}
+
+enum TransactionType {
+  Wrap
+  Unwrap
+  Collect
+  Withdraw
+  Call
+  Execute
 }
 
 type Implementation @entity {

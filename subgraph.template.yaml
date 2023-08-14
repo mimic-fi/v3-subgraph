@@ -119,6 +119,27 @@ templates:
       abis:
         - name: SmartVault
           file: ./node_modules/@mimic-fi/v3-smart-vault/artifacts/contracts/interfaces/ISmartVault.sol/ISmartVault.json
+      eventHandlers:
+        - event: Paused()
+          handler: handlePause
+        - event: Unpaused()
+          handler: handleUnpaused
+        - event: PriceOracleSet(indexed address)
+          handler: handlePriceOracleSet
+        - event: BalanceConnectorUpdated(indexed bytes32,indexed address,uint256,bool)
+          handler: handleBalanceConnectorUpdated
+        - event: Executed(indexed address,bytes,bytes)
+          handler: handleExecuted
+        - event: Called(indexed address,bytes,uint256,bytes)
+          handler: handleCalled
+        - event: Wrapped(uint256)
+          handler: handleWrapped
+        - event: Unwrapped(uint256)
+          handler: handleUnwrapped
+        - event: Collected(indexed address,indexed address,uint256)
+          handler: handleCollected
+        - event: Withdrawn(indexed address,indexed address,uint256,uint256)
+          handler: handleWithdrawn
       file: ./src/SmartVault.ts
   - kind: ethereum/contract
     name: Task

@@ -1,6 +1,11 @@
 import { Address, Bytes, crypto, log } from '@graphprotocol/graph-ts'
 
-import { Authorizer as AuthorizerTemplate, PriceOracle as PriceOracleTemplate } from '../types/templates'
+import {
+  Authorizer as AuthorizerTemplate,
+  PriceOracle as PriceOracleTemplate,
+  SmartVault as SmartVaultTemplate,
+} from '../types/templates'
+
 import { Authorizer, Environment, PriceOracle, SmartVault, Task } from '../types/schema'
 import { AuthorizerDeployed, PriceOracleDeployed, SmartVaultDeployed, TaskDeployed } from '../types/Deployer/Deployer'
 
@@ -51,7 +56,10 @@ export function handleSmartVaultDeployed(event: SmartVaultDeployed): void {
   smartVault.registry = getRegistry(event.params.instance).toHexString()
   smartVault.authorizer = getAuthorizer(event.params.instance).toHexString()
   smartVault.priceOracle = getPriceOracle(event.params.instance).toHexString()
+  smartVault.paused = false
   smartVault.save()
+
+  SmartVaultTemplate.create(event.params.instance)
 }
 
 export function handleTaskDeployed(event: TaskDeployed): void {
