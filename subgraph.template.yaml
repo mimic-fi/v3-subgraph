@@ -155,4 +155,7 @@ templates:
       abis:
         - name: Task
           file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
+      eventHandlers:
+        - event: BalanceConnectorsSet(indexed bytes32,indexed bytes32)
+          handler: handleBalanceConnectorsSet
       file: ./src/Task.ts

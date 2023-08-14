@@ -75,6 +75,10 @@ type Task @entity {
   implementation: Implementation!
   environment: Environment!
   smartVault: SmartVault!
+  tokensSource: String!
+  nextBalanceConnector: String!
+  previousBalanceConnector: String!
+  executionType: String!
 }
 
 type Movement @entity {

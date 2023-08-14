@@ -4,12 +4,13 @@ import {
   Authorizer as AuthorizerTemplate,
   PriceOracle as PriceOracleTemplate,
   SmartVault as SmartVaultTemplate,
+  Task as TaskTemplate,
 } from '../types/templates'
 
 import { Authorizer, Environment, PriceOracle, SmartVault, Task } from '../types/schema'
 import { AuthorizerDeployed, PriceOracleDeployed, SmartVaultDeployed, TaskDeployed } from '../types/Deployer/Deployer'
 
-import { getSmartVault } from './Task'
+import {getExecutionType, getSmartVault, getTokensSource} from './Task'
 import { loadOrCreateImplementation } from './Registry'
 import { getAuthorizer, getPriceOracle, getRegistry } from './SmartVault'
 
@@ -73,7 +74,13 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   task.implementation = implementation.id
   task.environment = environment.id
   task.smartVault = getSmartVault(event.params.instance).toHexString()
+  task.tokensSource = getTokensSource(event.params.instance).toHexString()
+  task.previousBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
+  task.nextBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
+  task.executionType = getExecutionType(event.params.instance).toHexString()
   task.save()
+
+  TaskTemplate.create(event.params.instance)
 }
 
 export function loadOrCreateEnvironment(creator: Address, namespace: String): Environment {
