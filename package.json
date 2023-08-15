@@ -12,7 +12,15 @@
     "build:gnosis": "NETWORK=gnosis ./scripts/build.sh",
     "build:mainnet": "NETWORK=mainnet ./scripts/build.sh",
     "build:polygon": "NETWORK=polygon ./scripts/build.sh",
-    "build:optimism": "NETWORK=optimism ./scripts/build.sh"
+    "build:optimism": "NETWORK=optimism ./scripts/build.sh",
+    "deploy:arbitrum": "NETWORK=arbitrum ./scripts/deploy.sh",
+    "deploy:avalanche": "NETWORK=avalanche ./scripts/deploy.sh",
+    "deploy:bsc": "NETWORK=bsc ./scripts/deploy.sh",
+    "deploy:fantom": "NETWORK=fantom ./scripts/deploy.sh",
+    "deploy:gnosis": "NETWORK=gnosis ./scripts/deploy.sh",
+    "deploy:mainnet": "NETWORK=mainnet ./scripts/deploy.sh",
+    "deploy:polygon": "NETWORK=polygon ./scripts/deploy.sh",
+    "deploy:optimism": "NETWORK=optimism ./scripts/deploy.sh"
   },
   "dependencies": {
     "@mimic-fi/v3-authorizer": "0.1.0",

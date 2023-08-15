@@ -1,0 +1,20 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy-arbitrum:
+    name: Deploy Arbitrum
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up environment
+        uses: ./.github/actions/setup
+      - name: Deploy Arbitrum
+        env:
+          GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+        run: yarn deploy:arbitrum
