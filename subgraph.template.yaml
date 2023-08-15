@@ -60,6 +60,26 @@ dataSources:
         - event: TaskDeployed(string,string,address,address)
           handler: handleTaskDeployed
       file: ./src/Deployer.ts
+  - kind: ethereum/contract
+    name: Relayer
+    network: {{network}}
+    source:
+      address: '{{relayerAddress}}'
+      abi: Relayer
+      startBlock: {{blockNumber}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Relayer
+      abis:
+        - name: Relayer
+          file: ./node_modules/@mimic-fi/v3-relayer/artifacts/contracts/interfaces/IRelayer.sol/IRelayer.json
+      eventHandlers:
+        - event: TaskExecuted(indexed address,indexed address,bytes,bool,bytes,uint256,uint256)
+          handler: handleTaskExecuted
+      file: ./src/Relayer.ts
 templates:
   - kind: ethereum/contract
     name: Authorizer

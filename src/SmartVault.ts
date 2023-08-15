@@ -1,6 +1,6 @@
-import { Address, BigInt, ethereum, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes, ethereum, log } from '@graphprotocol/graph-ts'
 
-import { Movement, Transaction, SmartVault } from '../types/schema'
+import { Movement, Transaction, SmartVault, RelayedExecution } from '../types/schema'
 import { SmartVault as SmartVaultContract } from '../types/templates/SmartVault/SmartVault'
 import {
   BalanceConnectorUpdated,
@@ -42,7 +42,7 @@ export function handleUnwrap(event: Unwrapped): void {
 }
 
 function createTransaction(event: ethereum.Event, type: string, fee: BigInt): void {
-  let transactionId = event.transaction.hash.toHexString() + '#' + event.transactionLogIndex.toString()
+  let transactionId = getNextTransactionId(event.transaction.hash)
   let transaction = new Transaction(transactionId)
   transaction.hash = event.transaction.hash.toHexString()
   transaction.sender = event.transaction.from.toHexString()
@@ -51,10 +51,20 @@ function createTransaction(event: ethereum.Event, type: string, fee: BigInt): vo
   transaction.type = type
   transaction.fee = fee
   transaction.save()
+
+  for (let i: i32 = 0; true; i++) {
+    const executionId = event.transaction.hash.toHexString() + '#' + i.toString()
+    let execution = RelayedExecution.load(executionId)
+    if (execution == null) break
+    if (execution.transactions.load().length == 0) {
+      transaction.relayedExecution = executionId
+      transaction.save()
+    }
+  }
 }
 
 export function handleBalanceConnectorUpdated(event: BalanceConnectorUpdated): void {
-  let movementId = event.transaction.hash.toHexString() + '#' + event.transactionLogIndex.toString()
+  let movementId = getNextMovementId(event.transaction.hash)
   let movement = new Movement(movementId)
   movement.hash = event.transaction.hash.toHexString()
   movement.sender = event.transaction.from.toHexString()
@@ -65,6 +75,16 @@ export function handleBalanceConnectorUpdated(event: BalanceConnectorUpdated): v
   movement.amount = event.params.amount
   movement.added = event.params.added
   movement.save()
+
+  for (let i: i32 = 0; true; i++) {
+    const executionId = event.transaction.hash.toHexString() + '#' + i.toString()
+    let execution = RelayedExecution.load(executionId)
+    if (execution == null) break
+    if (execution.movements.load().length == 0) {
+      movement.relayedExecution = executionId
+      movement.save()
+    }
+  }
 }
 
 export function handlePaused(event: Paused): void {
@@ -125,4 +145,22 @@ export function getPriceOracle(address: Address): Address {
 
   log.warning('priceOracle() call reverted for smart vault {}', [address.toHexString()])
   return Address.zero()
+}
+
+function getNextMovementId(hash: Bytes): string {
+  for (let i: i32 = 0; true; i++) {
+    const movementId = hash.toHexString() + '#' + i.toString()
+    if (Movement.load(movementId) == null) return movementId
+  }
+
+  throw Error('Could not find next movement ID')
+}
+
+function getNextTransactionId(hash: Bytes): string {
+  for (let i: i32 = 0; true; i++) {
+    const transactionId = hash.toHexString() + '#' + i.toString()
+    if (Transaction.load(transactionId) == null) return transactionId
+  }
+
+  throw Error('Could not find next transaction ID')
 }

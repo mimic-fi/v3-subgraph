@@ -6,41 +6,49 @@ set -o errexit
 # Arbitrum
 registry_arbitrum=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
 deployer_arbitrum=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_arbitrum=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
 block_arbitrum=117042327
 
 # Avalanche
 registry_avalanche=0x0000000000000000000000000000000000000000
 deployer_avalanche=0x0000000000000000000000000000000000000000
+relayer_avalanche=0x0000000000000000000000000000000000000000
 block_avalanche=0
 
 # BSC
 registry_bsc=0x0000000000000000000000000000000000000000
 deployer_bsc=0x0000000000000000000000000000000000000000
+relayer_bsc=0x0000000000000000000000000000000000000000
 block_bsc=0
 
 # Fantom
 registry_fantom=0x0000000000000000000000000000000000000000
 deployer_fantom=0x0000000000000000000000000000000000000000
+relayer_fantom=0x0000000000000000000000000000000000000000
 block_fantom=0
 
 # Gnosis
 registry_gnosis=0x0000000000000000000000000000000000000000
 deployer_gnosis=0x0000000000000000000000000000000000000000
+relayer_gnosis=0x0000000000000000000000000000000000000000
 block_gnosis=0
 
 # Mainnet
 registry_mainnet=0x0000000000000000000000000000000000000000
 deployer_mainnet=0x0000000000000000000000000000000000000000
+relayer_mainnet=0x0000000000000000000000000000000000000000
 block_mainnet=0
 
 # Optimism
 registry_optimism=0x0000000000000000000000000000000000000000
 deployer_optimism=0x0000000000000000000000000000000000000000
+relayer_optimism=0x0000000000000000000000000000000000000000
 block_optimism=0
 
 # Polygon
 registry_polygon=0x0000000000000000000000000000000000000000
 deployer_polygon=0x0000000000000000000000000000000000000000
+relayer_polygon=0x0000000000000000000000000000000000000000
 block_polygon=0
 
 # Validate network
@@ -50,7 +58,7 @@ if [[ -z $NETWORK || ! " ${networks[@]} " =~ " ${NETWORK} " ]]; then
   exit 1
 fi
 
-# Use mainnet network in case of local deployment
+# Update network name properly
 if [[ "$NETWORK" = "localhost" ]]; then
   ENV='mainnet'
 elif [[ "$NETWORK" = "polygon" ]]; then
@@ -94,6 +102,18 @@ if [[ -z $DEPLOYER_ADDRESS ]]; then
   exit 1
 fi
 
+# Load relayer address
+if [[ -z $RELAYER_ADDRESS ]]; then
+  RELAYER_ADDRESS_VAR=relayer_$NETWORK
+  RELAYER_ADDRESS=${!RELAYER_ADDRESS_VAR}
+fi
+
+# Validate relayer address
+if [[ -z $RELAYER_ADDRESS ]]; then
+  echo 'Please make sure a Relayer address is provided'
+  exit 1
+fi
+
 #################################################################
 #####                     FINALIZE                         ######
 #################################################################
@@ -110,6 +130,7 @@ cp subgraph.template.yaml subgraph.yaml
 sed -i -e "s/{{network}}/${ENV}/g" subgraph.yaml
 sed -i -e "s/{{registryAddress}}/${REGISTRY_ADDRESS}/g" subgraph.yaml
 sed -i -e "s/{{deployerAddress}}/${DEPLOYER_ADDRESS}/g" subgraph.yaml
+sed -i -e "s/{{relayerAddress}}/${RELAYER_ADDRESS}/g" subgraph.yaml
 sed -i -e "s/{{blockNumber}}/${BLOCK_NUMBER}/g" subgraph.yaml
 rm -f subgraph.yaml-e
 

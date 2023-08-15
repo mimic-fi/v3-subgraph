@@ -91,6 +91,7 @@ type Movement @entity {
   added: Boolean!
   connector: String!
   smartVault: SmartVault!
+  relayedExecution: RelayedExecution
 }
 
 type Transaction @entity {
@@ -101,6 +102,7 @@ type Transaction @entity {
   type: TransactionType!
   fee: BigInt!
   smartVault: SmartVault!
+  relayedExecution: RelayedExecution
 }
 
 enum TransactionType {
@@ -110,6 +112,23 @@ enum TransactionType {
   Withdraw
   Call
   Execute
+}
+
+type RelayedExecution @entity {
+  id: ID!
+  hash: String!
+  sender: String!
+  executedAt: BigInt!
+  smartVault: SmartVault!
+  task: Task!
+  index: BigInt!
+  succeeded: Boolean!
+  result: Bytes!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  costNative: BigInt!
+  movements: [Movement!] @derivedFrom(field: "relayedExecution")
+  transactions: [Transaction!] @derivedFrom(field: "relayedExecution")
 }
 
 type Implementation @entity {
