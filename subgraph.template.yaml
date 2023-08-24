@@ -178,4 +178,9 @@ templates:
       eventHandlers:
         - event: BalanceConnectorsSet(indexed bytes32,indexed bytes32)
           handler: handleBalanceConnectorsSet
+        - event: GasPriceLimitSet(uint256)
+          handler: handleGasPriceLimitSet
+        - event: PriorityFeeLimitSet(uint256)
+          handler: 
+        - event: TxCostLimitPctSet(uint256)
       file: ./src/Task.ts
