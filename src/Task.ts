@@ -2,7 +2,10 @@ import { Address, Bytes, log } from '@graphprotocol/graph-ts'
 
 import { Task } from '../types/schema'
 
-import { BalanceConnectorsSet } from '../types/templates/Task/Task'
+import { BalanceConnectorsSet,
+  TimeLockDelaySet,
+  TimeLockExecutionPeriodSet,
+  TimeLockExpirationSet } from '../types/templates/Task/Task'
 import { Task as TaskContract } from '../types/templates/Task/Task'
 
 export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
@@ -49,3 +52,28 @@ export function getExecutionType(address: Address): Bytes {
   log.warning('EXECUTION_TYPE() call reverted for task {}', [address.toHexString()])
   return Bytes.fromUTF8('')
 }
+
+export function handleTimeLockDelaySet(event : TimeLockDelaySet): void {
+  let task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+  
+  task.timeLockDelay = event.params.delay
+  task.save()
+}
+
+export function handleTimeLockExecutionPeriodSet(event: TimeLockExecutionPeriodSet): void {
+  let task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  task.timeLockExecutionPeriodSet = event.params.period
+  task.save()
+}
+
+export function handleTimeLockExpirationSet(event: TimeLockExpirationSet): void {
+  let task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  task.timeLockExpirationSet = event.params.expiration
+  task.save()
+}
+
