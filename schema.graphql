@@ -81,6 +81,7 @@ type Task @entity {
   executionType: String!
   gasPriceLimit: BigInt!
   priorityFeeLimit: BigInt!
+  txCostLimitPct: BigInt!
   txCostLimit: BigInt!
 }
 
