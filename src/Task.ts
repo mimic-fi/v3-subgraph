@@ -4,6 +4,10 @@ import { Task } from '../types/schema'
 
 import {
   BalanceConnectorsSet,
+  GasPriceLimitSet,
+  PriorityFeeLimitSet,
+  TxCostLimitPctSet,
+  TxCostLimitSet, 
   TimeLockDelaySet,
   TimeLockExecutionPeriodSet,
   TimeLockExpirationSet 
@@ -16,6 +20,38 @@ export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
 
   task.previousBalanceConnector = event.params.previous.toHexString()
   task.nextBalanceConnector = event.params.next.toHexString()
+  task.save()
+}
+
+export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
+  let task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  task.gasPriceLimit = event.params.gasPriceLimit
+  task.save()
+}
+
+export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
+  let task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  task.priorityFeeLimit = event.params.priorityFeeLimit
+  task.save()
+}
+
+export function handleTxCostLimitPctSet(event: TxCostLimitPctSet): void {
+  let task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  task.txCostLimitPct = event.params.txCostLimitPct
+  task.save()
+}
+
+export function handleTxCostLimitSet(event: TxCostLimitSet): void {
+  let task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  task.txCostLimit = event.params.txCostLimit
   task.save()
 }
 

@@ -78,6 +78,10 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   task.previousBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
   task.nextBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
   task.executionType = getExecutionType(event.params.instance).toHexString()
+  task.gasPriceLimit = BigInt.zero()
+  task.priorityFeeLimit = BigInt.zero()
+  task.txCostLimitPct = BigInt.zero()
+  task.txCostLimit = BigInt.zero()
   task.timeLockDelay = BigInt.zero()
   task.timeLockExecutionPeriod = BigInt.zero()
   task.timeLockExpiration = BigInt.zero()
