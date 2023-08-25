@@ -1,4 +1,4 @@
-import { Address, Bytes, crypto, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes, crypto, log } from '@graphprotocol/graph-ts'
 
 import {
   Authorizer as AuthorizerTemplate,
@@ -78,6 +78,9 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   task.previousBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
   task.nextBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
   task.executionType = getExecutionType(event.params.instance).toHexString()
+  task.timeLockDelay = BigInt.zero()
+  task.timeLockExecutionPeriod = BigInt.zero()
+  task.timeLockExpiration = BigInt.zero()
   task.save()
 
   TaskTemplate.create(event.params.instance)

@@ -80,8 +80,8 @@ type Task @entity {
   previousBalanceConnector: String!
   executionType: String!
   timeLockDelay: BigInt!
-  timeLockExecutionPeriodSet: BigInt!
-  timeLockExpirationSet: BigInt!
+  timeLockExecutionPeriod: BigInt!
+  timeLockExpiration: BigInt!
 }
 
 type Movement @entity {
