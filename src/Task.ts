@@ -90,6 +90,7 @@ export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   let customVolumeLimitId = getCustomVolumeLimitId(
+    task,
     event.params.token,
     event.params.limitToken,
     event.params.amount,
@@ -144,6 +145,16 @@ export function getExecutionType(address: Address): Bytes {
 }
 
 
-export function getCustomVolumeLimitId(token: Address, limitToken: Address, amount: BigInt, period: BigInt): string {
-  return token.toHexString() + '/' + limitToken.toHexString() + '/' + amount.toString() + '/' + period.toString()
+export function getCustomVolumeLimitId(
+  task: Task,
+  token: Address,
+  limitToken: Address,
+  amount: BigInt,
+  period: BigInt
+  ): string {
+  return task.id.toString() +
+  '/' + token.toHexString() +
+  '/' + limitToken.toHexString() +
+  '/' + amount.toString() +
+  '/' + period.toString()
 }
