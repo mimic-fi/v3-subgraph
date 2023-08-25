@@ -186,4 +186,10 @@ templates:
           handler: handleTxCostLimitPctSet
         - event: TxCostLimitSet(uint256)
           handler: handleTxCostLimitSet
+        - event: TimeLockDelaySet(uint256)
+          handler: handleTimeLockDelaySet
+        - event: TimeLockExecutionPeriodSet(uint256)
+          handler: handleTimeLockExecutionPeriodSet
+        - event: TimeLockExpirationSet(uint256)
+          handler: handleTimeLockExpirationSet
       file: ./src/Task.ts

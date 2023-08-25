@@ -83,6 +83,9 @@ type Task @entity {
   priorityFeeLimit: BigInt!
   txCostLimitPct: BigInt!
   txCostLimit: BigInt!
+  timeLockDelay: BigInt!
+  timeLockExecutionPeriod: BigInt!
+  timeLockExpiration: BigInt!
 }
 
 type Movement @entity {

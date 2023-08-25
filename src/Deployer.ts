@@ -82,6 +82,9 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   task.priorityFeeLimit = BigInt.zero()
   task.txCostLimitPct = BigInt.zero()
   task.txCostLimit = BigInt.zero()
+  task.timeLockDelay = BigInt.zero()
+  task.timeLockExecutionPeriod = BigInt.zero()
+  task.timeLockExpiration = BigInt.zero()
   task.save()
 
   TaskTemplate.create(event.params.instance)
