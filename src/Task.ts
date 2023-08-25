@@ -6,7 +6,8 @@ import {
   BalanceConnectorsSet,
   TimeLockDelaySet,
   TimeLockExecutionPeriodSet,
-  TimeLockExpirationSet } from '../types/templates/Task/Task'
+  TimeLockExpirationSet 
+} from '../types/templates/Task/Task'
 import { Task as TaskContract } from '../types/templates/Task/Task'
 
 export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
