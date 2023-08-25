@@ -79,6 +79,10 @@ type Task @entity {
   nextBalanceConnector: String!
   previousBalanceConnector: String!
   executionType: String!
+  gasPriceLimit: BigInt!
+  priorityFeeLimit: BigInt!
+  txCostLimitPct: BigInt!
+  txCostLimit: BigInt!
 }
 
 type Movement @entity {
