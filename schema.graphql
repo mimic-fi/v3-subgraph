@@ -86,6 +86,16 @@ type Task @entity {
   timeLockDelay: BigInt!
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
+}
+
+type CustomVolumeLimit @entity {
+  id: ID!
+  task: Task!
+  token: ERC20!
+  limitToken: ERC20!
+  amount: BigInt!
+  period: BigInt!
 }
 
 type Movement @entity {

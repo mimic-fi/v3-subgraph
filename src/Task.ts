@@ -1,9 +1,13 @@
-import { Address, Bytes, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes, log } from '@graphprotocol/graph-ts'
 
-import { Task } from '../types/schema'
+import {
+  Task,
+  CustomVolumeLimit
+} from '../types/schema'
 
 import {
   BalanceConnectorsSet,
+  CustomVolumeLimitSet,
   GasPriceLimitSet,
   PriorityFeeLimitSet,
   TxCostLimitPctSet,
@@ -13,6 +17,8 @@ import {
   TimeLockExpirationSet 
 } from '../types/templates/Task/Task'
 import { Task as TaskContract } from '../types/templates/Task/Task'
+
+import { loadOrCreateERC20 } from './ERC20'
 
 export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
   let task = Task.load(event.address.toHexString())
@@ -79,6 +85,28 @@ export function handleTimeLockExpirationSet(event: TimeLockExpirationSet): void 
   task.save()
 }
 
+export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
+  let task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  let customVolumeLimitId = getCustomVolumeLimitId(
+    event.params.token,
+    event.params.limitToken,
+    event.params.amount,
+    event.params.period
+    )
+  
+  let customVolumeLimit = new CustomVolumeLimit(customVolumeLimitId)
+  customVolumeLimit.task = task.id
+  customVolumeLimit.token = loadOrCreateERC20(event.params.limitToken).id
+  customVolumeLimit.limitToken = loadOrCreateERC20(event.params.limitToken).id
+  customVolumeLimit.amount = event.params.amount
+  customVolumeLimit.period = event.params.period
+
+  customVolumeLimit.save()
+  task.save()
+}
+
 export function getSmartVault(address: Address): Address {
   let taskContract = TaskContract.bind(address)
   let smartVaultCall = taskContract.try_smartVault()
@@ -115,3 +143,7 @@ export function getExecutionType(address: Address): Bytes {
   return Bytes.fromUTF8('')
 }
 
+
+export function getCustomVolumeLimitId(token: Address, limitToken: Address, amount: BigInt, period: BigInt): string {
+  return token.toHexString() + '/' + limitToken.toHexString() + '/' + amount.toString() + '/' + period.toString()
+}

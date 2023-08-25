@@ -192,4 +192,6 @@ templates:
           handler: handleTimeLockExecutionPeriodSet
         - event: TimeLockExpirationSet(uint256)
           handler: handleTimeLockExpirationSet
+        - event: CustomVolumeLimitSet(indexed address,indexed address,uint256,uint256)
+          handler: handleCustomVolumeLimitSet
       file: ./src/Task.ts
