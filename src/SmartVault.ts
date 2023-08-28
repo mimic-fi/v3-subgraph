@@ -1,20 +1,19 @@
 import { Address, BigInt, Bytes, ethereum, log } from '@graphprotocol/graph-ts'
 
-import { Movement, Transaction, SmartVault, RelayedExecution } from '../types/schema'
-import { SmartVault as SmartVaultContract } from '../types/templates/SmartVault/SmartVault'
+import { Movement, RelayedExecution, SmartVault, Transaction } from '../types/schema'
 import {
   BalanceConnectorUpdated,
   Called,
   Collected,
   Executed,
-  Paused, 
+  Paused,
   PriceOracleSet,
+  SmartVault as SmartVaultContract,
   Unpaused,
   Unwrapped,
   Withdrawn,
   Wrapped,
 } from '../types/templates/SmartVault/SmartVault'
-
 import { loadOrCreateERC20 } from './ERC20'
 
 export function handleExecuted(event: Executed): void {
@@ -42,8 +41,8 @@ export function handleUnwrap(event: Unwrapped): void {
 }
 
 function createTransaction(event: ethereum.Event, type: string, fee: BigInt): void {
-  let transactionId = getNextTransactionId(event.transaction.hash)
-  let transaction = new Transaction(transactionId)
+  const transactionId = getNextTransactionId(event.transaction.hash)
+  const transaction = new Transaction(transactionId)
   transaction.hash = event.transaction.hash.toHexString()
   transaction.sender = event.transaction.from.toHexString()
   transaction.executedAt = event.block.timestamp
@@ -52,9 +51,10 @@ function createTransaction(event: ethereum.Event, type: string, fee: BigInt): vo
   transaction.fee = fee
   transaction.save()
 
+  // eslint-disable-next-line no-constant-condition
   for (let i: i32 = 0; true; i++) {
     const executionId = event.transaction.hash.toHexString() + '#' + i.toString()
-    let execution = RelayedExecution.load(executionId)
+    const execution = RelayedExecution.load(executionId)
     if (execution == null) break
     if (execution.transactions.load().length == 0) {
       transaction.relayedExecution = executionId
@@ -64,8 +64,8 @@ function createTransaction(event: ethereum.Event, type: string, fee: BigInt): vo
 }
 
 export function handleBalanceConnectorUpdated(event: BalanceConnectorUpdated): void {
-  let movementId = getNextMovementId(event.transaction.hash)
-  let movement = new Movement(movementId)
+  const movementId = getNextMovementId(event.transaction.hash)
+  const movement = new Movement(movementId)
   movement.hash = event.transaction.hash.toHexString()
   movement.sender = event.transaction.from.toHexString()
   movement.executedAt = event.block.timestamp
@@ -76,9 +76,10 @@ export function handleBalanceConnectorUpdated(event: BalanceConnectorUpdated): v
   movement.added = event.params.added
   movement.save()
 
+  // eslint-disable-next-line no-constant-condition
   for (let i: i32 = 0; true; i++) {
     const executionId = event.transaction.hash.toHexString() + '#' + i.toString()
-    let execution = RelayedExecution.load(executionId)
+    const execution = RelayedExecution.load(executionId)
     if (execution == null) break
     if (execution.movements.load().length == 0) {
       movement.relayedExecution = executionId
@@ -88,7 +89,7 @@ export function handleBalanceConnectorUpdated(event: BalanceConnectorUpdated): v
 }
 
 export function handlePaused(event: Paused): void {
-  let smartVault = SmartVault.load(event.address.toHexString())
+  const smartVault = SmartVault.load(event.address.toHexString())
   if (smartVault == null) return log.warning('Missing smart vault entity {}', [event.address.toHexString()])
 
   smartVault.paused = true
@@ -96,7 +97,7 @@ export function handlePaused(event: Paused): void {
 }
 
 export function handleUnpaused(event: Unpaused): void {
-  let smartVault = SmartVault.load(event.address.toHexString())
+  const smartVault = SmartVault.load(event.address.toHexString())
   if (smartVault == null) return log.warning('Missing smart vault entity {}', [event.address.toHexString()])
 
   smartVault.paused = false
@@ -104,7 +105,7 @@ export function handleUnpaused(event: Unpaused): void {
 }
 
 export function handlePriceOracleSet(event: PriceOracleSet): void {
-  let smartVault = SmartVault.load(event.address.toHexString())
+  const smartVault = SmartVault.load(event.address.toHexString())
   if (smartVault == null) return log.warning('Missing smart vault entity {}', [event.address.toHexString()])
 
   smartVault.priceOracle = event.params.priceOracle.toHexString()
@@ -112,8 +113,8 @@ export function handlePriceOracleSet(event: PriceOracleSet): void {
 }
 
 export function getRegistry(address: Address): Address {
-  let smartVaultContract = SmartVaultContract.bind(address)
-  let registryCall = smartVaultContract.try_registry()
+  const smartVaultContract = SmartVaultContract.bind(address)
+  const registryCall = smartVaultContract.try_registry()
 
   if (!registryCall.reverted) {
     return registryCall.value
@@ -124,8 +125,8 @@ export function getRegistry(address: Address): Address {
 }
 
 export function getAuthorizer(address: Address): Address {
-  let smartVaultContract = SmartVaultContract.bind(address)
-  let authorizerCall = smartVaultContract.try_authorizer()
+  const smartVaultContract = SmartVaultContract.bind(address)
+  const authorizerCall = smartVaultContract.try_authorizer()
 
   if (!authorizerCall.reverted) {
     return authorizerCall.value
@@ -136,8 +137,8 @@ export function getAuthorizer(address: Address): Address {
 }
 
 export function getPriceOracle(address: Address): Address {
-  let smartVaultContract = SmartVaultContract.bind(address)
-  let priceOracleCall = smartVaultContract.try_priceOracle()
+  const smartVaultContract = SmartVaultContract.bind(address)
+  const priceOracleCall = smartVaultContract.try_priceOracle()
 
   if (!priceOracleCall.reverted) {
     return priceOracleCall.value
@@ -148,6 +149,7 @@ export function getPriceOracle(address: Address): Address {
 }
 
 function getNextMovementId(hash: Bytes): string {
+  // eslint-disable-next-line no-constant-condition
   for (let i: i32 = 0; true; i++) {
     const movementId = hash.toHexString() + '#' + i.toString()
     if (Movement.load(movementId) == null) return movementId
@@ -157,6 +159,7 @@ function getNextMovementId(hash: Bytes): string {
 }
 
 function getNextTransactionId(hash: Bytes): string {
+  // eslint-disable-next-line no-constant-condition
   for (let i: i32 = 0; true; i++) {
     const transactionId = hash.toHexString() + '#' + i.toString()
     if (Transaction.load(transactionId) == null) return transactionId

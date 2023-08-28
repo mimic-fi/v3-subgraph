@@ -1,9 +1,10 @@
-import { Implementation } from '../types/schema'
-import { Deprecated, Registered } from '../types/Registry/Registry'
 import { Address } from '@graphprotocol/graph-ts'
 
+import { Deprecated, Registered } from '../types/Registry/Registry'
+import { Implementation } from '../types/schema'
+
 export function handleRegistered(event: Registered): void {
-  let implementation = loadOrCreateImplementation(event.params.implementation)
+  const implementation = loadOrCreateImplementation(event.params.implementation)
   implementation.name = event.params.name
   implementation.deprecated = false
   implementation.stateless = event.params.stateless
@@ -11,13 +12,13 @@ export function handleRegistered(event: Registered): void {
 }
 
 export function handleDeprecated(event: Deprecated): void {
-  let implementation = loadOrCreateImplementation(event.params.implementation)
+  const implementation = loadOrCreateImplementation(event.params.implementation)
   implementation.deprecated = true
   implementation.save()
 }
 
 export function loadOrCreateImplementation(address: Address): Implementation {
-  let id = address.toHexString()
+  const id = address.toHexString()
   let implementation = Implementation.load(id)
 
   if (implementation === null) {
