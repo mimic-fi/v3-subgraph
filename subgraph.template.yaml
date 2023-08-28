@@ -192,4 +192,8 @@ templates:
           handler: handleTimeLockExecutionPeriodSet
         - event: TimeLockExpirationSet(uint256)
           handler: handleTimeLockExpirationSet
+        - event: TokensAcceptanceTypeSet(uint8)
+          handler: handleTokensAcceptanceTypeSet
+        - event: TokensAcceptanceListSet(indexed address,bool)
+          handler: handleTokensAcceptanceListSet
       file: ./src/Task.ts

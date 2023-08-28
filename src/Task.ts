@@ -1,6 +1,6 @@
 import { Address, Bytes, log } from '@graphprotocol/graph-ts'
 
-import { Task } from '../types/schema'
+import { Task, TokensAcceptanceList } from '../types/schema'
 import {
   BalanceConnectorsSet,
   GasPriceLimitSet,
@@ -9,9 +9,13 @@ import {
   TimeLockDelaySet,
   TimeLockExecutionPeriodSet,
   TimeLockExpirationSet,
+  TokensAcceptanceTypeSet,
+  TokensAcceptanceListSet,
   TxCostLimitPctSet,
   TxCostLimitSet,
 } from '../types/templates/Task/Task'
+
+import { loadOrCreateERC20 } from './ERC20'
 
 export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
   const task = Task.load(event.address.toHexString())
@@ -35,6 +39,33 @@ export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   task.priorityFeeLimit = event.params.priorityFeeLimit
+  task.save()
+}
+
+export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const tokensAcceptanceListId = getTokensAcceptanceListId(task, event.params.token.toHexString())
+  
+  const tokensAcceptanceList = TokensAcceptanceList.load(tokensAcceptanceListId)
+  tokensAcceptanceList.tokensAcceptanceType = parseAcceptanceType(event.params.acceptanceType)
+  
+  tokensAcceptanceList.save()
+  task.save()
+}
+
+export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const tokensAcceptanceListId = getTokensAcceptanceListId(task, event.params.token)
+
+  const tokensAcceptanceList = new TokensAcceptanceList(tokensAcceptanceListId)
+  tokensAcceptanceList.token = loadOrCreateERC20(event.params.token).id
+  tokensAcceptanceList.added = event.params.added
+
+  tokensAcceptanceList.save()
   task.save()
 }
 
@@ -90,6 +121,10 @@ export function getSmartVault(address: Address): Address {
   return Address.zero()
 }
 
+export function getTokensAcceptanceListId(task: Task, token: Address): string {
+  return task.id.toString() + '/' + token.toHexString()
+}
+
 export function getTokensSource(address: Address): Address {
   const taskContract = TaskContract.bind(address)
   const tokensSourceCall = taskContract.try_getTokensSource()
@@ -112,4 +147,9 @@ export function getExecutionType(address: Address): Bytes {
 
   log.warning('EXECUTION_TYPE() call reverted for task {}', [address.toHexString()])
   return Bytes.fromUTF8('')
+}
+
+function parseAcceptanceType(op: i32): string {
+  if (op == 0) return 'DenyList'
+  else return 'AllowList'
 }
