@@ -1,8 +1,10 @@
 import { Address, Bytes, log } from '@graphprotocol/graph-ts'
 
-import { Task } from '../types/schema'
+import { CustomTokenThreshold, DefaultTokenThreshold, Task } from '../types/schema'
 import {
   BalanceConnectorsSet,
+  CustomTokenThresholdSet,
+  DefaultTokenThresholdSet,
   GasPriceLimitSet,
   PriorityFeeLimitSet,
   Task as TaskContract,
@@ -12,6 +14,7 @@ import {
   TxCostLimitPctSet,
   TxCostLimitSet,
 } from '../types/templates/Task/Task'
+import { loadOrCreateERC20 } from './ERC20'
 
 export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
   const task = Task.load(event.address.toHexString())
@@ -19,6 +22,39 @@ export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
 
   task.previousBalanceConnector = event.params.previous.toHexString()
   task.nextBalanceConnector = event.params.next.toHexString()
+  task.save()
+}
+
+export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const customTokenThresholdId = getTokenThresholdId(task, event.params.token)
+
+  const customTokenThreshold = new CustomTokenThreshold(customTokenThresholdId)
+  customTokenThreshold.task = task.id
+  customTokenThreshold.token = loadOrCreateERC20(event.params.token).id
+  customTokenThreshold.thresholdToken = loadOrCreateERC20(event.params.thresholdToken).id
+  customTokenThreshold.min = event.params.min
+  customTokenThreshold.max = event.params.max
+
+  customTokenThreshold.save()
+  task.save()
+}
+
+export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const defaultTokenThresholdId = getTokenThresholdId(task, event.params.token)
+
+  const defaultTokenThreshold = new DefaultTokenThreshold(defaultTokenThresholdId)
+  defaultTokenThreshold.task = task.id
+  defaultTokenThreshold.token = loadOrCreateERC20(event.params.token).id
+  defaultTokenThreshold.min = event.params.min
+  defaultTokenThreshold.max = event.params.max
+
+  defaultTokenThreshold.save()
   task.save()
 }
 
@@ -112,4 +148,8 @@ export function getExecutionType(address: Address): Bytes {
 
   log.warning('EXECUTION_TYPE() call reverted for task {}', [address.toHexString()])
   return Bytes.fromUTF8('')
+}
+
+export function getTokenThresholdId(task: Task, token: Address): string {
+  return task.id.toString() + '/' + token.toHexString()
 }

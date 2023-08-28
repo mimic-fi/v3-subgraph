@@ -86,6 +86,25 @@ type Task @entity {
   timeLockDelay: BigInt!
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
+  defaultTokenThreshold: [DefaultTokenThreshold!] @derivedFrom(field: "task")
+}
+
+type CustomTokenThreshold @entity {
+  id: ID!
+  task: Task!
+  token: ERC20!
+  thresholdToken: ERC20!
+  min: BigInt!
+  max: BigInt!
+}
+
+type DefaultTokenThreshold @entity {
+  id: ID!
+  task: Task!
+  token: ERC20!
+  min: BigInt!
+  max: BigInt!
 }
 
 type Movement @entity {

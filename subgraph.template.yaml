@@ -192,4 +192,8 @@ templates:
           handler: handleTimeLockExecutionPeriodSet
         - event: TimeLockExpirationSet(uint256)
           handler: handleTimeLockExpirationSet
+        - event: CustomTokenThresholdSet(indexed address,address,uint256,uint256)
+          handler: handleCustomTokenThresholdSet 
+        - event: DefaultTokenThresholdSet(address,uint256,uint256)
+          handler: handleDefaultTokenThresholdSet
       file: ./src/Task.ts
