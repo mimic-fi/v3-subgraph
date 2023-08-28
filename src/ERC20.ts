@@ -2,13 +2,12 @@ import { Address, log } from '@graphprotocol/graph-ts'
 
 import { ERC20 as ERC20Entity } from '../types/schema'
 import { ERC20 as ERC20Contract } from '../types/templates/PriceOracle/ERC20'
-
 import { isAvalanche, isBinance, isEthNetwork, isFantom, isGnosis, isMaticNetwork } from './Networks'
 
 const NATIVE_TOKEN_ADDRESS = Address.fromString('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
 
 export function loadOrCreateNativeToken(): ERC20Entity {
-  let id = NATIVE_TOKEN_ADDRESS.toHexString()
+  const id = NATIVE_TOKEN_ADDRESS.toHexString()
   let erc20 = ERC20Entity.load(id)
 
   if (erc20 === null) {
@@ -25,7 +24,7 @@ export function loadOrCreateNativeToken(): ERC20Entity {
 export function loadOrCreateERC20(address: Address): ERC20Entity {
   if (address.equals(NATIVE_TOKEN_ADDRESS)) return loadOrCreateNativeToken()
 
-  let id = address.toHexString()
+  const id = address.toHexString()
   let erc20 = ERC20Entity.load(id)
 
   if (erc20 === null) {
@@ -40,8 +39,8 @@ export function loadOrCreateERC20(address: Address): ERC20Entity {
 }
 
 export function getERC20Decimals(address: Address): i32 {
-  let erc20Contract = ERC20Contract.bind(address)
-  let decimalsCall = erc20Contract.try_decimals()
+  const erc20Contract = ERC20Contract.bind(address)
+  const decimalsCall = erc20Contract.try_decimals()
 
   if (!decimalsCall.reverted) {
     return decimalsCall.value
@@ -52,8 +51,8 @@ export function getERC20Decimals(address: Address): i32 {
 }
 
 export function getERC20Name(address: Address): string {
-  let erc20Contract = ERC20Contract.bind(address)
-  let nameCall = erc20Contract.try_name()
+  const erc20Contract = ERC20Contract.bind(address)
+  const nameCall = erc20Contract.try_name()
 
   if (!nameCall.reverted) {
     return nameCall.value
@@ -64,8 +63,8 @@ export function getERC20Name(address: Address): string {
 }
 
 export function getERC20Symbol(address: Address): string {
-  let erc20Contract = ERC20Contract.bind(address)
-  let symbolCall = erc20Contract.try_symbol()
+  const erc20Contract = ERC20Contract.bind(address)
+  const symbolCall = erc20Contract.try_symbol()
 
   if (!symbolCall.reverted) {
     return symbolCall.value

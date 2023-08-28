@@ -4,24 +4,23 @@ import {
   Task,
   CustomVolumeLimit
 } from '../types/schema'
-
 import {
   BalanceConnectorsSet,
   CustomVolumeLimitSet,
   GasPriceLimitSet,
   PriorityFeeLimitSet,
-  TxCostLimitPctSet,
-  TxCostLimitSet, 
+  Task as TaskContract,
   TimeLockDelaySet,
   TimeLockExecutionPeriodSet,
-  TimeLockExpirationSet 
+  TimeLockExpirationSet,
+  TxCostLimitPctSet,
+  TxCostLimitSet,
 } from '../types/templates/Task/Task'
-import { Task as TaskContract } from '../types/templates/Task/Task'
 
 import { loadOrCreateERC20 } from './ERC20'
 
 export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
-  let task = Task.load(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   task.previousBalanceConnector = event.params.previous.toHexString()
@@ -30,7 +29,7 @@ export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
 }
 
 export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
-  let task = Task.load(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   task.gasPriceLimit = event.params.gasPriceLimit
@@ -38,7 +37,7 @@ export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
 }
 
 export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
-  let task = Task.load(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   task.priorityFeeLimit = event.params.priorityFeeLimit
@@ -46,7 +45,7 @@ export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
 }
 
 export function handleTxCostLimitPctSet(event: TxCostLimitPctSet): void {
-  let task = Task.load(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   task.txCostLimitPct = event.params.txCostLimitPct
@@ -54,23 +53,23 @@ export function handleTxCostLimitPctSet(event: TxCostLimitPctSet): void {
 }
 
 export function handleTxCostLimitSet(event: TxCostLimitSet): void {
-  let task = Task.load(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   task.txCostLimit = event.params.txCostLimit
   task.save()
 }
 
-export function handleTimeLockDelaySet(event : TimeLockDelaySet): void {
-  let task = Task.load(event.address.toHexString())
+export function handleTimeLockDelaySet(event: TimeLockDelaySet): void {
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
-  
+
   task.timeLockDelay = event.params.delay
   task.save()
 }
 
 export function handleTimeLockExecutionPeriodSet(event: TimeLockExecutionPeriodSet): void {
-  let task = Task.load(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   task.timeLockExecutionPeriod = event.params.period
@@ -78,7 +77,7 @@ export function handleTimeLockExecutionPeriodSet(event: TimeLockExecutionPeriodS
 }
 
 export function handleTimeLockExpirationSet(event: TimeLockExpirationSet): void {
-  let task = Task.load(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   task.timeLockExpiration = event.params.expiration
@@ -109,8 +108,8 @@ export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
 }
 
 export function getSmartVault(address: Address): Address {
-  let taskContract = TaskContract.bind(address)
-  let smartVaultCall = taskContract.try_smartVault()
+  const taskContract = TaskContract.bind(address)
+  const smartVaultCall = taskContract.try_smartVault()
 
   if (!smartVaultCall.reverted) {
     return smartVaultCall.value
@@ -121,8 +120,8 @@ export function getSmartVault(address: Address): Address {
 }
 
 export function getTokensSource(address: Address): Address {
-  let taskContract = TaskContract.bind(address)
-  let tokensSourceCall = taskContract.try_getTokensSource()
+  const taskContract = TaskContract.bind(address)
+  const tokensSourceCall = taskContract.try_getTokensSource()
 
   if (!tokensSourceCall.reverted) {
     return tokensSourceCall.value
@@ -133,8 +132,8 @@ export function getTokensSource(address: Address): Address {
 }
 
 export function getExecutionType(address: Address): Bytes {
-  let taskContract = TaskContract.bind(address)
-  let executionTypeCall = taskContract.try_EXECUTION_TYPE()
+  const taskContract = TaskContract.bind(address)
+  const executionTypeCall = taskContract.try_EXECUTION_TYPE()
 
   if (!executionTypeCall.reverted) {
     return executionTypeCall.value
@@ -143,7 +142,6 @@ export function getExecutionType(address: Address): Bytes {
   log.warning('EXECUTION_TYPE() call reverted for task {}', [address.toHexString()])
   return Bytes.fromUTF8('')
 }
-
 
 export function getCustomVolumeLimitId(
   task: Task,
