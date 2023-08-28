@@ -1,19 +1,19 @@
 import { Address, Bytes, crypto, log, store } from '@graphprotocol/graph-ts'
 
 import { Permission, PermissionParam } from '../types/schema'
-import { Authorized, Unauthorized, Authorizer as AuthorizerContract } from '../types/templates/Authorizer/Authorizer'
+import { Authorized, Authorizer as AuthorizerContract, Unauthorized } from '../types/templates/Authorizer/Authorizer'
 
 export function handleAuthorized(event: Authorized): void {
-  let permissionId = getPermissionId(event.address, event.params.who, event.params.where, event.params.what)
-  let permission = new Permission(permissionId)
+  const permissionId = getPermissionId(event.address, event.params.who, event.params.where, event.params.what)
+  const permission = new Permission(permissionId)
   permission.authorizer = event.address.toHexString()
   permission.who = event.params.who.toHexString()
   permission.where = event.params.where.toHexString()
   permission.what = event.params.what.toHexString()
   permission.save()
 
-  let authorizerContract = AuthorizerContract.bind(event.address)
-  let getPermissionParamsCall = authorizerContract.try_getPermissionParams(
+  const authorizerContract = AuthorizerContract.bind(event.address)
+  const getPermissionParamsCall = authorizerContract.try_getPermissionParams(
     event.params.who,
     event.params.where,
     event.params.what
@@ -24,10 +24,10 @@ export function handleAuthorized(event: Authorized): void {
     return
   }
 
-  let params = getPermissionParamsCall.value
+  const params = getPermissionParamsCall.value
   for (let i: i32 = 0; i < params.length; i++) {
-    let paramId = permissionId + '/param/' + i.toString()
-    let param = new PermissionParam(paramId)
+    const paramId = permissionId + '/param/' + i.toString()
+    const param = new PermissionParam(paramId)
     param.op = parseOp(params[i].op)
     param.value = params[i].value.toHexString()
     param.permission = permissionId
@@ -36,11 +36,11 @@ export function handleAuthorized(event: Authorized): void {
 }
 
 export function handleUnauthorized(event: Unauthorized): void {
-  let permissionId = getPermissionId(event.address, event.params.who, event.params.where, event.params.what)
-  let permission = Permission.load(permissionId)
+  const permissionId = getPermissionId(event.address, event.params.who, event.params.where, event.params.what)
+  const permission = Permission.load(permissionId)
 
   if (permission != null) {
-    let params = permission.params.load()
+    const params = permission.params.load()
     for (let i: i32 = 0; i < params.length; i++) store.remove('PermissionParam', params[i].id)
     store.remove('Permission', permissionId)
   }
@@ -58,12 +58,14 @@ function parseOp(op: i32): string {
 }
 
 function getPermissionId(authorizer: Address, who: Address, where: Address, what: Bytes): string {
-  return crypto.keccak256(
-    Bytes.fromHexString(
-      authorizer.toHexString() +
-      who.toHexString().slice(2) +
-      where.toHexString().slice(2) +
-      what.toHexString().slice(2),
-    ),
-  ).toHexString()
+  return crypto
+    .keccak256(
+      Bytes.fromHexString(
+        authorizer.toHexString() +
+          who.toHexString().slice(2) +
+          where.toHexString().slice(2) +
+          what.toHexString().slice(2)
+      )
+    )
+    .toHexString()
 }

@@ -1,26 +1,24 @@
 import { Address, BigInt, Bytes, crypto, log } from '@graphprotocol/graph-ts'
 
+import { AuthorizerDeployed, PriceOracleDeployed, SmartVaultDeployed, TaskDeployed } from '../types/Deployer/Deployer'
+import { Authorizer, Environment, PriceOracle, SmartVault, Task } from '../types/schema'
 import {
   Authorizer as AuthorizerTemplate,
   PriceOracle as PriceOracleTemplate,
   SmartVault as SmartVaultTemplate,
   Task as TaskTemplate,
 } from '../types/templates'
-
-import { Authorizer, Environment, PriceOracle, SmartVault, Task } from '../types/schema'
-import { AuthorizerDeployed, PriceOracleDeployed, SmartVaultDeployed, TaskDeployed } from '../types/Deployer/Deployer'
-
-import {getExecutionType, getSmartVault, getTokensSource} from './Task'
 import { loadOrCreateImplementation } from './Registry'
 import { getAuthorizer, getPriceOracle, getRegistry } from './SmartVault'
+import { getExecutionType, getSmartVault, getTokensSource } from './Task'
 
 export function handleAuthorizerDeployed(event: AuthorizerDeployed): void {
   log.warning('New authorizer deployed {}', [event.params.instance.toHexString()])
-  let implementation = loadOrCreateImplementation(event.params.implementation)
-  let environment = loadOrCreateEnvironment(event.transaction.from, event.params.namespace)
+  const implementation = loadOrCreateImplementation(event.params.implementation)
+  const environment = loadOrCreateEnvironment(event.transaction.from, event.params.namespace)
 
-  let authorizerId = event.params.instance.toHexString()
-  let authorizer = new Authorizer(authorizerId)
+  const authorizerId = event.params.instance.toHexString()
+  const authorizer = new Authorizer(authorizerId)
   authorizer.name = event.params.name
   authorizer.implementation = implementation.id
   authorizer.environment = environment.id
@@ -31,11 +29,11 @@ export function handleAuthorizerDeployed(event: AuthorizerDeployed): void {
 
 export function handlePriceOracleDeployed(event: PriceOracleDeployed): void {
   log.warning('New price oracle deployed {}', [event.params.instance.toHexString()])
-  let implementation = loadOrCreateImplementation(event.params.implementation)
-  let environment = loadOrCreateEnvironment(event.transaction.from, event.params.namespace)
+  const implementation = loadOrCreateImplementation(event.params.implementation)
+  const environment = loadOrCreateEnvironment(event.transaction.from, event.params.namespace)
 
-  let priceOracleId = event.params.instance.toHexString()
-  let priceOracle = new PriceOracle(priceOracleId)
+  const priceOracleId = event.params.instance.toHexString()
+  const priceOracle = new PriceOracle(priceOracleId)
   priceOracle.name = event.params.name
   priceOracle.implementation = implementation.id
   priceOracle.environment = environment.id
@@ -46,11 +44,11 @@ export function handlePriceOracleDeployed(event: PriceOracleDeployed): void {
 
 export function handleSmartVaultDeployed(event: SmartVaultDeployed): void {
   log.warning('New smart vault deployed {}', [event.params.instance.toHexString()])
-  let implementation = loadOrCreateImplementation(event.params.implementation)
-  let environment = loadOrCreateEnvironment(event.transaction.from, event.params.namespace)
+  const implementation = loadOrCreateImplementation(event.params.implementation)
+  const environment = loadOrCreateEnvironment(event.transaction.from, event.params.namespace)
 
-  let smartVaultId = event.params.instance.toHexString()
-  let smartVault = new SmartVault(smartVaultId)
+  const smartVaultId = event.params.instance.toHexString()
+  const smartVault = new SmartVault(smartVaultId)
   smartVault.name = event.params.name
   smartVault.implementation = implementation.id
   smartVault.environment = environment.id
@@ -65,11 +63,11 @@ export function handleSmartVaultDeployed(event: SmartVaultDeployed): void {
 
 export function handleTaskDeployed(event: TaskDeployed): void {
   log.warning('New task deployed {}', [event.params.instance.toHexString()])
-  let implementation = loadOrCreateImplementation(event.params.implementation)
-  let environment = loadOrCreateEnvironment(event.transaction.from, event.params.namespace)
+  const implementation = loadOrCreateImplementation(event.params.implementation)
+  const environment = loadOrCreateEnvironment(event.transaction.from, event.params.namespace)
 
-  let taskId = event.params.instance.toHexString()
-  let task = new Task(taskId)
+  const taskId = event.params.instance.toHexString()
+  const task = new Task(taskId)
   task.name = event.params.name
   task.implementation = implementation.id
   task.environment = environment.id
@@ -90,9 +88,9 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   TaskTemplate.create(event.params.instance)
 }
 
-export function loadOrCreateEnvironment(creator: Address, namespace: String): Environment {
-  let rawId = Bytes.fromHexString(creator.toHexString() + Bytes.fromUTF8(namespace.toString()).toHexString().slice(2))
-  let id = crypto.keccak256(rawId).toHexString()
+export function loadOrCreateEnvironment(creator: Address, namespace: string): Environment {
+  const rawId = Bytes.fromHexString(creator.toHexString() + Bytes.fromUTF8(namespace.toString()).toHexString().slice(2))
+  const id = crypto.keccak256(rawId).toHexString()
   let environment = Environment.load(id)
 
   if (environment === null) {
