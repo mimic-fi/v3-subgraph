@@ -139,6 +139,8 @@ templates:
       abis:
         - name: SmartVault
           file: ./node_modules/@mimic-fi/v3-smart-vault/artifacts/contracts/interfaces/ISmartVault.sol/ISmartVault.json
+        - name: ERC20
+          file: ./abis/IERC20.json
       eventHandlers:
         - event: Paused()
           handler: handlePause
