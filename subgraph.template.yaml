@@ -76,6 +76,8 @@ dataSources:
       abis:
         - name: Relayer
           file: ./node_modules/@mimic-fi/v3-relayer/artifacts/contracts/interfaces/IRelayer.sol/IRelayer.json
+        - name: Task
+          file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
       eventHandlers:
         - event: TaskExecuted(indexed address,indexed address,bytes,bool,bytes,uint256,uint256)
           handler: handleTaskExecuted
