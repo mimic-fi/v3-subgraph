@@ -1,6 +1,6 @@
 import { Address, Bytes, log } from '@graphprotocol/graph-ts'
 
-import { CustomVolumeLimit, DefaultVolumeLimit, Task } from '../types/schema'
+import { CustomVolumeLimit, Task, VolumeLimit } from '../types/schema'
 import {
   BalanceConnectorsSet,
   CustomVolumeLimitSet,
@@ -83,16 +83,26 @@ export function handleTimeLockExpirationSet(event: TimeLockExpirationSet): void 
 
 export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
   const task = Task.load(event.address.toHexString())
-  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+  if (task == null) {
+    log.warning('Missing task entity {}', [event.address.toHexString()])
+    return
+  }
 
   const customVolumeLimitId = getVolumeLimitId(task, event.params.token)
+
+  const customValuesVolumeLimit = new VolumeLimit(customVolumeLimitId)
+  customValuesVolumeLimit.task = task.id
+  customValuesVolumeLimit.token = loadOrCreateERC20(event.params.token).id
+  customValuesVolumeLimit.amount = event.params.amount
+  customValuesVolumeLimit.period = event.params.period
+
+  customValuesVolumeLimit.save()
 
   const customVolumeLimit = new CustomVolumeLimit(customVolumeLimitId)
   customVolumeLimit.task = task.id
   customVolumeLimit.token = loadOrCreateERC20(event.params.token).id
-  customVolumeLimit.limitToken = loadOrCreateERC20(event.params.limitToken).id
-  customVolumeLimit.amount = event.params.amount
-  customVolumeLimit.period = event.params.period
+  customVolumeLimit.volumeLimit = customValuesVolumeLimit.id
+
   customVolumeLimit.save()
 }
 
@@ -101,7 +111,7 @@ export function handleDefaultVolumeLimitSet(event: DefaultVolumeLimitSet): void 
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const defaultVolumeLimitId = task.id
-  const defaultVolumeLimit = new DefaultVolumeLimit(defaultVolumeLimitId)
+  const defaultVolumeLimit = new VolumeLimit(defaultVolumeLimitId)
   defaultVolumeLimit.task = task.id
   defaultVolumeLimit.token = loadOrCreateERC20(event.params.token).id
   defaultVolumeLimit.amount = event.params.amount
