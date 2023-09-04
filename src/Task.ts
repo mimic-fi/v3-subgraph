@@ -90,18 +90,18 @@ export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
 
   const customVolumeLimitId = getVolumeLimitId(task, event.params.token)
 
-  const customValuesVolumeLimit = new VolumeLimit(customVolumeLimitId)
-  customValuesVolumeLimit.task = task.id
-  customValuesVolumeLimit.token = loadOrCreateERC20(event.params.token).id
-  customValuesVolumeLimit.amount = event.params.amount
-  customValuesVolumeLimit.period = event.params.period
+  const volumeLimit = new VolumeLimit(customVolumeLimitId)
+  volumeLimit.task = task.id
+  volumeLimit.token = loadOrCreateERC20(event.params.token).id
+  volumeLimit.amount = event.params.amount
+  volumeLimit.period = event.params.period
 
-  customValuesVolumeLimit.save()
+  volumeLimit.save()
 
   const customVolumeLimit = new CustomVolumeLimit(customVolumeLimitId)
   customVolumeLimit.task = task.id
   customVolumeLimit.token = loadOrCreateERC20(event.params.token).id
-  customVolumeLimit.volumeLimit = customValuesVolumeLimit.id
+  customVolumeLimit.volumeLimit = volumeLimit.id
 
   customVolumeLimit.save()
 }
