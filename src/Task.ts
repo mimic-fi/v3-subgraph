@@ -1,6 +1,6 @@
 import { Address, Bytes, log } from '@graphprotocol/graph-ts'
 
-import { CustomTokenThreshold, DefaultTokenThreshold, Task } from '../types/schema'
+import { CustomTokenThreshold, Task, TokenThreshold } from '../types/schema'
 import {
   BalanceConnectorsSet,
   CustomTokenThresholdSet,
@@ -30,16 +30,23 @@ export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): v
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const customTokenThresholdId = getTokenThresholdId(task, event.params.token)
+  const tokenThreshold = new TokenThreshold(customTokenThresholdId)
+
+  tokenThreshold.task = task.id
+  tokenThreshold.token = loadOrCreateERC20(event.params.token).id
+  tokenThreshold.min = event.params.min
+  tokenThreshold.max = event.params.max
+
+  tokenThreshold.save()
 
   const customTokenThreshold = new CustomTokenThreshold(customTokenThresholdId)
+
   customTokenThreshold.task = task.id
   customTokenThreshold.token = loadOrCreateERC20(event.params.token).id
   customTokenThreshold.thresholdToken = loadOrCreateERC20(event.params.thresholdToken).id
-  customTokenThreshold.min = event.params.min
-  customTokenThreshold.max = event.params.max
+  customTokenThreshold.tokenThreshold = tokenThreshold.id
 
   customTokenThreshold.save()
-  task.save()
 }
 
 export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet): void {
@@ -48,14 +55,13 @@ export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet):
 
   const defaultTokenThresholdId = getTokenThresholdId(task, event.params.token)
 
-  const defaultTokenThreshold = new DefaultTokenThreshold(defaultTokenThresholdId)
+  const defaultTokenThreshold = new TokenThreshold(defaultTokenThresholdId)
   defaultTokenThreshold.task = task.id
   defaultTokenThreshold.token = loadOrCreateERC20(event.params.token).id
   defaultTokenThreshold.min = event.params.min
   defaultTokenThreshold.max = event.params.max
 
   defaultTokenThreshold.save()
-  task.save()
 }
 
 export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
