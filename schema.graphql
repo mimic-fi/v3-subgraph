@@ -92,9 +92,8 @@ type Task @entity {
 type TokensAcceptanceList @entity {
   id: ID!
   task: Task!
-  token: ERC20!
-  added: Boolean!
-  tokensAcceptanceType: String
+  tokensAcceptanceType: String!
+  tokens: [String!]!
 }
 
 type Movement @entity {

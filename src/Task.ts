@@ -9,13 +9,11 @@ import {
   TimeLockDelaySet,
   TimeLockExecutionPeriodSet,
   TimeLockExpirationSet,
-  TokensAcceptanceTypeSet,
   TokensAcceptanceListSet,
+  TokensAcceptanceTypeSet,
   TxCostLimitPctSet,
   TxCostLimitSet,
 } from '../types/templates/Task/Task'
-
-import { loadOrCreateERC20 } from './ERC20'
 
 export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
   const task = Task.load(event.address.toHexString())
@@ -44,29 +42,52 @@ export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
 
 export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): void {
   const task = Task.load(event.address.toHexString())
-  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+  if (task == null) {
+    log.warning('Missing task entity {}', [event.address.toHexString()])
+    return
+  }
 
-  const tokensAcceptanceListId = getTokensAcceptanceListId(task, event.params.token.toHexString())
-  
-  const tokensAcceptanceList = TokensAcceptanceList.load(tokensAcceptanceListId)
-  tokensAcceptanceList.tokensAcceptanceType = parseAcceptanceType(event.params.acceptanceType)
-  
-  tokensAcceptanceList.save()
-  task.save()
+  const acceptanceType = parseAcceptanceType(event.params.acceptanceType)
+  const acceptanceListId = task.id
+
+  let acceptanceList = TokensAcceptanceList.load(acceptanceListId)
+  if (acceptanceList == null) {
+    acceptanceList = new TokensAcceptanceList(acceptanceListId)
+    acceptanceList.task = task.id
+    acceptanceList.tokensAcceptanceType = acceptanceType
+    acceptanceList.tokens = []
+  }
+
+  acceptanceList.save()
 }
 
 export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): void {
   const task = Task.load(event.address.toHexString())
-  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+  if (task == null) {
+    log.warning('Missing task entity {}', [event.address.toHexString()])
+    return
+  }
 
-  const tokensAcceptanceListId = getTokensAcceptanceListId(task, event.params.token)
+  const tokensAcceptanceListId = task.id
 
-  const tokensAcceptanceList = new TokensAcceptanceList(tokensAcceptanceListId)
-  tokensAcceptanceList.token = loadOrCreateERC20(event.params.token).id
-  tokensAcceptanceList.added = event.params.added
+  const tokensAcceptanceList = TokensAcceptanceList.load(tokensAcceptanceListId)
+  if (tokensAcceptanceList == null) {
+    log.warning('Missing tokensAcceptanceType {}', [event.address.toHexString()])
+    return
+  }
+
+  if (tokensAcceptanceList.tokens == null) {
+    tokensAcceptanceList.tokens = []
+  }
+
+  const token = event.params.token.toHexString()
+  if (tokensAcceptanceList.tokens != null) {
+    tokensAcceptanceList.tokens.push(token)
+  } else {
+    tokensAcceptanceList.tokens = [token]
+  }
 
   tokensAcceptanceList.save()
-  task.save()
 }
 
 export function handleTxCostLimitPctSet(event: TxCostLimitPctSet): void {
@@ -121,8 +142,8 @@ export function getSmartVault(address: Address): Address {
   return Address.zero()
 }
 
-export function getTokensAcceptanceListId(task: Task, token: Address): string {
-  return task.id.toString() + '/' + token.toHexString()
+export function getTokensAcceptanceListId(task: Task, acceptanceType: string): string {
+  return task.id.toString() + '/' + acceptanceType
 }
 
 export function getTokensSource(address: Address): Address {
