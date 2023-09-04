@@ -8,7 +8,7 @@ import {
   SmartVault as SmartVaultTemplate,
   Task as TaskTemplate,
 } from '../types/templates'
-import { loadOrCreateImplementation } from './Registry'
+import { loadOrCreateImplementation, loadOrCreateVolumeLimit } from './Registry'
 import { getAuthorizer, getPriceOracle, getRegistry } from './SmartVault'
 import { getExecutionType, getSmartVault, getTokensSource } from './Task'
 
@@ -83,6 +83,7 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   task.timeLockDelay = BigInt.zero()
   task.timeLockExecutionPeriod = BigInt.zero()
   task.timeLockExpiration = BigInt.zero()
+  task.defaultVolumeLimit = loadOrCreateVolumeLimit(task, event.params.instance).toString()
   task.save()
 
   TaskTemplate.create(event.params.instance)

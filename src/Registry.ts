@@ -1,7 +1,7 @@
-import { Address } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 import { Deprecated, Registered } from '../types/Registry/Registry'
-import { Implementation } from '../types/schema'
+import { Implementation, Task, VolumeLimit } from '../types/schema'
 
 export function handleRegistered(event: Registered): void {
   const implementation = loadOrCreateImplementation(event.params.implementation)
@@ -30,4 +30,20 @@ export function loadOrCreateImplementation(address: Address): Implementation {
   }
 
   return implementation
+}
+
+export function loadOrCreateVolumeLimit(task: Task, tokenAddress: Address): string {
+  const volumeLimitId = task.id
+  let volumeLimit = VolumeLimit.load(volumeLimitId)
+
+  if (volumeLimit === null) {
+    volumeLimit = new VolumeLimit(volumeLimitId)
+    volumeLimit.task = task.id
+    volumeLimit.token = tokenAddress.toHexString()
+    volumeLimit.period = BigInt.zero()
+    volumeLimit.amount = BigInt.zero()
+    volumeLimit.save()
+  }
+
+  return volumeLimit.id
 }
