@@ -93,25 +93,20 @@ export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
   customVolumeLimit.limitToken = loadOrCreateERC20(event.params.limitToken).id
   customVolumeLimit.amount = event.params.amount
   customVolumeLimit.period = event.params.period
-
   customVolumeLimit.save()
-  task.save()
 }
 
 export function handleDefaultVolumeLimitSet(event: DefaultVolumeLimitSet): void {
   const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const defaultVolumeLimitId = getVolumeLimitId(task, event.params.token)
-
+  const defaultVolumeLimitId = task.id
   const defaultVolumeLimit = new DefaultVolumeLimit(defaultVolumeLimitId)
   defaultVolumeLimit.task = task.id
   defaultVolumeLimit.token = loadOrCreateERC20(event.params.token).id
   defaultVolumeLimit.amount = event.params.amount
   defaultVolumeLimit.period = event.params.period
-
   defaultVolumeLimit.save()
-  task.save()
 }
 
 export function getSmartVault(address: Address): Address {
