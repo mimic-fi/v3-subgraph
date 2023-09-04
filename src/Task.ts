@@ -53,7 +53,7 @@ export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet):
   const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const defaultTokenThresholdId = getTokenThresholdId(task, event.params.token)
+  const defaultTokenThresholdId = task.id
 
   const defaultTokenThreshold = new TokenThreshold(defaultTokenThresholdId)
   defaultTokenThreshold.task = task.id
