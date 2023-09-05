@@ -1,4 +1,4 @@
-import { Address, Bytes, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes, log } from '@graphprotocol/graph-ts'
 
 import { CustomTokenThreshold, Task, TokenThreshold } from '../types/schema'
 import {
@@ -29,8 +29,8 @@ export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): v
   const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const customTokenThresholdId = getTokenThresholdId(task, event.params.token)
-  const tokenThreshold = new TokenThreshold(customTokenThresholdId)
+  const customTokenThresholdId = getCustomTokenThresholdId(task, event.params.token)
+  const tokenThreshold = loadOrCreateTokenThreshold(customTokenThresholdId)
   tokenThreshold.task = task.id
   tokenThreshold.token = loadOrCreateERC20(event.params.token).id
   tokenThreshold.min = event.params.min
@@ -38,11 +38,9 @@ export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): v
   tokenThreshold.save()
 
   const customTokenThreshold = new CustomTokenThreshold(customTokenThresholdId)
-
   customTokenThreshold.task = task.id
   customTokenThreshold.token = loadOrCreateERC20(event.params.token).id
-  customTokenThreshold.thresholdToken = loadOrCreateERC20(event.params.thresholdToken).id
-  customTokenThreshold.tokenThreshold = tokenThreshold.id
+  customTokenThreshold.threshold = tokenThreshold.id
   customTokenThreshold.save()
 }
 
@@ -51,8 +49,7 @@ export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet):
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const defaultTokenThresholdId = task.id
-
-  const defaultTokenThreshold = new TokenThreshold(defaultTokenThresholdId)
+  const defaultTokenThreshold = loadOrCreateTokenThreshold(defaultTokenThresholdId)
   defaultTokenThreshold.task = task.id
   defaultTokenThreshold.token = loadOrCreateERC20(event.params.token).id
   defaultTokenThreshold.min = event.params.min
@@ -152,6 +149,21 @@ export function getExecutionType(address: Address): Bytes {
   return Bytes.fromUTF8('')
 }
 
-export function getTokenThresholdId(task: Task, token: Address): string {
+export function getCustomTokenThresholdId(task: Task, token: Address): string {
   return task.id.toString() + '/' + token.toHexString()
+}
+
+export function loadOrCreateTokenThreshold(tokenThresholdId: string): TokenThreshold {
+  let tokenThreshold = TokenThreshold.load(tokenThresholdId)
+
+  if (tokenThreshold === null) {
+    tokenThreshold = new TokenThreshold(tokenThresholdId)
+    tokenThreshold.task = tokenThresholdId
+    tokenThreshold.token = loadOrCreateERC20(Address.zero()).id
+    tokenThreshold.min = BigInt.zero()
+    tokenThreshold.max = BigInt.zero()
+    tokenThreshold.save()
+  }
+
+  return tokenThreshold
 }

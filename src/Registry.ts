@@ -1,7 +1,7 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address } from '@graphprotocol/graph-ts'
 
 import { Deprecated, Registered } from '../types/Registry/Registry'
-import { Implementation, Task, TokenThreshold } from '../types/schema'
+import { Implementation } from '../types/schema'
 
 export function handleRegistered(event: Registered): void {
   const implementation = loadOrCreateImplementation(event.params.implementation)
@@ -30,20 +30,4 @@ export function loadOrCreateImplementation(address: Address): Implementation {
   }
 
   return implementation
-}
-
-export function loadOrCreateDefaultTokenThreshold(task: Task, tokenAddress: Address): string {
-  const tokenThresholdId = task.id
-  let tokenThreshold = TokenThreshold.load(tokenThresholdId)
-
-  if (tokenThreshold === null) {
-    tokenThreshold = new TokenThreshold(tokenThresholdId)
-    tokenThreshold.task = task.id
-    tokenThreshold.token = tokenAddress.toHexString()
-    tokenThreshold.min = BigInt.zero()
-    tokenThreshold.max = BigInt.zero()
-    tokenThreshold.save()
-  }
-
-  return tokenThreshold.id
 }
