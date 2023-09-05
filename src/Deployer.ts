@@ -8,9 +8,9 @@ import {
   SmartVault as SmartVaultTemplate,
   Task as TaskTemplate,
 } from '../types/templates'
-import { loadOrCreateImplementation, loadOrCreateVolumeLimit } from './Registry'
+import { loadOrCreateImplementation } from './Registry'
 import { getAuthorizer, getPriceOracle, getRegistry } from './SmartVault'
-import { getExecutionType, getSmartVault, getTokensSource } from './Task'
+import { getExecutionType, getSmartVault, getTokensSource, loadOrCreateVolumeLimit } from './Task'
 
 export function handleAuthorizerDeployed(event: AuthorizerDeployed): void {
   log.warning('New authorizer deployed {}', [event.params.instance.toHexString()])
@@ -83,7 +83,7 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   task.timeLockDelay = BigInt.zero()
   task.timeLockExecutionPeriod = BigInt.zero()
   task.timeLockExpiration = BigInt.zero()
-  task.defaultVolumeLimit = loadOrCreateVolumeLimit(task, event.params.instance).toString()
+  task.defaultVolumeLimit = loadOrCreateVolumeLimit(taskId).id
   task.save()
 
   TaskTemplate.create(event.params.instance)
