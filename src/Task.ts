@@ -42,14 +42,10 @@ export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
 
 export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): void {
   const task = Task.load(event.address.toHexString())
-  if (task == null) {
-    log.warning('Missing task entity {}', [event.address.toHexString()])
-    return
-  }
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const acceptanceType = parseAcceptanceType(event.params.acceptanceType)
   const acceptanceListId = task.id
-
   let acceptanceList = TokensAcceptanceList.load(acceptanceListId)
   if (acceptanceList == null) {
     acceptanceList = new TokensAcceptanceList(acceptanceListId)
@@ -57,7 +53,6 @@ export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): v
     acceptanceList.tokensAcceptanceType = acceptanceType
     acceptanceList.tokens = []
   }
-
   acceptanceList.save()
 }
 
@@ -69,7 +64,6 @@ export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): v
   }
 
   const tokensAcceptanceListId = task.id
-
   const tokensAcceptanceList = TokensAcceptanceList.load(tokensAcceptanceListId)
   if (tokensAcceptanceList == null) {
     log.warning('Missing tokensAcceptanceType {}', [event.address.toHexString()])
@@ -86,7 +80,6 @@ export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): v
   } else {
     tokensAcceptanceList.tokens = [token]
   }
-
   tokensAcceptanceList.save()
 }
 
