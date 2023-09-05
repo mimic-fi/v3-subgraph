@@ -31,12 +31,10 @@ export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): v
 
   const customTokenThresholdId = getTokenThresholdId(task, event.params.token)
   const tokenThreshold = new TokenThreshold(customTokenThresholdId)
-
   tokenThreshold.task = task.id
   tokenThreshold.token = loadOrCreateERC20(event.params.token).id
   tokenThreshold.min = event.params.min
   tokenThreshold.max = event.params.max
-
   tokenThreshold.save()
 
   const customTokenThreshold = new CustomTokenThreshold(customTokenThresholdId)
@@ -45,7 +43,6 @@ export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): v
   customTokenThreshold.token = loadOrCreateERC20(event.params.token).id
   customTokenThreshold.thresholdToken = loadOrCreateERC20(event.params.thresholdToken).id
   customTokenThreshold.tokenThreshold = tokenThreshold.id
-
   customTokenThreshold.save()
 }
 
@@ -60,7 +57,6 @@ export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet):
   defaultTokenThreshold.token = loadOrCreateERC20(event.params.token).id
   defaultTokenThreshold.min = event.params.min
   defaultTokenThreshold.max = event.params.max
-
   defaultTokenThreshold.save()
 }
 

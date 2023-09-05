@@ -102,12 +102,8 @@ type CustomTokenThreshold @entity {
   id: ID!
   task: Task!
   token: ERC20!
-  thresholdToken: ERC20!
-  tokenThreshold: TokenThreshold!
+  threshold: TokenThreshold!
 }
-
-
-
 type Movement @entity {
   id: ID!
   hash: String!
