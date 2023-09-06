@@ -2,6 +2,7 @@ type Environment @entity {
   id: ID!
   creator: String!
   namespace: String!
+  network: String!
   authorizers: [Authorizer!] @derivedFrom(field: "environment")
   priceOracles: [PriceOracle!] @derivedFrom(field: "environment")
   smartVaults: [SmartVault!] @derivedFrom(field: "environment")

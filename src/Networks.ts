@@ -47,3 +47,13 @@ export function isFantom(): boolean {
 export function isGnosis(): boolean {
   return dataSource.network() == 'gnosis'
 }
+
+export function getNativeNetwork(): string {
+  if (isEthNetwork()) return 'Ethereum'
+  if (isMaticNetwork()) return 'Matic'
+  if (isAvalanche()) return 'Avalanche'
+  if (isBinance()) return 'Binance smart chain'
+  if (isFantom()) return 'Fantom'
+  if (isGnosis()) return 'Gnosis'
+  return 'Unknown'
+}
