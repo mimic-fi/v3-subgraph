@@ -76,6 +76,8 @@ dataSources:
       abis:
         - name: Relayer
           file: ./node_modules/@mimic-fi/v3-relayer/artifacts/contracts/interfaces/IRelayer.sol/IRelayer.json
+        - name: Task
+          file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
       eventHandlers:
         - event: TaskExecuted(indexed address,indexed address,bytes,bool,bytes,uint256,uint256)
           handler: handleTaskExecuted
@@ -139,6 +141,8 @@ templates:
       abis:
         - name: SmartVault
           file: ./node_modules/@mimic-fi/v3-smart-vault/artifacts/contracts/interfaces/ISmartVault.sol/ISmartVault.json
+        - name: ERC20
+          file: ./abis/IERC20.json
       eventHandlers:
         - event: Paused()
           handler: handlePause
@@ -196,4 +200,8 @@ templates:
           handler: handleCustomTokenThresholdSet 
         - event: DefaultTokenThresholdSet(address,uint256,uint256)
           handler: handleDefaultTokenThresholdSet
+        - event: CustomVolumeLimitSet(indexed address,indexed address,uint256,uint256)
+          handler: handleCustomVolumeLimitSet
+        - event: DefaultVolumeLimitSet(indexed address,uint256,uint256)
+          handler: handleDefaultVolumeLimitSet
       file: ./src/Task.ts

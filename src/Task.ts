@@ -1,10 +1,12 @@
 import { Address, BigInt, Bytes, log } from '@graphprotocol/graph-ts'
 
-import { CustomTokenThreshold, Task, TokenThreshold } from '../types/schema'
+import { CustomTokenThreshold, Task, TokenThreshold,VolumeLimit } from '../types/schema'
 import {
   BalanceConnectorsSet,
   CustomTokenThresholdSet,
   DefaultTokenThresholdSet,
+  CustomVolumeLimitSet,
+  DefaultVolumeLimitSet,
   GasPriceLimitSet,
   PriorityFeeLimitSet,
   Task as TaskContract,
@@ -113,6 +115,38 @@ export function handleTimeLockExpirationSet(event: TimeLockExpirationSet): void 
   task.save()
 }
 
+export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const customVolumeLimitId = getCustomVolumeLimitId(task, event.params.token)
+  const volumeLimit = loadOrCreateVolumeLimit(customVolumeLimitId)
+  volumeLimit.task = task.id
+  volumeLimit.token = loadOrCreateERC20(event.params.limitToken).id
+  volumeLimit.amount = event.params.amount
+  volumeLimit.period = event.params.period
+  volumeLimit.save()
+
+  const customVolumeLimit = new CustomVolumeLimit(customVolumeLimitId)
+  customVolumeLimit.task = task.id
+  customVolumeLimit.token = loadOrCreateERC20(event.params.token).id
+  customVolumeLimit.volumeLimit = volumeLimit.id
+  customVolumeLimit.save()
+}
+
+export function handleDefaultVolumeLimitSet(event: DefaultVolumeLimitSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const defaultVolumeLimitId = task.id
+  const defaultVolumeLimit = loadOrCreateVolumeLimit(defaultVolumeLimitId)
+  defaultVolumeLimit.task = task.id
+  defaultVolumeLimit.token = loadOrCreateERC20(event.params.token).id
+  defaultVolumeLimit.amount = event.params.amount
+  defaultVolumeLimit.period = event.params.period
+  defaultVolumeLimit.save()
+}
+
 export function getSmartVault(address: Address): Address {
   const taskContract = TaskContract.bind(address)
   const smartVaultCall = taskContract.try_smartVault()
@@ -149,6 +183,7 @@ export function getExecutionType(address: Address): Bytes {
   return Bytes.fromUTF8('')
 }
 
+
 export function getCustomTokenThresholdId(task: Task, token: Address): string {
   return task.id.toString() + '/' + token.toHexString()
 }
@@ -164,6 +199,23 @@ export function loadOrCreateTokenThreshold(tokenThresholdId: string): TokenThres
     tokenThreshold.max = BigInt.zero()
     tokenThreshold.save()
   }
-
   return tokenThreshold
+}
+
+export function getCustomVolumeLimitId(task: Task, token: Address): string {
+  return task.id.toString() + '/' + token.toHexString()
+}
+
+export function loadOrCreateVolumeLimit(volumeLimitId: string): VolumeLimit {
+  let volumeLimit = VolumeLimit.load(volumeLimitId)
+
+  if (volumeLimit === null) {
+    volumeLimit = new VolumeLimit(volumeLimitId)
+    volumeLimit.task = volumeLimitId
+    volumeLimit.token = loadOrCreateERC20(Address.zero()).id
+    volumeLimit.period = BigInt.zero()
+    volumeLimit.amount = BigInt.zero()
+    volumeLimit.save()
+  }
+  return volumeLimit
 }
