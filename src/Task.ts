@@ -32,8 +32,8 @@ export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): v
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const customTokenThresholdId = getCustomTokenThresholdId(task, event.params.token)
-  const tokenThreshold = loadOrCreateTokenThreshold(customTokenThresholdId)
-  tokenThreshold.task = task.id
+  let tokenThreshold = TokenThreshold.load(customTokenThresholdId)
+  if (tokenThreshold === null) tokenThreshold = new TokenThreshold(customTokenThresholdId)
   tokenThreshold.token = loadOrCreateERC20(event.params.thresholdToken).id
   tokenThreshold.min = event.params.min
   tokenThreshold.max = event.params.max
@@ -51,8 +51,8 @@ export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet):
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const defaultTokenThresholdId = task.id
-  const defaultTokenThreshold = loadOrCreateTokenThreshold(defaultTokenThresholdId)
-  defaultTokenThreshold.task = task.id
+  let defaultTokenThreshold = TokenThreshold.load(defaultTokenThresholdId)
+  if (defaultTokenThreshold === null) defaultTokenThreshold = new TokenThreshold(defaultTokenThresholdId)
   defaultTokenThreshold.token = loadOrCreateERC20(event.params.token).id
   defaultTokenThreshold.min = event.params.min
   defaultTokenThreshold.max = event.params.max
@@ -185,20 +185,6 @@ export function getExecutionType(address: Address): Bytes {
 
 export function getCustomTokenThresholdId(task: Task, token: Address): string {
   return task.id.toString() + '/' + token.toHexString()
-}
-
-export function loadOrCreateTokenThreshold(tokenThresholdId: string): TokenThreshold {
-  let tokenThreshold = TokenThreshold.load(tokenThresholdId)
-
-  if (tokenThreshold === null) {
-    tokenThreshold = new TokenThreshold(tokenThresholdId)
-    tokenThreshold.task = tokenThresholdId
-    tokenThreshold.token = loadOrCreateERC20(Address.zero()).id
-    tokenThreshold.min = BigInt.zero()
-    tokenThreshold.max = BigInt.zero()
-    tokenThreshold.save()
-  }
-  return tokenThreshold
 }
 
 export function getCustomVolumeLimitId(task: Task, token: Address): string {
