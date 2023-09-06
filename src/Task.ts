@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes, log } from '@graphprotocol/graph-ts'
+import { Address, Bytes, log } from '@graphprotocol/graph-ts'
 
 import { CustomVolumeLimit, Task, VolumeLimit } from '../types/schema'
 import {
@@ -86,14 +86,15 @@ export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const customVolumeLimitId = getCustomVolumeLimitId(task, event.params.token)
-  const volumeLimit = loadOrCreateVolumeLimit(customVolumeLimitId)
-  volumeLimit.task = task.id
+  let volumeLimit = VolumeLimit.load(customVolumeLimitId)
+  if (volumeLimit == null) volumeLimit = new VolumeLimit(customVolumeLimitId)
   volumeLimit.token = loadOrCreateERC20(event.params.limitToken).id
   volumeLimit.amount = event.params.amount
   volumeLimit.period = event.params.period
   volumeLimit.save()
 
-  const customVolumeLimit = new CustomVolumeLimit(customVolumeLimitId)
+  let customVolumeLimit = CustomVolumeLimit.load(customVolumeLimitId)
+  if (customVolumeLimit == null) customVolumeLimit = new CustomVolumeLimit(customVolumeLimitId)
   customVolumeLimit.task = task.id
   customVolumeLimit.token = loadOrCreateERC20(event.params.token).id
   customVolumeLimit.volumeLimit = volumeLimit.id
@@ -105,8 +106,8 @@ export function handleDefaultVolumeLimitSet(event: DefaultVolumeLimitSet): void 
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const defaultVolumeLimitId = task.id
-  const defaultVolumeLimit = loadOrCreateVolumeLimit(defaultVolumeLimitId)
-  defaultVolumeLimit.task = task.id
+  let defaultVolumeLimit = VolumeLimit.load(defaultVolumeLimitId)
+  if (defaultVolumeLimit == null) defaultVolumeLimit = new VolumeLimit(defaultVolumeLimitId)
   defaultVolumeLimit.token = loadOrCreateERC20(event.params.token).id
   defaultVolumeLimit.amount = event.params.amount
   defaultVolumeLimit.period = event.params.period
@@ -151,19 +152,4 @@ export function getExecutionType(address: Address): Bytes {
 
 export function getCustomVolumeLimitId(task: Task, token: Address): string {
   return task.id.toString() + '/' + token.toHexString()
-}
-
-export function loadOrCreateVolumeLimit(volumeLimitId: string): VolumeLimit {
-  let volumeLimit = VolumeLimit.load(volumeLimitId)
-
-  if (volumeLimit === null) {
-    volumeLimit = new VolumeLimit(volumeLimitId)
-    volumeLimit.task = volumeLimitId
-    volumeLimit.token = loadOrCreateERC20(Address.zero()).id
-    volumeLimit.period = BigInt.zero()
-    volumeLimit.amount = BigInt.zero()
-    volumeLimit.save()
-  }
-
-  return volumeLimit
 }
