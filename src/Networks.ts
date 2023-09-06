@@ -49,8 +49,12 @@ export function isGnosis(): boolean {
 }
 
 export function getNativeNetwork(): string {
-  if (isEthNetwork()) return 'Ethereum'
-  if (isMaticNetwork()) return 'Matic'
+  if (isMainnet()) return 'Ethereum'
+  if (isGoerli()) return 'Goerli'
+  if (isArbitrum()) return 'Arbitrum'
+  if (isOptimism()) return 'Optimism'
+  if (isPolygon()) return 'Matic'
+  if (isMumbai()) return 'Mumbai'
   if (isAvalanche()) return 'Avalanche'
   if (isBinance()) return 'Binance smart chain'
   if (isFantom()) return 'Fantom'
