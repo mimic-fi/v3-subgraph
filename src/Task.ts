@@ -39,7 +39,7 @@ export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): v
 
   const customTokenThreshold = new CustomTokenThreshold(customTokenThresholdId)
   customTokenThreshold.task = task.id
-  customTokenThreshold.token = loadOrCreateERC20(event.params.token).id
+  customTokenThreshold.token = loadOrCreateERC20(event.params.thresholdToken).id
   customTokenThreshold.threshold = tokenThreshold.id
   customTokenThreshold.save()
 }
