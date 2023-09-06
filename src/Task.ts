@@ -46,40 +46,23 @@ export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): v
 
   const acceptanceType = parseAcceptanceType(event.params.acceptanceType)
   const acceptanceListId = task.id
-  let acceptanceList = TokensAcceptanceList.load(acceptanceListId)
-  if (acceptanceList == null) {
-    acceptanceList = new TokensAcceptanceList(acceptanceListId)
-    acceptanceList.task = task.id
-    acceptanceList.tokensAcceptanceType = acceptanceType
-    acceptanceList.tokens = []
-  }
+  const acceptanceList = loadOrCreateTokenAcceptanceList(acceptanceListId)
+  acceptanceList.tokensAcceptanceType = acceptanceType
   acceptanceList.save()
 }
 
 export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): void {
   const task = Task.load(event.address.toHexString())
-  if (task == null) {
-    log.warning('Missing task entity {}', [event.address.toHexString()])
-    return
-  }
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const tokensAcceptanceListId = task.id
-  const tokensAcceptanceList = TokensAcceptanceList.load(tokensAcceptanceListId)
-  if (tokensAcceptanceList == null) {
-    log.warning('Missing tokensAcceptanceType {}', [event.address.toHexString()])
-    return
-  }
-
-  if (tokensAcceptanceList.tokens == null) {
-    tokensAcceptanceList.tokens = []
-  }
-
+  const tokensAcceptanceList = loadOrCreateTokenAcceptanceList(tokensAcceptanceListId)
+  const tokens = tokensAcceptanceList.tokens
   const token = event.params.token.toHexString()
-  if (tokensAcceptanceList.tokens != null) {
-    tokensAcceptanceList.tokens.push(token)
-  } else {
-    tokensAcceptanceList.tokens = [token]
-  }
+  const index = tokens.indexOf(token)
+  if (token && index < 0) tokens.push(token)
+  else if (token && index >= 0) tokens.splice(index, 1)
+  tokensAcceptanceList.tokens = tokens
   tokensAcceptanceList.save()
 }
 
@@ -163,7 +146,20 @@ export function getExecutionType(address: Address): Bytes {
   return Bytes.fromUTF8('')
 }
 
-function parseAcceptanceType(op: i32): string {
+export function parseAcceptanceType(op: i32): string {
   if (op == 0) return 'DenyList'
   else return 'AllowList'
+}
+
+export function loadOrCreateTokenAcceptanceList(tokensAcceptanceListId: string): TokensAcceptanceList {
+  let acceptanceList = TokensAcceptanceList.load(tokensAcceptanceListId)
+
+  if (acceptanceList === null) {
+    acceptanceList = new TokensAcceptanceList(tokensAcceptanceListId)
+    acceptanceList.task = tokensAcceptanceListId
+    acceptanceList.tokensAcceptanceType = 'DenyList'
+    acceptanceList.tokens = []
+  }
+
+  return acceptanceList
 }

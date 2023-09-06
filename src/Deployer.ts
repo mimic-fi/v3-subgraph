@@ -10,7 +10,7 @@ import {
 } from '../types/templates'
 import { loadOrCreateImplementation } from './Registry'
 import { getAuthorizer, getPriceOracle, getRegistry } from './SmartVault'
-import { getExecutionType, getSmartVault, getTokensSource } from './Task'
+import { getExecutionType, getSmartVault, getTokensSource, loadOrCreateTokenAcceptanceList } from './Task'
 
 export function handleAuthorizerDeployed(event: AuthorizerDeployed): void {
   log.warning('New authorizer deployed {}', [event.params.instance.toHexString()])
@@ -83,6 +83,7 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   task.timeLockDelay = BigInt.zero()
   task.timeLockExecutionPeriod = BigInt.zero()
   task.timeLockExpiration = BigInt.zero()
+  task.tokensAcceptanceList = loadOrCreateTokenAcceptanceList(taskId).id
   task.save()
 
   TaskTemplate.create(event.params.instance)

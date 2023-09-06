@@ -86,7 +86,7 @@ type Task @entity {
   timeLockDelay: BigInt!
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
-  tokensAcceptanceList: [TokensAcceptanceList!] @derivedFrom(field: "task")
+  tokensAcceptanceList: TokensAcceptanceList!
 }
 
 type TokensAcceptanceList @entity {
