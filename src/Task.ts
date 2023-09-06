@@ -1,11 +1,11 @@
 import { Address, BigInt, Bytes, log } from '@graphprotocol/graph-ts'
 
-import { CustomTokenThreshold, Task, TokenThreshold,VolumeLimit } from '../types/schema'
+import { CustomTokenThreshold, CustomVolumeLimit, Task, TokenThreshold, VolumeLimit } from '../types/schema'
 import {
   BalanceConnectorsSet,
   CustomTokenThresholdSet,
-  DefaultTokenThresholdSet,
   CustomVolumeLimitSet,
+  DefaultTokenThresholdSet,
   DefaultVolumeLimitSet,
   GasPriceLimitSet,
   PriorityFeeLimitSet,
@@ -182,7 +182,6 @@ export function getExecutionType(address: Address): Bytes {
   log.warning('EXECUTION_TYPE() call reverted for task {}', [address.toHexString()])
   return Bytes.fromUTF8('')
 }
-
 
 export function getCustomTokenThresholdId(task: Task, token: Address): string {
   return task.id.toString() + '/' + token.toHexString()

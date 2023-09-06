@@ -10,7 +10,13 @@ import {
 } from '../types/templates'
 import { loadOrCreateImplementation } from './Registry'
 import { getAuthorizer, getPriceOracle, getRegistry } from './SmartVault'
-import { getExecutionType, getSmartVault, getTokensSource, loadOrCreateTokenThreshold ,loadOrCreateVolumeLimit } from './Task'
+import {
+  getExecutionType,
+  getSmartVault,
+  getTokensSource,
+  loadOrCreateTokenThreshold,
+  loadOrCreateVolumeLimit,
+} from './Task'
 
 export function handleAuthorizerDeployed(event: AuthorizerDeployed): void {
   log.warning('New authorizer deployed {}', [event.params.instance.toHexString()])
