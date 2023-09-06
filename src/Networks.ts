@@ -49,15 +49,15 @@ export function isGnosis(): boolean {
 }
 
 export function getNativeNetwork(): string {
-  if (isMainnet()) return 'Ethereum'
-  if (isGoerli()) return 'Goerli'
-  if (isArbitrum()) return 'Arbitrum'
-  if (isOptimism()) return 'Optimism'
-  if (isPolygon()) return 'Matic'
-  if (isMumbai()) return 'Mumbai'
-  if (isAvalanche()) return 'Avalanche'
-  if (isBinance()) return 'Binance smart chain'
-  if (isFantom()) return 'Fantom'
-  if (isGnosis()) return 'Gnosis'
+  if (isMainnet()) return 'ethereum'
+  if (isGoerli()) return 'goerli'
+  if (isArbitrum()) return 'arbitrum'
+  if (isOptimism()) return 'optimism'
+  if (isPolygon()) return 'polygon'
+  if (isMumbai()) return 'mumbai'
+  if (isAvalanche()) return 'avalanche'
+  if (isBinance()) return 'bsc'
+  if (isFantom()) return 'fantom'
+  if (isGnosis()) return 'gnosis'
   return 'Unknown'
 }
