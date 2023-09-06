@@ -20,23 +20,23 @@ export function handleExecuted(event: Executed): void {
   createTransaction(event, 'Execute', BigInt.zero())
 }
 
-export function handleCall(event: Called): void {
+export function handleCalled(event: Called): void {
   createTransaction(event, 'Call', BigInt.zero())
 }
 
-export function handleCollect(event: Collected): void {
+export function handleCollected(event: Collected): void {
   createTransaction(event, 'Collect', BigInt.zero())
 }
 
-export function handleWithdraw(event: Withdrawn): void {
+export function handleWithdrawn(event: Withdrawn): void {
   createTransaction(event, 'Withdraw', event.params.fee)
 }
 
-export function handleWrap(event: Wrapped): void {
+export function handleWrapped(event: Wrapped): void {
   createTransaction(event, 'Wrap', BigInt.zero())
 }
 
-export function handleUnwrap(event: Unwrapped): void {
+export function handleUnwrapped(event: Unwrapped): void {
   createTransaction(event, 'Unwrap', BigInt.zero())
 }
 
