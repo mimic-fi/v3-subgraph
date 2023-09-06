@@ -48,7 +48,7 @@ export function isGnosis(): boolean {
   return dataSource.network() == 'gnosis'
 }
 
-export function getNativeNetwork(): string {
+export function getNetworkName(): string {
   if (isMainnet()) return 'ethereum'
   if (isGoerli()) return 'goerli'
   if (isArbitrum()) return 'arbitrum'
