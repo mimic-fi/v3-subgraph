@@ -47,9 +47,9 @@ export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): v
   const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const acceptanceType = parseAcceptanceType(event.params.acceptanceType)
   const acceptanceListId = task.id
   const acceptanceList = loadOrCreateTokenAcceptanceList(acceptanceListId)
+  const acceptanceType = parseAcceptanceType(event.params.acceptanceType)
   acceptanceList.tokensAcceptanceType = acceptanceType
   acceptanceList.save()
 }
@@ -61,7 +61,7 @@ export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): v
   const tokensAcceptanceListId = task.id
   const tokensAcceptanceList = loadOrCreateTokenAcceptanceList(tokensAcceptanceListId)
   const tokens = tokensAcceptanceList.tokens
-  const token = event.params.token.toHexString()
+  const token = loadOrCreateERC20(event.params.token).id
   const index = tokens.indexOf(token)
   if (token && index < 0) tokens.push(token)
   else if (token && index >= 0) tokens.splice(index, 1)
@@ -151,10 +151,6 @@ export function getSmartVault(address: Address): Address {
 
   log.warning('smartVault() call reverted for task {}', [address.toHexString()])
   return Address.zero()
-}
-
-export function getTokensAcceptanceListId(task: Task, acceptanceType: string): string {
-  return task.id.toString() + '/' + acceptanceType
 }
 
 export function getTokensSource(address: Address): Address {
