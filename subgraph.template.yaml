@@ -179,6 +179,8 @@ templates:
       abis:
         - name: Task
           file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
+        - name: ERC20
+          file: ./abis/IERC20.json
       eventHandlers:
         - event: BalanceConnectorsSet(indexed bytes32,indexed bytes32)
           handler: handleBalanceConnectorsSet
