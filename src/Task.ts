@@ -83,13 +83,12 @@ export function handleTimeLockExpirationSet(event: TimeLockExpirationSet): void 
 
 export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
   const task = Task.load(event.address.toHexString())
-
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const customVolumeLimitId = getCustomVolumeLimitId(task, event.params.token)
   const volumeLimit = loadOrCreateVolumeLimit(customVolumeLimitId)
   volumeLimit.task = task.id
-  volumeLimit.token = loadOrCreateERC20(event.params.token).id
+  volumeLimit.token = loadOrCreateERC20(event.params.limitToken).id
   volumeLimit.amount = event.params.amount
   volumeLimit.period = event.params.period
   volumeLimit.save()
