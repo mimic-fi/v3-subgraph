@@ -179,6 +179,8 @@ templates:
       abis:
         - name: Task
           file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
+        - name: ERC20
+          file: ./abis/IERC20.json
       eventHandlers:
         - event: BalanceConnectorsSet(indexed bytes32,indexed bytes32)
           handler: handleBalanceConnectorsSet
@@ -196,6 +198,10 @@ templates:
           handler: handleTimeLockExecutionPeriodSet
         - event: TimeLockExpirationSet(uint256)
           handler: handleTimeLockExpirationSet
+        - event: CustomTokenThresholdSet(indexed address,address,uint256,uint256)
+          handler: handleCustomTokenThresholdSet 
+        - event: DefaultTokenThresholdSet(address,uint256,uint256)
+          handler: handleDefaultTokenThresholdSet
         - event: CustomVolumeLimitSet(indexed address,indexed address,uint256,uint256)
           handler: handleCustomVolumeLimitSet
         - event: DefaultVolumeLimitSet(indexed address,uint256,uint256)
@@ -203,6 +209,6 @@ templates:
         - event: TokensAcceptanceTypeSet(uint8)
           handler: handleTokensAcceptanceTypeSet
         - event: TokensAcceptanceListSet(indexed address,bool)
-          handler: handleTokensAcceptanceListSet
-        
+          handler: handleTokensAcceptanceListSet        
       file: ./src/Task.ts
+

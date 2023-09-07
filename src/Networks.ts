@@ -47,3 +47,17 @@ export function isFantom(): boolean {
 export function isGnosis(): boolean {
   return dataSource.network() == 'gnosis'
 }
+
+export function getNetworkName(): string {
+  if (isMainnet()) return 'ethereum'
+  if (isGoerli()) return 'goerli'
+  if (isArbitrum()) return 'arbitrum'
+  if (isOptimism()) return 'optimism'
+  if (isPolygon()) return 'polygon'
+  if (isMumbai()) return 'mumbai'
+  if (isAvalanche()) return 'avalanche'
+  if (isBinance()) return 'bsc'
+  if (isFantom()) return 'fantom'
+  if (isGnosis()) return 'gnosis'
+  return 'Unknown'
+}

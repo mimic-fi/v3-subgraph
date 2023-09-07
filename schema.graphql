@@ -2,6 +2,7 @@ type Environment @entity {
   id: ID!
   creator: String!
   namespace: String!
+  network: String!
   authorizers: [Authorizer!] @derivedFrom(field: "environment")
   priceOracles: [PriceOracle!] @derivedFrom(field: "environment")
   smartVaults: [SmartVault!] @derivedFrom(field: "environment")
@@ -86,14 +87,15 @@ type Task @entity {
   timeLockDelay: BigInt!
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
-  defaultVolumeLimit: VolumeLimit!
+  defaultVolumeLimit: VolumeLimit
   customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   acceptanceList: AcceptanceList!
+  defaultTokenThreshold: TokenThreshold
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
 }
 
 type VolumeLimit @entity {
   id: ID!
-  task: Task!
   token: ERC20!
   period: BigInt!
   amount: BigInt!
@@ -111,6 +113,20 @@ type AcceptanceList @entity {
   task: Task!
   type: String!
   tokens: [String!]!
+}
+
+type TokenThreshold @entity {
+  id: ID!
+  token: ERC20!
+  min: BigInt!
+  max: BigInt!
+}
+
+type CustomTokenThreshold @entity {
+  id: ID!
+  task: Task!
+  token: ERC20!
+  threshold: TokenThreshold!
 }
 
 type Movement @entity {
