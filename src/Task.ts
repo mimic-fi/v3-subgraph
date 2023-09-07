@@ -1,9 +1,11 @@
 import { Address, Bytes, log } from '@graphprotocol/graph-ts'
 
-import { CustomVolumeLimit, Task, VolumeLimit } from '../types/schema'
+import { CustomTokenThreshold, CustomVolumeLimit, Task, TokenThreshold, VolumeLimit } from '../types/schema'
 import {
   BalanceConnectorsSet,
+  CustomTokenThresholdSet,
   CustomVolumeLimitSet,
+  DefaultTokenThresholdSet,
   DefaultVolumeLimitSet,
   GasPriceLimitSet,
   PriorityFeeLimitSet,
@@ -81,6 +83,19 @@ export function handleTimeLockExpirationSet(event: TimeLockExpirationSet): void 
   task.save()
 }
 
+export function handleDefaultVolumeLimitSet(event: DefaultVolumeLimitSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const defaultVolumeLimitId = task.id
+  let defaultVolumeLimit = VolumeLimit.load(defaultVolumeLimitId)
+  if (defaultVolumeLimit == null) defaultVolumeLimit = new VolumeLimit(defaultVolumeLimitId)
+  defaultVolumeLimit.token = loadOrCreateERC20(event.params.token).id
+  defaultVolumeLimit.amount = event.params.amount
+  defaultVolumeLimit.period = event.params.period
+  defaultVolumeLimit.save()
+}
+
 export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
   const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
@@ -101,17 +116,36 @@ export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
   customVolumeLimit.save()
 }
 
-export function handleDefaultVolumeLimitSet(event: DefaultVolumeLimitSet): void {
+export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet): void {
   const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const defaultVolumeLimitId = task.id
-  let defaultVolumeLimit = VolumeLimit.load(defaultVolumeLimitId)
-  if (defaultVolumeLimit == null) defaultVolumeLimit = new VolumeLimit(defaultVolumeLimitId)
-  defaultVolumeLimit.token = loadOrCreateERC20(event.params.token).id
-  defaultVolumeLimit.amount = event.params.amount
-  defaultVolumeLimit.period = event.params.period
-  defaultVolumeLimit.save()
+  const defaultTokenThresholdId = task.id
+  let defaultTokenThreshold = TokenThreshold.load(defaultTokenThresholdId)
+  if (defaultTokenThreshold == null) defaultTokenThreshold = new TokenThreshold(defaultTokenThresholdId)
+  defaultTokenThreshold.token = loadOrCreateERC20(event.params.token).id
+  defaultTokenThreshold.min = event.params.min
+  defaultTokenThreshold.max = event.params.max
+  defaultTokenThreshold.save()
+}
+
+export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const customTokenThresholdId = getCustomTokenThresholdId(task, event.params.token)
+  let tokenThreshold = TokenThreshold.load(customTokenThresholdId)
+  if (tokenThreshold == null) tokenThreshold = new TokenThreshold(customTokenThresholdId)
+  tokenThreshold.token = loadOrCreateERC20(event.params.thresholdToken).id
+  tokenThreshold.min = event.params.min
+  tokenThreshold.max = event.params.max
+  tokenThreshold.save()
+
+  const customTokenThreshold = new CustomTokenThreshold(customTokenThresholdId)
+  customTokenThreshold.task = task.id
+  customTokenThreshold.token = loadOrCreateERC20(event.params.token).id
+  customTokenThreshold.threshold = tokenThreshold.id
+  customTokenThreshold.save()
 }
 
 export function getSmartVault(address: Address): Address {
@@ -151,5 +185,9 @@ export function getExecutionType(address: Address): Bytes {
 }
 
 export function getCustomVolumeLimitId(task: Task, token: Address): string {
+  return task.id.toString() + '/' + token.toHexString()
+}
+
+export function getCustomTokenThresholdId(task: Task, token: Address): string {
   return task.id.toString() + '/' + token.toHexString()
 }
