@@ -14,7 +14,7 @@ import {
   getExecutionType,
   getSmartVault,
   getTokensSource,
-  loadOrCreateTokenAcceptanceList,
+  loadOrCreateAcceptanceList,
   loadOrCreateVolumeLimit,
 } from './Task'
 
@@ -90,7 +90,7 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   task.timeLockExecutionPeriod = BigInt.zero()
   task.timeLockExpiration = BigInt.zero()
   task.defaultVolumeLimit = loadOrCreateVolumeLimit(taskId).id
-  task.tokensAcceptanceList = loadOrCreateTokenAcceptanceList(taskId).id
+  task.acceptanceList = loadOrCreateAcceptanceList(taskId).id
   task.save()
 
   TaskTemplate.create(event.params.instance)

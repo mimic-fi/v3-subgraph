@@ -1,6 +1,6 @@
 import { Address, BigInt, Bytes, log } from '@graphprotocol/graph-ts'
 
-import { CustomVolumeLimit, Task, TokensAcceptanceList, VolumeLimit } from '../types/schema'
+import { AcceptanceList, CustomVolumeLimit, Task, VolumeLimit } from '../types/schema'
 import {
   BalanceConnectorsSet,
   CustomVolumeLimitSet,
@@ -48,9 +48,9 @@ export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): v
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const acceptanceListId = task.id
-  const acceptanceList = loadOrCreateTokenAcceptanceList(acceptanceListId)
+  const acceptanceList = loadOrCreateAcceptanceList(acceptanceListId)
   const acceptanceType = parseAcceptanceType(event.params.acceptanceType)
-  acceptanceList.tokensAcceptanceType = acceptanceType
+  acceptanceList.type = acceptanceType
   acceptanceList.save()
 }
 
@@ -58,15 +58,15 @@ export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): v
   const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const tokensAcceptanceListId = task.id
-  const tokensAcceptanceList = loadOrCreateTokenAcceptanceList(tokensAcceptanceListId)
-  const tokens = tokensAcceptanceList.tokens
+  const acceptanceListId = task.id
+  const acceptanceList = loadOrCreateAcceptanceList(acceptanceListId)
+  const tokens = acceptanceList.tokens
   const token = loadOrCreateERC20(event.params.token).id
   const index = tokens.indexOf(token)
   if (token && index < 0) tokens.push(token)
   else if (token && index >= 0) tokens.splice(index, 1)
-  tokensAcceptanceList.tokens = tokens
-  tokensAcceptanceList.save()
+  acceptanceList.tokens = tokens
+  acceptanceList.save()
 }
 
 export function handleTxCostLimitPctSet(event: TxCostLimitPctSet): void {
@@ -201,13 +201,13 @@ export function parseAcceptanceType(op: i32): string {
   else return 'AllowList'
 }
 
-export function loadOrCreateTokenAcceptanceList(tokensAcceptanceListId: string): TokensAcceptanceList {
-  let acceptanceList = TokensAcceptanceList.load(tokensAcceptanceListId)
+export function loadOrCreateAcceptanceList(tokensAcceptanceListId: string): AcceptanceList {
+  let acceptanceList = AcceptanceList.load(tokensAcceptanceListId)
 
   if (acceptanceList === null) {
-    acceptanceList = new TokensAcceptanceList(tokensAcceptanceListId)
+    acceptanceList = new AcceptanceList(tokensAcceptanceListId)
     acceptanceList.task = tokensAcceptanceListId
-    acceptanceList.tokensAcceptanceType = 'DenyList'
+    acceptanceList.type = 'DenyList'
     acceptanceList.tokens = []
   }
 

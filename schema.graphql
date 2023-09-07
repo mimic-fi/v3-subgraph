@@ -88,7 +88,7 @@ type Task @entity {
   timeLockExpiration: BigInt!
   defaultVolumeLimit: VolumeLimit!
   customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
-  tokensAcceptanceList: TokensAcceptanceList!
+  acceptanceList: AcceptanceList!
 }
 
 type VolumeLimit @entity {
@@ -106,10 +106,10 @@ type CustomVolumeLimit @entity {
   volumeLimit: VolumeLimit!
 }
 
-type TokensAcceptanceList @entity {
+type AcceptanceList @entity {
   id: ID!
   task: Task!
-  tokensAcceptanceType: String!
+  type: String!
   tokens: [String!]!
 }
 
