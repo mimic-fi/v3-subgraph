@@ -206,4 +206,9 @@ templates:
           handler: handleCustomVolumeLimitSet
         - event: DefaultVolumeLimitSet(indexed address,uint256,uint256)
           handler: handleDefaultVolumeLimitSet
+        - event: TokensAcceptanceTypeSet(uint8)
+          handler: handleTokensAcceptanceTypeSet
+        - event: TokensAcceptanceListSet(indexed address,bool)
+          handler: handleTokensAcceptanceListSet        
       file: ./src/Task.ts
+

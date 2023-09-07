@@ -1,6 +1,13 @@
 import { Address, Bytes, log } from '@graphprotocol/graph-ts'
 
-import { CustomTokenThreshold, CustomVolumeLimit, Task, TokenThreshold, VolumeLimit } from '../types/schema'
+import {
+  AcceptanceList,
+  CustomTokenThreshold,
+  CustomVolumeLimit,
+  Task,
+  TokenThreshold,
+  VolumeLimit,
+} from '../types/schema'
 import {
   BalanceConnectorsSet,
   CustomTokenThresholdSet,
@@ -13,6 +20,8 @@ import {
   TimeLockDelaySet,
   TimeLockExecutionPeriodSet,
   TimeLockExpirationSet,
+  TokensAcceptanceListSet,
+  TokensAcceptanceTypeSet,
   TxCostLimitPctSet,
   TxCostLimitSet,
 } from '../types/templates/Task/Task'
@@ -41,6 +50,32 @@ export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
 
   task.priorityFeeLimit = event.params.priorityFeeLimit
   task.save()
+}
+
+export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const acceptanceListId = task.id
+  const acceptanceList = loadOrCreateAcceptanceList(acceptanceListId)
+  const acceptanceType = parseAcceptanceType(event.params.acceptanceType)
+  acceptanceList.type = acceptanceType
+  acceptanceList.save()
+}
+
+export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const acceptanceListId = task.id
+  const acceptanceList = loadOrCreateAcceptanceList(acceptanceListId)
+  const tokens = acceptanceList.tokens
+  const token = loadOrCreateERC20(event.params.token).id
+  const index = tokens.indexOf(token)
+  if (token && index < 0) tokens.push(token)
+  else if (token && index >= 0) tokens.splice(index, 1)
+  acceptanceList.tokens = tokens
+  acceptanceList.save()
 }
 
 export function handleTxCostLimitPctSet(event: TxCostLimitPctSet): void {
@@ -190,4 +225,22 @@ export function getCustomVolumeLimitId(task: Task, token: Address): string {
 
 export function getCustomTokenThresholdId(task: Task, token: Address): string {
   return task.id.toString() + '/' + token.toHexString()
+}
+
+export function parseAcceptanceType(op: i32): string {
+  if (op == 0) return 'DenyList'
+  else return 'AllowList'
+}
+
+export function loadOrCreateAcceptanceList(tokensAcceptanceListId: string): AcceptanceList {
+  let acceptanceList = AcceptanceList.load(tokensAcceptanceListId)
+
+  if (acceptanceList === null) {
+    acceptanceList = new AcceptanceList(tokensAcceptanceListId)
+    acceptanceList.task = tokensAcceptanceListId
+    acceptanceList.type = 'DenyList'
+    acceptanceList.tokens = []
+  }
+
+  return acceptanceList
 }
