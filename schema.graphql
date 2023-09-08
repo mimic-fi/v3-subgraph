@@ -1,3 +1,55 @@
+interface ITask { 
+  id: ID!
+  name: String!
+  implementation: Implementation!
+  environment: Environment!
+  smartVault: SmartVault!
+  tokensSource: String!
+  nextBalanceConnector: String!
+  previousBalanceConnector: String!
+  executionType: String!
+  gasPriceLimit: BigInt!
+  priorityFeeLimit: BigInt!
+  txCostLimitPct: BigInt!
+  txCostLimit: BigInt!
+  timeLockDelay: BigInt!
+  timeLockExecutionPeriod: BigInt!
+  timeLockExpiration: BigInt!
+  defaultVolumeLimit: VolumeLimit
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "iTask")
+  acceptanceList: AcceptanceList!
+  defaultTokenThreshold: TokenThreshold
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "iTask")
+}
+
+type BaseSwapTask implements ITask @entity {
+  # Task interface
+  id: ID!
+  name: String!
+  implementation: Implementation!
+  environment: Environment!
+  smartVault: SmartVault!
+  tokensSource: String!
+  nextBalanceConnector: String!
+  previousBalanceConnector: String!
+  executionType: String!
+  gasPriceLimit: BigInt!
+  priorityFeeLimit: BigInt!
+  txCostLimitPct: BigInt!
+  txCostLimit: BigInt!
+  timeLockDelay: BigInt!
+  timeLockExecutionPeriod: BigInt!
+  timeLockExpiration: BigInt!
+  defaultVolumeLimit: VolumeLimit
+  task: String
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "iTask")
+  acceptanceList: AcceptanceList!
+  defaultTokenThreshold: TokenThreshold
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "iTask")
+  # New Fields
+  connector: String!
+}
+
 type Environment @entity {
   id: ID!
   creator: String!
@@ -70,7 +122,7 @@ type PriceOracleFeed @entity {
   feed: String!
 }
 
-type Task @entity {
+type Task implements ITask @entity{
   id: ID!
   name: String!
   implementation: Implementation!
@@ -88,10 +140,10 @@ type Task @entity {
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
   defaultVolumeLimit: VolumeLimit
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "iTask")
   acceptanceList: AcceptanceList!
   defaultTokenThreshold: TokenThreshold
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "iTask")
 }
 
 type VolumeLimit @entity {
@@ -103,14 +155,14 @@ type VolumeLimit @entity {
 
 type CustomVolumeLimit @entity {
   id: ID!
-  task: Task!
+  iTask: ITask!
   token: ERC20!
   volumeLimit: VolumeLimit!
 }
 
 type AcceptanceList @entity {
   id: ID!
-  task: Task!
+  iTask: ITask!
   type: String!
   tokens: [String!]!
 }
@@ -124,7 +176,7 @@ type TokenThreshold @entity {
 
 type CustomTokenThreshold @entity {
   id: ID!
-  task: Task!
+  iTask: ITask!
   token: ERC20!
   threshold: TokenThreshold!
 }
