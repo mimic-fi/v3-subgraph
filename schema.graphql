@@ -7,7 +7,7 @@ type Environment @entity {
   priceOracles: [PriceOracle!] @derivedFrom(field: "environment")
   smartVaults: [SmartVault!] @derivedFrom(field: "environment")
   tasks: [Task!] @derivedFrom(field: "environment")
-  relayedExecution: RelayedExecution!
+  relayedExecution: [RelayedExecution!] @derivedFrom(field: "environment")
 }
 
 type SmartVault @entity {
@@ -178,7 +178,7 @@ type RelayedExecution @entity {
   costNative: BigInt!
   movements: [Movement!] @derivedFrom(field: "relayedExecution")
   transactions: [Transaction!] @derivedFrom(field: "relayedExecution")
-  environment: [Environment!]@derivedFrom(field: "relayedExecution")
+  environment: Environment!
 }
 
 type Implementation @entity {

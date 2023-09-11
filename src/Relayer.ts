@@ -1,10 +1,13 @@
 import { Address, log } from '@graphprotocol/graph-ts'
 
 import { TaskExecuted } from '../types/Relayer/Relayer'
-import { Movement, RelayedExecution, Transaction } from '../types/schema'
+import { Movement, RelayedExecution, Task, Transaction } from '../types/schema'
 import { Task as TaskContract } from '../types/templates/Task/Task'
 
 export function handleTaskExecuted(event: TaskExecuted): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
   const executionId = event.transaction.hash.toHexString() + '#' + event.params.index.toString()
   const execution = new RelayedExecution(executionId)
   execution.hash = event.transaction.hash.toHexString()
@@ -18,6 +21,7 @@ export function handleTaskExecuted(event: TaskExecuted): void {
   execution.gasUsed = event.params.gas
   execution.gasPrice = event.transaction.gasPrice
   execution.costNative = event.transaction.gasPrice.times(event.params.gas)
+  execution.environment = task.environment
   execution.save()
 
   // eslint-disable-next-line no-constant-condition
