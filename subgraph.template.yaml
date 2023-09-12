@@ -186,32 +186,32 @@ templates:
       eventHandlers:
         - event: BalanceConnectorsSet(indexed bytes32,indexed bytes32)
           handler: handleBalanceConnectorsSet
+        - event: CustomTokenThresholdSet(indexed address,address,uint256,uint256)
+          handler: handleCustomTokenThresholdSet 
+        - event: CustomVolumeLimitSet(indexed address,indexed address,uint256,uint256)
+          handler: handleCustomVolumeLimitSet
+        - event: DefaultVolumeLimitSet(indexed address,uint256,uint256)
+          handler: handleDefaultVolumeLimitSet
+        - event: DefaultTokenThresholdSet(address,uint256,uint256)
+          handler: handleDefaultTokenThresholdSet
         - event: GasPriceLimitSet(uint256)
           handler: handleGasPriceLimitSet
         - event: PriorityFeeLimitSet(uint256)
           handler: handlePriorityFeeLimitSet
-        - event: TxCostLimitPctSet(uint256)
-          handler: handleTxCostLimitPctSet
-        - event: TxCostLimitSet(uint256)
-          handler: handleTxCostLimitSet
         - event: TimeLockDelaySet(uint256)
           handler: handleTimeLockDelaySet
         - event: TimeLockExecutionPeriodSet(uint256)
           handler: handleTimeLockExecutionPeriodSet
         - event: TimeLockExpirationSet(uint256)
           handler: handleTimeLockExpirationSet
-        - event: CustomTokenThresholdSet(indexed address,address,uint256,uint256)
-          handler: handleCustomTokenThresholdSet 
-        - event: DefaultTokenThresholdSet(address,uint256,uint256)
-          handler: handleDefaultTokenThresholdSet
-        - event: CustomVolumeLimitSet(indexed address,indexed address,uint256,uint256)
-          handler: handleCustomVolumeLimitSet
-        - event: DefaultVolumeLimitSet(indexed address,uint256,uint256)
-          handler: handleDefaultVolumeLimitSet
-        - event: TokensAcceptanceTypeSet(uint8)
-          handler: handleTokensAcceptanceTypeSet
         - event: TokensAcceptanceListSet(indexed address,bool)
           handler: handleTokensAcceptanceListSet        
+        - event: TokensAcceptanceTypeSet(uint8)
+          handler: handleTokensAcceptanceTypeSet
+        - event: TxCostLimitPctSet(uint256)
+          handler: handleTxCostLimitPctSet
+        - event: TxCostLimitSet(uint256)
+          handler: handleTxCostLimitSet
       file: ./src/Task.ts
   - kind: ethereum/contract
     name: BaseSwap
