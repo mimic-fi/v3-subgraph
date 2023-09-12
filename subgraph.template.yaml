@@ -50,8 +50,6 @@ dataSources:
           file: ./node_modules/@mimic-fi/v3-smart-vault/artifacts/contracts/interfaces/ISmartVault.sol/ISmartVault.json
         - name: Task
           file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
-        # - name: BaseSwap
-        #   file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/swap/IBaseSwapTask.sol/IBaseSwapTask.json
       eventHandlers:
         - event: AuthorizerDeployed(string,string,address,address)
           handler: handleAuthorizerDeployed
