@@ -5,7 +5,7 @@ import { Movement, RelayedExecution, Task, Transaction } from '../types/schema'
 import { Task as TaskContract } from '../types/templates/Task/Task'
 
 export function handleTaskExecuted(event: TaskExecuted): void {
-  const task = Task.load(event.address.toHexString())
+  const task = Task.load(event.params.task.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   const executionId = event.transaction.hash.toHexString() + '#' + event.params.index.toString()
