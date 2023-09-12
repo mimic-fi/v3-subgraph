@@ -1,27 +1,3 @@
-interface ITask { 
-  id: ID!
-  name: String!
-  implementation: Implementation!
-  environment: Environment!
-  smartVault: SmartVault!
-  tokensSource: String!
-  nextBalanceConnector: String!
-  previousBalanceConnector: String!
-  executionType: String!
-  gasPriceLimit: BigInt!
-  priorityFeeLimit: BigInt!
-  txCostLimitPct: BigInt!
-  txCostLimit: BigInt!
-  timeLockDelay: BigInt!
-  timeLockExecutionPeriod: BigInt!
-  timeLockExpiration: BigInt!
-  defaultVolumeLimit: VolumeLimit
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "iTask")
-  acceptanceList: AcceptanceList!
-  defaultTokenThreshold: TokenThreshold
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "iTask")
-}
-
 type BaseSwapTask implements ITask @entity {
   # Task interface
   id: ID!
@@ -41,31 +17,16 @@ type BaseSwapTask implements ITask @entity {
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
   defaultVolumeLimit: VolumeLimit
-  task: String
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "Task")
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   acceptanceList: AcceptanceList!
   defaultTokenThreshold: TokenThreshold
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "Task")
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
   # New Fields
   connector: String!
-  customSlippage: [CustomSlippage!] @derivedFrom(field: "BaseSwapTask")
-  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "BaseSwapTask")
-  defaultTokenOut: ERC20!
   defaultSlippage: BigInt!
-}
-
-type CustomSlippage @entity {
-  id: ID!
-  BaseSwapTask: BaseSwapTask!
-  token: ERC20!
-  slippage: BigInt!
-}
-
-type CustomTokenOut @entity {
-  id: ID!
-  BaseSwapTask: BaseSwapTask!
-  token: ERC20!
-  tokenOut: ERC20!
+  defaultTokenOut: ERC20!
+  customSlippage: [CustomSlippage!] @derivedFrom(field: "task")
+  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "task")
 }
 
 type Environment @entity {
@@ -140,6 +101,30 @@ type PriceOracleFeed @entity {
   feed: String!
 }
 
+interface ITask { 
+  id: ID!
+  name: String!
+  implementation: Implementation!
+  environment: Environment!
+  smartVault: SmartVault!
+  tokensSource: String!
+  nextBalanceConnector: String!
+  previousBalanceConnector: String!
+  executionType: String!
+  gasPriceLimit: BigInt!
+  priorityFeeLimit: BigInt!
+  txCostLimitPct: BigInt!
+  txCostLimit: BigInt!
+  timeLockDelay: BigInt!
+  timeLockExecutionPeriod: BigInt!
+  timeLockExpiration: BigInt!
+  defaultVolumeLimit: VolumeLimit
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
+  acceptanceList: AcceptanceList!
+  defaultTokenThreshold: TokenThreshold
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
+}
+
 type Task implements ITask @entity{
   id: ID!
   name: String!
@@ -158,10 +143,10 @@ type Task implements ITask @entity{
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
   defaultVolumeLimit: VolumeLimit
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "Task")
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   acceptanceList: AcceptanceList!
   defaultTokenThreshold: TokenThreshold
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "Task")
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
 }
 
 type VolumeLimit @entity {
@@ -173,14 +158,14 @@ type VolumeLimit @entity {
 
 type CustomVolumeLimit @entity {
   id: ID!
-  Task: ITask!
+  task: ITask!
   token: ERC20!
   volumeLimit: VolumeLimit!
 }
 
 type AcceptanceList @entity {
   id: ID!
-  Task: ITask!
+  task: ITask!
   type: String!
   tokens: [String!]!
 }
@@ -194,9 +179,23 @@ type TokenThreshold @entity {
 
 type CustomTokenThreshold @entity {
   id: ID!
-  Task: ITask!
+  task: ITask!
   token: ERC20!
   threshold: TokenThreshold!
+}
+
+type CustomSlippage @entity {
+  id: ID!
+  task: BaseSwapTask!
+  token: ERC20!
+  slippage: BigInt!
+}
+
+type CustomTokenOut @entity {
+  id: ID!
+  task: BaseSwapTask!
+  token: ERC20!
+  tokenOut: ERC20!
 }
 
 type Movement @entity {

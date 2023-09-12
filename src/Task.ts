@@ -62,7 +62,7 @@ export function handlerCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
   let customSlippage = CustomSlippage.load(customSlippageId)
   if (customSlippage === null) customSlippage = new CustomSlippage(customSlippageId)
 
-  customSlippage.BaseSwapTask = task.id
+  customSlippage.task = task.id
   customSlippage.token = loadOrCreateERC20(event.params.token).id
   customSlippage.slippage = event.params.maxSlippage
   customSlippage.save()
@@ -75,7 +75,7 @@ export function handleCustomTokenOutSet(event: CustomTokenOutSet): void {
   const customTokenOutId = getCustomId(task, event.params.token)
   let customTokenOut = CustomTokenOut.load(customTokenOutId)
   if (customTokenOut === null) customTokenOut = new CustomTokenOut(customTokenOutId)
-  customTokenOut.BaseSwapTask = task.id
+  customTokenOut.task = task.id
   customTokenOut.token = loadOrCreateERC20(event.params.token).id
   customTokenOut.tokenOut = loadOrCreateERC20(event.params.tokenOut).id
   customTokenOut.save()
@@ -94,7 +94,7 @@ export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): v
   tokenThreshold.save()
 
   const customTokenThreshold = new CustomTokenThreshold(customTokenThresholdId)
-  customTokenThreshold.Task = task.id
+  customTokenThreshold.task = task.id
   customTokenThreshold.token = loadOrCreateERC20(event.params.token).id
   customTokenThreshold.threshold = tokenThreshold.id
   customTokenThreshold.save()
@@ -114,7 +114,7 @@ export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
 
   let customVolumeLimit = CustomVolumeLimit.load(customVolumeLimitId)
   if (customVolumeLimit == null) customVolumeLimit = new CustomVolumeLimit(customVolumeLimitId)
-  customVolumeLimit.Task = task.id
+  customVolumeLimit.task = task.id
   customVolumeLimit.token = loadOrCreateERC20(event.params.token).id
   customVolumeLimit.volumeLimit = volumeLimit.id
   customVolumeLimit.save()
@@ -297,7 +297,7 @@ export function loadOrCreateAcceptanceList(tokensAcceptanceListId: string): Acce
 
   if (acceptanceList === null) {
     acceptanceList = new AcceptanceList(tokensAcceptanceListId)
-    acceptanceList.Task = tokensAcceptanceListId
+    acceptanceList.task = tokensAcceptanceListId
     acceptanceList.type = 'DenyList'
     acceptanceList.tokens = []
   }
