@@ -6,7 +6,7 @@ import { Task as TaskContract } from '../types/templates/Task/Task'
 
 export function handleTaskExecuted(event: TaskExecuted): void {
   const task = Task.load(event.params.task.toHexString())
-  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+  if (task == null) return log.warning('Missing task entity {}', [event.params.task.toHexString()])
 
   const executionId = event.transaction.hash.toHexString() + '#' + event.params.index.toString()
   const execution = new RelayedExecution(executionId)
