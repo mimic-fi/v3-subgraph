@@ -7,6 +7,7 @@ type Environment @entity {
   priceOracles: [PriceOracle!] @derivedFrom(field: "environment")
   smartVaults: [SmartVault!] @derivedFrom(field: "environment")
   tasks: [Task!] @derivedFrom(field: "environment")
+  relayedExecutions: [RelayedExecution!] @derivedFrom(field: "environment")
 }
 
 type SmartVault @entity {
@@ -168,6 +169,7 @@ type RelayedExecution @entity {
   sender: String!
   executedAt: BigInt!
   smartVault: SmartVault!
+  environment: Environment!
   task: Task!
   index: BigInt!
   succeeded: Boolean!
