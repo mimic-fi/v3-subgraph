@@ -232,10 +232,9 @@ templates:
         - name: ERC20
           file: ./abis/IERC20.json
       eventHandlers:
+        # Common events
         - event: BalanceConnectorsSet(indexed bytes32,indexed bytes32)
           handler: handleBalanceConnectorsSet
-        - event: ConnectorSet(indexed address)
-          handler: handleConnectorSet
         - event: CustomTokenThresholdSet(indexed address,address,uint256,uint256)
           handler: handleCustomTokenThresholdSet 
         - event: CustomVolumeLimitSet(indexed address,indexed address,uint256,uint256)
@@ -262,4 +261,15 @@ templates:
           handler: handleTxCostLimitPctSet
         - event: TxCostLimitSet(uint256)
           handler: handleTxCostLimitSet
+        # New events
+        - event: ConnectorSet(indexed address)
+          handler: handleConnectorSet
+        - event: DefaultMaxSlippageSet(uint256)
+          handler: handleDefaultMaxSlippageSet
+        - event: DefaultTokenOutSet(indexed address)
+          handler: handleDefaultTokenOutSet
+        - event: CustomMaxSlippageSet(indexed address,uint256)
+          handler: handleCustomMaxSlippageSet
+        - event: CustomTokenOutSet(indexed address,address)
+          handler: handleCustomTokenOutSet
       file: ./src/Task.ts

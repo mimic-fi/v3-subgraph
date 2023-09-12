@@ -42,12 +42,30 @@ type BaseSwapTask implements ITask @entity {
   timeLockExpiration: BigInt!
   defaultVolumeLimit: VolumeLimit
   task: String
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "iTask")
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "Task")
   acceptanceList: AcceptanceList!
   defaultTokenThreshold: TokenThreshold
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "iTask")
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "Task")
   # New Fields
   connector: String!
+  customSlippage: [CustomSlippage!] @derivedFrom(field: "BaseSwapTask")
+  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "BaseSwapTask")
+  defaultTokenOut: ERC20!
+  defaultSlippage: BigInt!
+}
+
+type CustomSlippage @entity {
+  id: ID!
+  BaseSwapTask: BaseSwapTask!
+  token: ERC20!
+  slippage: BigInt!
+}
+
+type CustomTokenOut @entity {
+  id: ID!
+  BaseSwapTask: BaseSwapTask!
+  token: ERC20!
+  tokenOut: ERC20!
 }
 
 type Environment @entity {
@@ -140,10 +158,10 @@ type Task implements ITask @entity{
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
   defaultVolumeLimit: VolumeLimit
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "iTask")
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "Task")
   acceptanceList: AcceptanceList!
   defaultTokenThreshold: TokenThreshold
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "iTask")
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "Task")
 }
 
 type VolumeLimit @entity {
@@ -155,14 +173,14 @@ type VolumeLimit @entity {
 
 type CustomVolumeLimit @entity {
   id: ID!
-  iTask: ITask!
+  Task: ITask!
   token: ERC20!
   volumeLimit: VolumeLimit!
 }
 
 type AcceptanceList @entity {
   id: ID!
-  iTask: ITask!
+  Task: ITask!
   type: String!
   tokens: [String!]!
 }
@@ -176,7 +194,7 @@ type TokenThreshold @entity {
 
 type CustomTokenThreshold @entity {
   id: ID!
-  iTask: ITask!
+  Task: ITask!
   token: ERC20!
   threshold: TokenThreshold!
 }
