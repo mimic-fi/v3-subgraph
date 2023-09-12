@@ -58,7 +58,7 @@ export function handlerCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
   const task = BaseSwapTask.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const customSlippageId = getCustomId(task, event.params.token)
+  const customSlippageId = getBaseSwapCustomId(task, event.params.token)
   let customSlippage = CustomSlippage.load(customSlippageId)
   if (customSlippage === null) customSlippage = new CustomSlippage(customSlippageId)
 
@@ -72,7 +72,7 @@ export function handleCustomTokenOutSet(event: CustomTokenOutSet): void {
   const task = BaseSwapTask.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const customTokenOutId = getCustomId(task, event.params.token)
+  const customTokenOutId = getBaseSwapCustomId(task, event.params.token)
   let customTokenOut = CustomTokenOut.load(customTokenOutId)
   if (customTokenOut === null) customTokenOut = new CustomTokenOut(customTokenOutId)
   customTokenOut.task = task.id
@@ -248,7 +248,7 @@ export function getCustomVolumeLimitId(task: Task, token: Address): string {
   return task.id.toString() + '/' + token.toHexString()
 }
 
-export function getCustomId(baseSwapTask: BaseSwapTask, token: Address): string {
+export function getBaseSwapCustomId(baseSwapTask: BaseSwapTask, token: Address): string {
   return baseSwapTask.id.toString() + '/' + token.toHexString()
 }
 
