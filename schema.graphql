@@ -1,34 +1,3 @@
-type BaseSwapTask implements ITask @entity {
-  # Task interface
-  id: ID!
-  name: String!
-  implementation: Implementation!
-  environment: Environment!
-  smartVault: SmartVault!
-  tokensSource: String!
-  nextBalanceConnector: String!
-  previousBalanceConnector: String!
-  executionType: String!
-  gasPriceLimit: BigInt!
-  priorityFeeLimit: BigInt!
-  txCostLimitPct: BigInt!
-  txCostLimit: BigInt!
-  timeLockDelay: BigInt!
-  timeLockExecutionPeriod: BigInt!
-  timeLockExpiration: BigInt!
-  defaultVolumeLimit: VolumeLimit
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
-  acceptanceList: AcceptanceList!
-  defaultTokenThreshold: TokenThreshold
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
-  # New Fields
-  connector: String!
-  defaultSlippage: BigInt!
-  defaultTokenOut: ERC20!
-  customSlippage: [CustomSlippage!] @derivedFrom(field: "task")
-  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "task")
-}
-
 type Environment @entity {
   id: ID!
   creator: String!
@@ -147,6 +116,37 @@ type Task implements ITask @entity{
   acceptanceList: AcceptanceList!
   defaultTokenThreshold: TokenThreshold
   customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
+}
+
+type BaseSwapTask implements ITask @entity {
+  # Task interface
+  id: ID!
+  name: String!
+  implementation: Implementation!
+  environment: Environment!
+  smartVault: SmartVault!
+  tokensSource: String!
+  nextBalanceConnector: String!
+  previousBalanceConnector: String!
+  executionType: String!
+  gasPriceLimit: BigInt!
+  priorityFeeLimit: BigInt!
+  txCostLimitPct: BigInt!
+  txCostLimit: BigInt!
+  timeLockDelay: BigInt!
+  timeLockExecutionPeriod: BigInt!
+  timeLockExpiration: BigInt!
+  defaultVolumeLimit: VolumeLimit
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
+  acceptanceList: AcceptanceList!
+  defaultTokenThreshold: TokenThreshold
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
+  # New Fields
+  connector: String!
+  defaultSlippage: BigInt!
+  defaultTokenOut: ERC20!
+  customSlippage: [CustomSlippage!] @derivedFrom(field: "task")
+  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "task")
 }
 
 type VolumeLimit @entity {
