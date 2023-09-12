@@ -17,7 +17,7 @@ import {
   CustomTokenOutSet,
   DefaultMaxSlippageSet,
   DefaultTokenOutSet,
-} from '../types/templates/BaseSwap/BaseSwap'
+} from '../types/templates/BaseSwapTask/BaseSwapTask'
 import {
   BalanceConnectorsSet,
   CustomTokenThresholdSet,
@@ -61,7 +61,6 @@ export function handlerCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
   const customSlippageId = getBaseSwapCustomId(task, event.params.token)
   let customSlippage = CustomSlippage.load(customSlippageId)
   if (customSlippage === null) customSlippage = new CustomSlippage(customSlippageId)
-
   customSlippage.task = task.id
   customSlippage.token = loadOrCreateERC20(event.params.token).id
   customSlippage.slippage = event.params.maxSlippage
