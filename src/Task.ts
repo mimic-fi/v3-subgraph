@@ -58,7 +58,7 @@ export function handleCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
   const task = BaseSwapTask.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const customSlippageId = getBaseSwapCustomId(task, event.params.token)
+  const customSlippageId = getBaseSwapTaskCustomConfigId(task, event.params.token)
   let customSlippage = CustomSlippage.load(customSlippageId)
   if (customSlippage === null) customSlippage = new CustomSlippage(customSlippageId)
   customSlippage.task = task.id
@@ -71,7 +71,7 @@ export function handleCustomTokenOutSet(event: CustomTokenOutSet): void {
   const task = BaseSwapTask.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const customTokenOutId = getBaseSwapCustomId(task, event.params.token)
+  const customTokenOutId = getBaseSwapTaskCustomConfigId(task, event.params.token)
   let customTokenOut = CustomTokenOut.load(customTokenOutId)
   if (customTokenOut === null) customTokenOut = new CustomTokenOut(customTokenOutId)
   customTokenOut.task = task.id
@@ -84,7 +84,7 @@ export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): v
   const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const customTokenThresholdId = getCustomTokenThresholdId(task, event.params.token)
+  const customTokenThresholdId = getTaskCustomConfigId(task, event.params.token)
   let tokenThreshold = TokenThreshold.load(customTokenThresholdId)
   if (tokenThreshold == null) tokenThreshold = new TokenThreshold(customTokenThresholdId)
   tokenThreshold.token = loadOrCreateERC20(event.params.thresholdToken).id
@@ -103,7 +103,7 @@ export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
   const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const customVolumeLimitId = getCustomVolumeLimitId(task, event.params.token)
+  const customVolumeLimitId = getTaskCustomConfigId(task, event.params.token)
   let volumeLimit = VolumeLimit.load(customVolumeLimitId)
   if (volumeLimit == null) volumeLimit = new VolumeLimit(customVolumeLimitId)
   volumeLimit.token = loadOrCreateERC20(event.params.limitToken).id
@@ -222,8 +222,7 @@ export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): v
 
   const acceptanceListId = task.id
   const acceptanceList = loadOrCreateAcceptanceList(acceptanceListId)
-  const acceptanceType = parseAcceptanceType(event.params.acceptanceType)
-  acceptanceList.type = acceptanceType
+  acceptanceList.type = parseAcceptanceType(event.params.acceptanceType)
   acceptanceList.save()
 }
 
@@ -243,15 +242,11 @@ export function handleTxCostLimitSet(event: TxCostLimitSet): void {
   task.save()
 }
 
-export function getCustomVolumeLimitId(task: Task, token: Address): string {
+export function getTaskCustomConfigId(task: Task, token: Address): string {
   return task.id.toString() + '/' + token.toHexString()
 }
 
-export function getBaseSwapCustomId(baseSwapTask: BaseSwapTask, token: Address): string {
-  return baseSwapTask.id.toString() + '/' + token.toHexString()
-}
-
-export function getCustomTokenThresholdId(task: Task, token: Address): string {
+export function getBaseSwapTaskCustomConfigId(task: BaseSwapTask, token: Address): string {
   return task.id.toString() + '/' + token.toHexString()
 }
 

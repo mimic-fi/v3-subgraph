@@ -87,10 +87,10 @@ interface ITask {
   timeLockDelay: BigInt!
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
-  defaultVolumeLimit: VolumeLimit
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   acceptanceList: AcceptanceList!
+  defaultVolumeLimit: VolumeLimit
   defaultTokenThreshold: TokenThreshold
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
 }
 
@@ -111,10 +111,10 @@ type Task implements ITask @entity{
   timeLockDelay: BigInt!
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
-  defaultVolumeLimit: VolumeLimit
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   acceptanceList: AcceptanceList!
+  defaultVolumeLimit: VolumeLimit
   defaultTokenThreshold: TokenThreshold
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
 }
 
@@ -136,15 +136,15 @@ type BaseSwapTask implements ITask @entity {
   timeLockDelay: BigInt!
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
-  defaultVolumeLimit: VolumeLimit
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   acceptanceList: AcceptanceList!
+  defaultVolumeLimit: VolumeLimit
   defaultTokenThreshold: TokenThreshold
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
   # New Fields
   connector: String!
   defaultSlippage: BigInt!
-  defaultTokenOut: ERC20!
+  defaultTokenOut: ERC20
   customSlippage: [CustomSlippage!] @derivedFrom(field: "task")
   customTokenOut: [CustomTokenOut!] @derivedFrom(field: "task")
 }
