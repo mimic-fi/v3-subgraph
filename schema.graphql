@@ -88,11 +88,17 @@ type Task @entity {
   timeLockDelay: BigInt!
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!
-  defaultVolumeLimit: VolumeLimit
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   acceptanceList: AcceptanceList!
+  defaultVolumeLimit: VolumeLimit
   defaultTokenThreshold: TokenThreshold
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
+  # Specific tasks config
+  connector: String
+  defaultTokenOut: ERC20
+  defaultMaxSlippage: BigInt
+  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "task")
+  customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "task")
 }
 
 type VolumeLimit @entity {
@@ -128,6 +134,20 @@ type CustomTokenThreshold @entity {
   task: Task!
   token: ERC20!
   threshold: TokenThreshold!
+}
+
+type CustomMaxSlippage @entity {
+  id: ID!
+  task: Task!
+  token: ERC20!
+  slippage: BigInt!
+}
+
+type CustomTokenOut @entity {
+  id: ID!
+  task: Task!
+  token: ERC20!
+  tokenOut: ERC20!
 }
 
 type Movement @entity {
