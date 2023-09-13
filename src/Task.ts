@@ -54,7 +54,7 @@ export function handleConnectorsSet(event: ConnectorSet): void {
   task.save()
 }
 
-export function handlerCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
+export function handleCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
   const task = BaseSwapTask.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
