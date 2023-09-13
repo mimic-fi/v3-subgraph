@@ -70,7 +70,7 @@ type PriceOracleFeed @entity {
   feed: String!
 }
 
-type Task @entity{
+type Task @entity {
   id: ID!
   name: String!
   implementation: Implementation!

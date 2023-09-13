@@ -221,3 +221,4 @@ templates:
         - event: CustomTokenOutSet(indexed address,address)
           handler: handleCustomTokenOutSet
       file: ./src/Task.ts
+
