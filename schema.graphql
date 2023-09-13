@@ -95,10 +95,20 @@ type Task @entity {
   customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
   # Specific tasks config
   connector: String
-  defaultTokenOut: ERC20
+  defaultDestinationChain: BigInt
   defaultMaxSlippage: BigInt
+  defaultTokenOut: ERC20
+  recipient: String
+  customDestinationChain: [CustomDestinationChain!] @derivedFrom(field: "task")
   customTokenOut: [CustomTokenOut!] @derivedFrom(field: "task")
   customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "task")
+}
+
+type AcceptanceList @entity {
+  id: ID!
+  task: Task!
+  type: String!
+  tokens: [String!]!
 }
 
 type VolumeLimit @entity {
@@ -108,18 +118,25 @@ type VolumeLimit @entity {
   amount: BigInt!
 }
 
-type CustomVolumeLimit @entity {
+type CustomDestinationChain @entity {
   id: ID!
   task: Task!
   token: ERC20!
-  volumeLimit: VolumeLimit!
+  destinationChain: BigInt!
 }
 
-type AcceptanceList @entity {
+type CustomMaxSlippage @entity {
   id: ID!
   task: Task!
-  type: String!
-  tokens: [String!]!
+  token: ERC20!
+  slippage: BigInt!
+}
+
+type CustomTokenOut @entity {
+  id: ID!
+  task: Task!
+  token: ERC20!
+  tokenOut: ERC20!
 }
 
 type TokenThreshold @entity {
@@ -136,18 +153,11 @@ type CustomTokenThreshold @entity {
   threshold: TokenThreshold!
 }
 
-type CustomMaxSlippage @entity {
+type CustomVolumeLimit @entity {
   id: ID!
   task: Task!
   token: ERC20!
-  slippage: BigInt!
-}
-
-type CustomTokenOut @entity {
-  id: ID!
-  task: Task!
-  token: ERC20!
-  tokenOut: ERC20!
+  volumeLimit: VolumeLimit!
 }
 
 type Movement @entity {

@@ -2,6 +2,7 @@ import { Address, Bytes, log } from '@graphprotocol/graph-ts'
 
 import {
   AcceptanceList,
+  CustomDestinationChain,
   CustomMaxSlippage,
   CustomTokenOut,
   CustomTokenThreshold,
@@ -13,16 +14,19 @@ import {
 import {
   BalanceConnectorsSet,
   ConnectorSet,
+  CustomDestinationChainSet,
   CustomMaxSlippageSet,
   CustomTokenOutSet,
   CustomTokenThresholdSet,
   CustomVolumeLimitSet,
+  DefaultDestinationChainSet,
   DefaultMaxSlippageSet,
   DefaultTokenOutSet,
   DefaultTokenThresholdSet,
   DefaultVolumeLimitSet,
   GasPriceLimitSet,
   PriorityFeeLimitSet,
+  RecipientSet,
   Task as TaskContract,
   TimeLockDelaySet,
   TimeLockExecutionPeriodSet,
@@ -62,6 +66,19 @@ export function handleCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
   customMaxSlippage.token = loadOrCreateERC20(event.params.token).id
   customMaxSlippage.slippage = event.params.maxSlippage
   customMaxSlippage.save()
+}
+
+export function handleCustomDestinationChainSet(event: CustomDestinationChainSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const customDestinationChainId = getTaskCustomConfigId(task, event.params.token)
+  let customDestinationChain = CustomDestinationChain.load(customDestinationChainId)
+  if (customDestinationChain === null) customDestinationChain = new CustomDestinationChain(customDestinationChainId)
+  customDestinationChain.task = task.id
+  customDestinationChain.token = loadOrCreateERC20(event.params.token).id
+  customDestinationChain.destinationChain = event.params.defaultDestinationChain
+  customDestinationChain.save()
 }
 
 export function handleCustomTokenOutSet(event: CustomTokenOutSet): void {
@@ -114,6 +131,14 @@ export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
   customVolumeLimit.token = loadOrCreateERC20(event.params.token).id
   customVolumeLimit.volumeLimit = volumeLimit.id
   customVolumeLimit.save()
+}
+
+export function handleDefaultDestinationChainSet(event: DefaultDestinationChainSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  task.defaultDestinationChain = event.params.defaultDestinationChain
+  task.save()
 }
 
 export function handleDefaultMaxSlippageSet(event: DefaultMaxSlippageSet): void {
@@ -171,6 +196,14 @@ export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   task.priorityFeeLimit = event.params.priorityFeeLimit
+  task.save()
+}
+
+export function handleRecipientSet(event: RecipientSet): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  task.recipient = event.params.recipient.toHexString()
   task.save()
 }
 

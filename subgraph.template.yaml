@@ -220,5 +220,11 @@ templates:
           handler: handleCustomMaxSlippageSet
         - event: CustomTokenOutSet(indexed address,address)
           handler: handleCustomTokenOutSet
+        - event: RecipientSet(indexed address)
+          handler: handleRecipientSet
+        - event: DefaultDestinationChainSet(indexed uint256)
+          handler: handleDefaultDestinationChainSet
+        - event: CustomDestinationChainSet(indexed address,indexed uint256)
+          handler: handleCustomDestinationChainSet
       file: ./src/Task.ts
 
