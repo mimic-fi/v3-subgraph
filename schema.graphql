@@ -70,7 +70,7 @@ type PriceOracleFeed @entity {
   feed: String!
 }
 
-interface ITask { 
+type Task @entity{
   id: ID!
   name: String!
   implementation: Implementation!
@@ -92,61 +92,12 @@ interface ITask {
   defaultTokenThreshold: TokenThreshold
   customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
   customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
-}
-
-type Task implements ITask @entity{
-  id: ID!
-  name: String!
-  implementation: Implementation!
-  environment: Environment!
-  smartVault: SmartVault!
-  tokensSource: String!
-  nextBalanceConnector: String!
-  previousBalanceConnector: String!
-  executionType: String!
-  gasPriceLimit: BigInt!
-  priorityFeeLimit: BigInt!
-  txCostLimitPct: BigInt!
-  txCostLimit: BigInt!
-  timeLockDelay: BigInt!
-  timeLockExecutionPeriod: BigInt!
-  timeLockExpiration: BigInt!
-  acceptanceList: AcceptanceList!
-  defaultVolumeLimit: VolumeLimit
-  defaultTokenThreshold: TokenThreshold
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
-}
-
-type BaseSwapTask implements ITask @entity {
-  # Task interface
-  id: ID!
-  name: String!
-  implementation: Implementation!
-  environment: Environment!
-  smartVault: SmartVault!
-  tokensSource: String!
-  nextBalanceConnector: String!
-  previousBalanceConnector: String!
-  executionType: String!
-  gasPriceLimit: BigInt!
-  priorityFeeLimit: BigInt!
-  txCostLimitPct: BigInt!
-  txCostLimit: BigInt!
-  timeLockDelay: BigInt!
-  timeLockExecutionPeriod: BigInt!
-  timeLockExpiration: BigInt!
-  acceptanceList: AcceptanceList!
-  defaultVolumeLimit: VolumeLimit
-  defaultTokenThreshold: TokenThreshold
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
-  # New Fields
-  connector: String!
-  defaultSlippage: BigInt!
+  # Specific tasks config
+  connector: String
   defaultTokenOut: ERC20
-  customSlippage: [CustomSlippage!] @derivedFrom(field: "task")
+  defaultMaxSlippage: BigInt
   customTokenOut: [CustomTokenOut!] @derivedFrom(field: "task")
+  customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "task")
 }
 
 type VolumeLimit @entity {
@@ -158,14 +109,14 @@ type VolumeLimit @entity {
 
 type CustomVolumeLimit @entity {
   id: ID!
-  task: ITask!
+  task: Task!
   token: ERC20!
   volumeLimit: VolumeLimit!
 }
 
 type AcceptanceList @entity {
   id: ID!
-  task: ITask!
+  task: Task!
   type: String!
   tokens: [String!]!
 }
@@ -179,21 +130,21 @@ type TokenThreshold @entity {
 
 type CustomTokenThreshold @entity {
   id: ID!
-  task: ITask!
+  task: Task!
   token: ERC20!
   threshold: TokenThreshold!
 }
 
-type CustomSlippage @entity {
+type CustomMaxSlippage @entity {
   id: ID!
-  task: BaseSwapTask!
+  task: Task!
   token: ERC20!
   slippage: BigInt!
 }
 
 type CustomTokenOut @entity {
   id: ID!
-  task: BaseSwapTask!
+  task: Task!
   token: ERC20!
   tokenOut: ERC20!
 }

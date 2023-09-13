@@ -50,8 +50,6 @@ dataSources:
           file: ./node_modules/@mimic-fi/v3-smart-vault/artifacts/contracts/interfaces/ISmartVault.sol/ISmartVault.json
         - name: Task
           file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
-        - name: BaseSwapTask
-          file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/swap/IBaseSwapTask.sol/IBaseSwapTask.json
       eventHandlers:
         - event: AuthorizerDeployed(string,string,address,address)
           handler: handleAuthorizerDeployed
@@ -180,7 +178,7 @@ templates:
         - Task
       abis:
         - name: Task
-          file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
+          file: ./abis/IAllTasks.json
         - name: ERC20
           file: ./abis/IERC20.json
       eventHandlers:
@@ -212,56 +210,6 @@ templates:
           handler: handleTxCostLimitPctSet
         - event: TxCostLimitSet(uint256)
           handler: handleTxCostLimitSet
-      file: ./src/Task.ts
-  - kind: ethereum/contract
-    name: BaseSwapTask
-    network: {{network}}
-    source:
-      abi: BaseSwapTask
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - BaseSwapTask
-      abis:
-        - name: BaseSwapTask
-          file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/swap/IBaseSwapTask.sol/IBaseSwapTask.json
-        - name: Task
-          file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
-        - name: ERC20
-          file: ./abis/IERC20.json
-      eventHandlers:
-        # Common events
-        - event: BalanceConnectorsSet(indexed bytes32,indexed bytes32)
-          handler: handleBalanceConnectorsSet
-        - event: CustomTokenThresholdSet(indexed address,address,uint256,uint256)
-          handler: handleCustomTokenThresholdSet 
-        - event: CustomVolumeLimitSet(indexed address,indexed address,uint256,uint256)
-          handler: handleCustomVolumeLimitSet
-        - event: DefaultVolumeLimitSet(indexed address,uint256,uint256)
-          handler: handleDefaultVolumeLimitSet
-        - event: DefaultTokenThresholdSet(address,uint256,uint256)
-          handler: handleDefaultTokenThresholdSet
-        - event: GasPriceLimitSet(uint256)
-          handler: handleGasPriceLimitSet
-        - event: PriorityFeeLimitSet(uint256)
-          handler: handlePriorityFeeLimitSet
-        - event: TimeLockDelaySet(uint256)
-          handler: handleTimeLockDelaySet
-        - event: TimeLockExecutionPeriodSet(uint256)
-          handler: handleTimeLockExecutionPeriodSet
-        - event: TimeLockExpirationSet(uint256)
-          handler: handleTimeLockExpirationSet
-        - event: TokensAcceptanceListSet(indexed address,bool)
-          handler: handleTokensAcceptanceListSet        
-        - event: TokensAcceptanceTypeSet(uint8)
-          handler: handleTokensAcceptanceTypeSet
-        - event: TxCostLimitPctSet(uint256)
-          handler: handleTxCostLimitPctSet
-        - event: TxCostLimitSet(uint256)
-          handler: handleTxCostLimitSet
-        # New events
         - event: ConnectorSet(indexed address)
           handler: handleConnectorSet
         - event: DefaultMaxSlippageSet(uint256)

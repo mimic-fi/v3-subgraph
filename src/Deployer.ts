@@ -1,10 +1,9 @@
-import { Address, BigInt, ByteArray, Bytes, crypto, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes, crypto, log } from '@graphprotocol/graph-ts'
 
 import { AuthorizerDeployed, PriceOracleDeployed, SmartVaultDeployed, TaskDeployed } from '../types/Deployer/Deployer'
-import { Authorizer, BaseSwapTask, Environment, PriceOracle, SmartVault, Task } from '../types/schema'
+import { Authorizer, Environment, PriceOracle, SmartVault, Task } from '../types/schema'
 import {
   Authorizer as AuthorizerTemplate,
-  BaseSwapTask as BaseSwapTaskTemplate,
   PriceOracle as PriceOracleTemplate,
   SmartVault as SmartVaultTemplate,
   Task as TaskTemplate,
@@ -13,14 +12,6 @@ import { getNetworkName } from './Networks'
 import { loadOrCreateImplementation } from './Registry'
 import { getAuthorizer, getPriceOracle, getRegistry } from './SmartVault'
 import { getExecutionType, getSmartVault, getTokensSource, loadOrCreateAcceptanceList } from './Task'
-
-const SWAPPER_TASKS = [
-  'HOP_L2_SWAPPER',
-  '1INCH_V5_SWAPPER',
-  'PARASWAP_V5_SWAPPER',
-  'UNISWAP_V2_SWAPPER',
-  'UNISWAP_V3_SWAPPER',
-]
 
 export function handleAuthorizerDeployed(event: AuthorizerDeployed): void {
   log.warning('New authorizer deployed {}', [event.params.instance.toHexString()])
@@ -72,18 +63,6 @@ export function handleSmartVaultDeployed(event: SmartVaultDeployed): void {
 }
 
 export function handleTaskDeployed(event: TaskDeployed): void {
-  if (isSwapTask(event.params.instance)) createBaseSwapTask(event)
-  else createTask(event)
-}
-
-function isSwapTask(task: Address): boolean {
-  const executionType = getExecutionType(task).toHexString()
-  return SWAPPER_TASKS.map<string>((taskType: string) =>
-    crypto.keccak256(ByteArray.fromUTF8(taskType)).toHexString().toLowerCase()
-  ).includes(executionType.toLowerCase())
-}
-
-function createTask(event: TaskDeployed): void {
   log.warning('New task deployed {}', [event.params.instance.toHexString()])
   const implementation = loadOrCreateImplementation(event.params.implementation)
   const environment = loadOrCreateEnvironment(event.transaction.from, event.params.namespace)
@@ -109,36 +88,6 @@ function createTask(event: TaskDeployed): void {
   task.save()
 
   TaskTemplate.create(event.params.instance)
-}
-
-function createBaseSwapTask(event: TaskDeployed): void {
-  log.warning('New swap task deployed {}', [event.params.instance.toHexString()])
-  const implementation = loadOrCreateImplementation(event.params.implementation)
-  const environment = loadOrCreateEnvironment(event.transaction.from, event.params.namespace)
-
-  const baseSwapTaskId = event.params.instance.toHexString()
-  const baseSwapTask = new BaseSwapTask(baseSwapTaskId)
-  baseSwapTask.name = event.params.name
-  baseSwapTask.implementation = implementation.id
-  baseSwapTask.environment = environment.id
-  baseSwapTask.smartVault = getSmartVault(event.params.instance).toHexString()
-  baseSwapTask.tokensSource = getTokensSource(event.params.instance).toHexString()
-  baseSwapTask.previousBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
-  baseSwapTask.nextBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
-  baseSwapTask.executionType = getExecutionType(event.params.instance).toHexString()
-  baseSwapTask.gasPriceLimit = BigInt.zero()
-  baseSwapTask.priorityFeeLimit = BigInt.zero()
-  baseSwapTask.txCostLimitPct = BigInt.zero()
-  baseSwapTask.txCostLimit = BigInt.zero()
-  baseSwapTask.timeLockDelay = BigInt.zero()
-  baseSwapTask.timeLockExecutionPeriod = BigInt.zero()
-  baseSwapTask.timeLockExpiration = BigInt.zero()
-  baseSwapTask.acceptanceList = loadOrCreateAcceptanceList(baseSwapTaskId).id
-  baseSwapTask.connector = '0x0000000000000000000000000000000000000000'
-  baseSwapTask.defaultSlippage = BigInt.zero()
-  baseSwapTask.save()
-
-  BaseSwapTaskTemplate.create(event.params.instance)
 }
 
 export function loadOrCreateEnvironment(creator: Address, namespace: string): Environment {

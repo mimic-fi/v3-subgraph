@@ -2,8 +2,7 @@ import { Address, Bytes, log } from '@graphprotocol/graph-ts'
 
 import {
   AcceptanceList,
-  BaseSwapTask,
-  CustomSlippage,
+  CustomMaxSlippage,
   CustomTokenOut,
   CustomTokenThreshold,
   CustomVolumeLimit,
@@ -12,16 +11,14 @@ import {
   VolumeLimit,
 } from '../types/schema'
 import {
+  BalanceConnectorsSet,
   ConnectorSet,
   CustomMaxSlippageSet,
   CustomTokenOutSet,
-  DefaultMaxSlippageSet,
-  DefaultTokenOutSet,
-} from '../types/templates/BaseSwapTask/BaseSwapTask'
-import {
-  BalanceConnectorsSet,
   CustomTokenThresholdSet,
   CustomVolumeLimitSet,
+  DefaultMaxSlippageSet,
+  DefaultTokenOutSet,
   DefaultTokenThresholdSet,
   DefaultVolumeLimitSet,
   GasPriceLimitSet,
@@ -46,8 +43,8 @@ export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
   task.save()
 }
 
-export function handleConnectorsSet(event: ConnectorSet): void {
-  const task = BaseSwapTask.load(event.address.toHexString())
+export function handleConnectorSet(event: ConnectorSet): void {
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   task.connector = event.params.connector.toHexString()
@@ -55,23 +52,23 @@ export function handleConnectorsSet(event: ConnectorSet): void {
 }
 
 export function handleCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
-  const task = BaseSwapTask.load(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const customSlippageId = getBaseSwapTaskCustomConfigId(task, event.params.token)
-  let customSlippage = CustomSlippage.load(customSlippageId)
-  if (customSlippage === null) customSlippage = new CustomSlippage(customSlippageId)
-  customSlippage.task = task.id
-  customSlippage.token = loadOrCreateERC20(event.params.token).id
-  customSlippage.slippage = event.params.maxSlippage
-  customSlippage.save()
+  const customMaxSlippageId = getTaskCustomConfigId(task, event.params.token)
+  let customMaxSlippage = CustomMaxSlippage.load(customMaxSlippageId)
+  if (customMaxSlippage === null) customMaxSlippage = new CustomMaxSlippage(customMaxSlippageId)
+  customMaxSlippage.task = task.id
+  customMaxSlippage.token = loadOrCreateERC20(event.params.token).id
+  customMaxSlippage.slippage = event.params.maxSlippage
+  customMaxSlippage.save()
 }
 
 export function handleCustomTokenOutSet(event: CustomTokenOutSet): void {
-  const task = BaseSwapTask.load(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  const customTokenOutId = getBaseSwapTaskCustomConfigId(task, event.params.token)
+  const customTokenOutId = getTaskCustomConfigId(task, event.params.token)
   let customTokenOut = CustomTokenOut.load(customTokenOutId)
   if (customTokenOut === null) customTokenOut = new CustomTokenOut(customTokenOutId)
   customTokenOut.task = task.id
@@ -120,15 +117,15 @@ export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
 }
 
 export function handleDefaultMaxSlippageSet(event: DefaultMaxSlippageSet): void {
-  const task = BaseSwapTask.load(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  task.defaultSlippage = event.params.maxSlippage
+  task.defaultMaxSlippage = event.params.maxSlippage
   task.save()
 }
 
 export function handleDefaultTokenOutSet(event: DefaultTokenOutSet): void {
-  const task = BaseSwapTask.load(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
   task.defaultTokenOut = loadOrCreateERC20(event.params.tokenOut).id
@@ -242,14 +239,6 @@ export function handleTxCostLimitSet(event: TxCostLimitSet): void {
   task.save()
 }
 
-export function getTaskCustomConfigId(task: Task, token: Address): string {
-  return task.id.toString() + '/' + token.toHexString()
-}
-
-export function getBaseSwapTaskCustomConfigId(task: BaseSwapTask, token: Address): string {
-  return task.id.toString() + '/' + token.toHexString()
-}
-
 export function getExecutionType(address: Address): Bytes {
   const taskContract = TaskContract.bind(address)
   const executionTypeCall = taskContract.try_EXECUTION_TYPE()
@@ -302,4 +291,8 @@ export function loadOrCreateAcceptanceList(tokensAcceptanceListId: string): Acce
 export function parseAcceptanceType(op: i32): string {
   if (op == 0) return 'DenyList'
   else return 'AllowList'
+}
+
+export function getTaskCustomConfigId(task: Task, token: Address): string {
+  return task.id.toString() + '/' + token.toHexString()
 }
