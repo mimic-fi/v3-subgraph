@@ -1645,7 +1645,7 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "defaultDestinationChain",
+        "name": "destinationChain",
         "type": "uint256"
       }
     ],

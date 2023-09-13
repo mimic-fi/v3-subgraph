@@ -129,7 +129,7 @@ type CustomMaxSlippage @entity {
   id: ID!
   task: Task!
   token: ERC20!
-  slippage: BigInt!
+  maxSlippage: BigInt!
 }
 
 type CustomTokenOut @entity {

@@ -64,7 +64,7 @@ export function handleCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
   if (customMaxSlippage === null) customMaxSlippage = new CustomMaxSlippage(customMaxSlippageId)
   customMaxSlippage.task = task.id
   customMaxSlippage.token = loadOrCreateERC20(event.params.token).id
-  customMaxSlippage.slippage = event.params.maxSlippage
+  customMaxSlippage.maxSlippage = event.params.maxSlippage
   customMaxSlippage.save()
 }
 
@@ -77,7 +77,7 @@ export function handleCustomDestinationChainSet(event: CustomDestinationChainSet
   if (customDestinationChain === null) customDestinationChain = new CustomDestinationChain(customDestinationChainId)
   customDestinationChain.task = task.id
   customDestinationChain.token = loadOrCreateERC20(event.params.token).id
-  customDestinationChain.destinationChain = event.params.defaultDestinationChain
+  customDestinationChain.destinationChain = event.params.destinationChain
   customDestinationChain.save()
 }
 
