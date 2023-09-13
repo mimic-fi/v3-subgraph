@@ -214,3 +214,12 @@ type ERC20 @entity {
   symbol: String!
   decimals: Int!
 }
+
+type SmartVaultFee @entity {
+  id: ID!
+  smartVault: SmartVault!
+  defaultFeeCollector: String!
+  feePercentage: BigInt!
+  maxFeePercentage: BigInt!
+  customFeeColector: String!
+}

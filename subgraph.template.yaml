@@ -221,4 +221,27 @@ templates:
         - event: CustomTokenOutSet(indexed address,address)
           handler: handleCustomTokenOutSet
       file: ./src/Task.ts
-
+  - kind: ethereum/contract
+    name: FeeController
+    network: {{network}}
+    source:
+      abi: FeeController
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - FeeController
+      abis:
+        - name: FeeController
+          file: ./node_modules/@mimic-fi/v3-fee-controller/artifacts/contracts/interfaces/IFeeController.sol/IFeeController.json
+      eventHandlers:
+        - event: DefaultFeeCollectorSet(indexed address)
+          handler: handleDefaultFeeCollectorSet
+        - event: FeeCollectorSet(indexed address,indexed address)
+          handler: handleFeeCollectorSet
+        - event: FeePercentageSet(indexed address,uint256)
+          handler: handleFeePercentageSet
+        - event: MaxFeePercentageSet(indexed address,uint256)
+          handler: handleMaxFeePercentageSet
+      file: ./src/FeeController.ts
