@@ -81,6 +81,16 @@ dataSources:
       eventHandlers:
         - event: TaskExecuted(indexed address,indexed address,bytes,bool,bytes,uint256,uint256)
           handler: handleTaskExecuted
+        - event: Deposited(indexed address,uint256)
+          handler: handleDeposited
+        - event: Withdrawn(indexed address,uint256)
+          handler: handleWithdrawn
+        - event: SmartVaultCollectorSet(indexed address,indexed address)
+          handler: handleSmartVaultCollectorSet
+        - event: SmartVaultMaxQuotaSet(indexed address,uint256)
+          handler: handleSmartVaultMaxQuotaSet
+        - event: DefaultCollectorSet(indexed address)
+          handler: handleDefaultCollectorSet
       file: ./src/Relayer.ts
 templates:
   - kind: ethereum/contract
@@ -227,4 +237,3 @@ templates:
         - event: CustomDestinationChainSet(indexed address,indexed uint256)
           handler: handleCustomDestinationChainSet
       file: ./src/Task.ts
-

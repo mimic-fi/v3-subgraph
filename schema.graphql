@@ -22,6 +22,16 @@ type SmartVault @entity {
   tasks: [Task!] @derivedFrom(field: "smartVault")
   movements: [Movement!] @derivedFrom(field: "smartVault")
   transactions: [Transaction!] @derivedFrom(field: "smartVault")
+  relayerParams: RelayerParams
+}
+
+type RelayerParams @entity {
+  id: ID!
+  smartVault: SmartVault!
+  balance: BigInt!
+  feeCollector: String!
+  maxQuota: BigInt!
+  quotaUsed: BigInt!
 }
 
 type Authorizer @entity {
