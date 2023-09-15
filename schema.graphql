@@ -218,8 +218,7 @@ type ERC20 @entity {
 type SmartVaultFee @entity {
   id: ID!
   smartVault: SmartVault!
-  defaultFeeCollector: String!
+  feeCollector: String!
   feePercentage: BigInt!
   maxFeePercentage: BigInt!
-  customFeeColector: String!
 }
