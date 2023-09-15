@@ -143,6 +143,16 @@ templates:
           file: ./node_modules/@mimic-fi/v3-smart-vault/artifacts/contracts/interfaces/ISmartVault.sol/ISmartVault.json
         - name: ERC20
           file: ./abis/IERC20.json
+        - name: UniswapPairV2
+          file: ./node_modules/@uniswap/v2-core/build/IUniswapV2Pair.json
+        - name: UniswapFactoryV2
+          file: ./node_modules/@uniswap/v2-core/build/IUniswapV2Factory.json
+        - name: UniswapPoolV3
+          file: ./node_modules/@uniswap/v3-core/artifacts/contracts/interfaces/pool/IUniswapV3PoolState.sol/IUniswapV3PoolState.json
+        - name: UniswapFactoryV3
+          file: ./node_modules/@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json
+        - name: UniswapRouterV3
+          file: ./node_modules/@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryImmutableState.sol/IPeripheryImmutableState.json
       eventHandlers:
         - event: Paused()
           handler: handlePause

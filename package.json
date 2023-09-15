@@ -30,7 +30,10 @@
     "@mimic-fi/v3-registry": "0.1.0",
     "@mimic-fi/v3-relayer": "0.1.1",
     "@mimic-fi/v3-smart-vault": "0.1.0",
-    "@mimic-fi/v3-tasks": "0.1.0"
+    "@mimic-fi/v3-tasks": "0.1.0",
+    "@uniswap/v2-core": "^1.0.1",
+    "@uniswap/v3-core": "^1.0.1",
+    "@uniswap/v3-periphery": "^1.4.3"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.54.0",
@@ -43,6 +46,9 @@
   },
   "eslintConfig": {
     "extends": "eslint-config-mimic",
-    "ignorePatterns": ["build", "types"]
+    "ignorePatterns": [
+      "build",
+      "types"
+    ]
   }
 }
