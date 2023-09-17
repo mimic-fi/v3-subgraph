@@ -78,9 +78,14 @@ type Task @entity {
   environment: Environment!
   smartVault: SmartVault!
   tokensSource: String!
-  nextBalanceConnector: String!
-  previousBalanceConnector: String!
   executionType: String!
+  taskConfig: TaskConfig
+}
+
+type TaskConfig @entity{
+  id: ID!
+  nextBalanceConnector: String! 
+  previousBalanceConnector: String!
   gasPriceLimit: BigInt!
   priorityFeeLimit: BigInt!
   txCostLimitPct: BigInt!
@@ -91,22 +96,22 @@ type Task @entity {
   acceptanceList: AcceptanceList!
   defaultVolumeLimit: VolumeLimit
   defaultTokenThreshold: TokenThreshold
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "taskConfig")
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "taskConfig")
   # Specific tasks config
   connector: String
   defaultDestinationChain: BigInt
   defaultMaxSlippage: BigInt
   defaultTokenOut: ERC20
   recipient: String
-  customDestinationChain: [CustomDestinationChain!] @derivedFrom(field: "task")
-  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "task")
-  customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "task")
+  customDestinationChain: [CustomDestinationChain!] @derivedFrom(field: "taskConfig")
+  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "taskConfig")
+  customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "taskConfig")
 }
 
 type AcceptanceList @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   type: String!
   tokens: [String!]!
 }
@@ -120,21 +125,21 @@ type VolumeLimit @entity {
 
 type CustomDestinationChain @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   token: ERC20!
   destinationChain: BigInt!
 }
 
 type CustomMaxSlippage @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   token: ERC20!
   maxSlippage: BigInt!
 }
 
 type CustomTokenOut @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   token: ERC20!
   tokenOut: ERC20!
 }
@@ -148,14 +153,14 @@ type TokenThreshold @entity {
 
 type CustomTokenThreshold @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   token: ERC20!
   threshold: TokenThreshold!
 }
 
 type CustomVolumeLimit @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   token: ERC20!
   volumeLimit: VolumeLimit!
 }
