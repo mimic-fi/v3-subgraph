@@ -89,8 +89,6 @@ dataSources:
           handler: handleSmartVaultCollectorSet
         - event: SmartVaultMaxQuotaSet(indexed address,uint256)
           handler: handleSmartVaultMaxQuotaSet
-        - event: DefaultCollectorSet(indexed address)
-          handler: handleDefaultCollectorSet
       file: ./src/Relayer.ts
 templates:
   - kind: ethereum/contract

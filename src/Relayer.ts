@@ -1,27 +1,15 @@
 import { Address, BigInt, log } from '@graphprotocol/graph-ts'
 
 import {
-  DefaultCollectorSet,
   Deposited,
+  Relayer,
   SmartVaultCollectorSet,
   SmartVaultMaxQuotaSet,
   TaskExecuted,
   Withdrawn,
 } from '../types/Relayer/Relayer'
 import { Movement, RelayedExecution, RelayerParams, SmartVault, Task, Transaction } from '../types/schema'
-import { SmartVault as SmartVaultContract } from '../types/templates/SmartVault/SmartVault'
 import { Task as TaskContract } from '../types/templates/Task/Task'
-
-export function handleDefaultCollectorSet(event: DefaultCollectorSet): void {
-  const smartVault = SmartVault.load(event.address.toHexString())
-  if (smartVault == null) return log.warning('Missing smart vault entity {}', [event.address.toHexString()])
-
-  const relayerParams = loadOrCreateRelayerParams(smartVault.id, event.address)
-  const collectorAddress = event.params.collector.toHexString()
-  relayerParams.feeCollector =
-    collectorAddress == Address.zero().toHexString() ? getFeeCollector(event.address) : collectorAddress
-  relayerParams.save()
-}
 
 export function handleDeposited(event: Deposited): void {
   const smartVault = SmartVault.load(event.params.smartVault.toHexString())
@@ -38,8 +26,8 @@ export function handleSmartVaultCollectorSet(event: SmartVaultCollectorSet): voi
 
   const relayerParams = loadOrCreateRelayerParams(smartVault.id, event.address)
   const collectorAddress = event.params.collector.toHexString()
-  relayerParams.feeCollector =
-    collectorAddress == Address.zero().toHexString() ? getFeeCollector(event.address) : collectorAddress
+  collectorAddress == Address.zero().toHexString() ? getFeeCollector(event.address) : collectorAddress
+  relayerParams.feeCollector = collectorAddress
   relayerParams.save()
 }
 
@@ -116,6 +104,17 @@ export function getSmartVault(address: Address): Address {
   return Address.zero()
 }
 
+function getFeeCollector(address: Address): string {
+  const contract = Relayer.bind(address)
+  const feeCollectorCall = contract.try_defaultCollector()
+  if (!feeCollectorCall.reverted) {
+    return feeCollectorCall.value.toHexString()
+  }
+
+  log.warning('feeCollector() call reverted for {}', [address.toHexString()])
+  return 'Unknown'
+}
+
 export function loadOrCreateRelayerParams(relayerParamsId: string, address: Address): RelayerParams {
   let relayerParams = RelayerParams.load(relayerParamsId)
 
@@ -129,18 +128,4 @@ export function loadOrCreateRelayerParams(relayerParamsId: string, address: Addr
     relayerParams.save()
   }
   return relayerParams
-}
-
-function getFeeCollector(address: Address): string {
-  return '0x000000'
-  // let contract = SmartVaultContract.bind(address)
-  // TODO: Ver que valores pasarle
-  // let feeCollectorCall = contract.try_getBalanceConnector(address, )
-
-  // if (!feeCollectorCall.reverted) {
-  //   return feeCollectorCall.value.toHexString()
-  // }
-
-  // log.warning('feeCollector() call reverted for {}', [address.toHexString()])
-  // return 'Unknown'
 }
