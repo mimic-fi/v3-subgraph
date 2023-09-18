@@ -48,8 +48,6 @@ dataSources:
           file: ./node_modules/@mimic-fi/v3-price-oracle/artifacts/contracts/interfaces/IPriceOracle.sol/IPriceOracle.json
         - name: SmartVault
           file: ./node_modules/@mimic-fi/v3-smart-vault/artifacts/contracts/interfaces/ISmartVault.sol/ISmartVault.json
-        - name: FeeController
-          file: ./node_modules/@mimic-fi/v3-fee-controller/artifacts/contracts/interfaces/IFeeController.sol/IFeeController.json
         - name: Task
           file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
       eventHandlers:
