@@ -8,7 +8,6 @@ import {
   SmartVault as SmartVaultTemplate,
   Task as TaskTemplate,
 } from '../types/templates'
-import { loadOrCreateSmartVaultFee } from './FeeController'
 import { getNetworkName } from './Networks'
 import { loadOrCreateImplementation } from './Registry'
 import { getAuthorizer, getPriceOracle, getRegistry } from './SmartVault'
@@ -57,7 +56,6 @@ export function handleSmartVaultDeployed(event: SmartVaultDeployed): void {
   smartVault.registry = getRegistry(event.params.instance).toHexString()
   smartVault.authorizer = getAuthorizer(event.params.instance).toHexString()
   smartVault.priceOracle = getPriceOracle(event.params.instance).toHexString()
-  smartVault.smartVaultFee = loadOrCreateSmartVaultFee(smartVault.id, event.address).id
   smartVault.paused = false
   smartVault.save()
 

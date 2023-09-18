@@ -151,7 +151,7 @@ sed -i -e "s/{{network}}/${ENV}/g" subgraph.yaml
 sed -i -e "s/{{registryAddress}}/${REGISTRY_ADDRESS}/g" subgraph.yaml
 sed -i -e "s/{{deployerAddress}}/${DEPLOYER_ADDRESS}/g" subgraph.yaml
 sed -i -e "s/{{relayerAddress}}/${RELAYER_ADDRESS}/g" subgraph.yaml
-sed -i -e "s/{{feeControllerAddress}}/${RELAYER_ADDRESS}/g" subgraph.yaml
+sed -i -e "s/{{feeControllerAddress}}/${FEE_CONTROLLER_ADDRESS}/g" subgraph.yaml
 sed -i -e "s/{{blockNumber}}/${BLOCK_NUMBER}/g" subgraph.yaml
 rm -f subgraph.yaml-e
 
