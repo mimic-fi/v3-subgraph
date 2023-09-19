@@ -79,11 +79,12 @@ type Task @entity {
   smartVault: SmartVault!
   tokensSource: String!
   executionType: String!
-  taskConfig: TaskConfig
+  taskConfig: TaskConfig @derivedFrom(field: "task")
 }
 
 type TaskConfig @entity{
   id: ID!
+  task: Task!
   nextBalanceConnector: String! 
   previousBalanceConnector: String!
   gasPriceLimit: BigInt!
