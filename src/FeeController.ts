@@ -6,38 +6,29 @@ import {
   FeePercentageSet,
   MaxFeePercentageSet,
 } from '../types/FeeController/FeeController'
-import { SmartVault, SmartVaultFee } from '../types/schema'
+import { SmartVaultFee } from '../types/schema'
 
 export function handleFeeCollectorSet(event: FeeCollectorSet): void {
-  const smartVault = SmartVault.load(event.params.smartVault.toHexString())
-  if (smartVault == null) return log.warning('Missing smartVault entity {}', [event.params.smartVault.toHexString()])
-
-  const feeController = loadOrCreateSmartVaultFee(smartVault.id, event.address)
+  const smartVaultFee = loadOrCreateSmartVaultFee(event.params.smartVault.toHexString(), event.address)
   let feeCollector = event.params.collector.toHexString()
-  feeCollector = Address.zero().toHexString() ? getFeeCollector(event.address) : feeCollector
-  feeController.feeCollector = feeCollector
-  feeController.save()
+  feeCollector = Address.zero().toHexString() ? feeCollector : getDefaultFeeCollector(event.address)
+  smartVaultFee.feeCollector = feeCollector
+  smartVaultFee.save()
 }
 
 export function handleFeePercentageSet(event: FeePercentageSet): void {
-  const smartVault = SmartVault.load(event.params.smartVault.toHexString())
-  if (smartVault == null) return log.warning('Missing smartVault entity {}', [event.params.smartVault.toHexString()])
-
-  const feeController = loadOrCreateSmartVaultFee(smartVault.id, event.address)
-  feeController.maxFeePercentage = event.params.pct
-  feeController.save()
+  const smartVaultFee = loadOrCreateSmartVaultFee(event.params.smartVault.toHexString(), event.address)
+  smartVaultFee.maxFeePercentage = event.params.pct
+  smartVaultFee.save()
 }
 
 export function handleMaxFeePercentageSet(event: MaxFeePercentageSet): void {
-  const smartVault = SmartVault.load(event.params.smartVault.toHexString())
-  if (smartVault == null) return log.warning('Missing smartVault entity {}', [event.params.smartVault.toHexString()])
-
-  const feeController = loadOrCreateSmartVaultFee(smartVault.id, event.address)
-  feeController.maxFeePercentage = event.params.maxPct
-  feeController.save()
+  const smartVaultFee = loadOrCreateSmartVaultFee(event.params.smartVault.toHexString(), event.address)
+  smartVaultFee.maxFeePercentage = event.params.maxPct
+  smartVaultFee.save()
 }
 
-function getFeeCollector(address: Address): string {
+function getDefaultFeeCollector(address: Address): string {
   const contract = FeeController.bind(address)
   const feeControllerCall = contract.try_defaultFeeCollector()
   if (!feeControllerCall.reverted) {
@@ -48,16 +39,16 @@ function getFeeCollector(address: Address): string {
   return 'Unkonwn'
 }
 
-export function loadOrCreateSmartVaultFee(feeCollectorId: string, address: Address): SmartVaultFee {
-  let feeController = SmartVaultFee.load(feeCollectorId)
+export function loadOrCreateSmartVaultFee(smartVaultFeeId: string, address: Address): SmartVaultFee {
+  let smartVaultFee = SmartVaultFee.load(address.toHexString())
 
-  if (feeController == null) {
-    feeController = new SmartVaultFee(feeCollectorId)
-    feeController.smartVault = feeCollectorId
-    feeController.feeCollector = getFeeCollector(address)
-    feeController.feePercentage = BigInt.zero()
-    feeController.maxFeePercentage = BigInt.zero()
-    feeController.save()
+  if (smartVaultFee == null) {
+    smartVaultFee = new SmartVaultFee(smartVaultFeeId)
+    smartVaultFee.smartVault = smartVaultFeeId
+    smartVaultFee.feeCollector = getDefaultFeeCollector(address)
+    smartVaultFee.feePercentage = BigInt.zero()
+    smartVaultFee.maxFeePercentage = BigInt.zero()
+    smartVaultFee.save()
   }
-  return feeController
+  return smartVaultFee
 }

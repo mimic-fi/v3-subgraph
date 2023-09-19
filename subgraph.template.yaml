@@ -106,7 +106,6 @@ dataSources:
         - event: MaxFeePercentageSet(indexed address,uint256)
           handler: handleMaxFeePercentageSet
       file: ./src/FeeController.ts
-
 templates:
   - kind: ethereum/contract
     name: Authorizer
@@ -246,3 +245,4 @@ templates:
         - event: CustomTokenOutSet(indexed address,address)
           handler: handleCustomTokenOutSet
       file: ./src/Task.ts
+
