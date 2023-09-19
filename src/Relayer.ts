@@ -3,6 +3,7 @@ import { Address, log } from '@graphprotocol/graph-ts'
 import { TaskExecuted } from '../types/Relayer/Relayer'
 import { Movement, RelayedExecution, Task, Transaction } from '../types/schema'
 import { Task as TaskContract } from '../types/templates/Task/Task'
+import { rateInUsd } from './rates'
 
 export function handleTaskExecuted(event: TaskExecuted): void {
   const task = Task.load(event.params.task.toHexString())
@@ -10,6 +11,7 @@ export function handleTaskExecuted(event: TaskExecuted): void {
 
   const executionId = event.transaction.hash.toHexString() + '#' + event.params.index.toString()
   const execution = new RelayedExecution(executionId)
+  const tokensSourceAddress = getTokensSource(event.params.task)
   execution.hash = event.transaction.hash.toHexString()
   execution.sender = event.transaction.from.toHexString()
   execution.executedAt = event.block.timestamp
@@ -21,6 +23,7 @@ export function handleTaskExecuted(event: TaskExecuted): void {
   execution.gasUsed = event.params.gas
   execution.gasPrice = event.transaction.gasPrice
   execution.costNative = event.transaction.gasPrice.times(event.params.gas)
+  execution.totalGasUSD = rateInUsd(tokensSourceAddress, event.params.gas)
   execution.environment = task.environment
   execution.save()
 
@@ -56,5 +59,17 @@ export function getSmartVault(address: Address): Address {
   }
 
   log.warning('smartVault() call reverted for task {}', [address.toHexString()])
+  return Address.zero()
+}
+
+export function getTokensSource(address: Address): Address {
+  const taskContract = TaskContract.bind(address)
+  const tokensSourceCall = taskContract.try_getTokensSource()
+
+  if (!tokensSourceCall.reverted) {
+    return tokensSourceCall.value
+  }
+
+  log.warning('getTokensSource() call reverted for task {}', [address.toHexString()])
   return Address.zero()
 }

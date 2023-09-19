@@ -19,10 +19,6 @@ type SmartVault @entity {
   authorizer: Authorizer!
   priceOracle: PriceOracle!
   paused: Boolean!
-  totalValueManaged: BigInt!
-  totalFeesUsd: BigInt!
-  totalGasRefundsUsd: BigInt!
-  totalRelayedCostUsd: BigInt!
   tasks: [Task!] @derivedFrom(field: "smartVault")
   movements: [Movement!] @derivedFrom(field: "smartVault")
   transactions: [Transaction!] @derivedFrom(field: "smartVault")
@@ -184,11 +180,6 @@ type Transaction @entity {
   executedAt: BigInt!
   type: TransactionType!
   fee: BigInt!
-  feeUsd: BigInt!
-  gasUsed: BigInt!
-  gasPrice: BigInt!
-  costNative: BigInt!
-  costUsd: BigInt!
   smartVault: SmartVault!
   relayedExecution: RelayedExecution
 }
@@ -215,6 +206,7 @@ type RelayedExecution @entity {
   result: Bytes!
   gasUsed: BigInt!
   gasPrice: BigInt!
+  totalGasUSD: BigInt!
   costNative: BigInt!
   movements: [Movement!] @derivedFrom(field: "relayedExecution")
   transactions: [Transaction!] @derivedFrom(field: "relayedExecution")
@@ -232,12 +224,4 @@ type ERC20 @entity {
   name: String!
   symbol: String!
   decimals: Int!
-}
-
-type Stats @entity {
-  id: ID!
-  totalValueManaged: BigInt!
-  totalFeesUsd: BigInt!
-  totalGasRefundsUsd: BigInt!
-  totalRelayedCostUsd: BigInt!
 }

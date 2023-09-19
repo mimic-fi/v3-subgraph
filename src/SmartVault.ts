@@ -1,6 +1,6 @@
 import { Address, BigInt, Bytes, ethereum, log } from '@graphprotocol/graph-ts'
 
-import { Movement, RelayedExecution, SmartVault, Stats, Transaction } from '../types/schema'
+import { Movement, RelayedExecution, SmartVault, Transaction } from '../types/schema'
 import {
   BalanceConnectorUpdated,
   Called,
@@ -15,10 +15,6 @@ import {
   Wrapped,
 } from '../types/templates/SmartVault/SmartVault'
 import { loadOrCreateERC20 } from './ERC20'
-import { rateInUsd } from './rates'
-import { getWrappedNativeToken } from './rates/Tokens'
-
-const REDEEM_GAS_NOTE = '0x52454c41594552'
 
 export function handleExecuted(event: Executed): void {
   createTransaction(event, 'Execute', BigInt.zero())
@@ -34,7 +30,6 @@ export function handleCollected(event: Collected): void {
 
 export function handleWithdrawn(event: Withdrawn): void {
   createTransaction(event, 'Withdraw', event.params.fee)
-  handleUsdWithdraw(event, event.params.fee)
 }
 
 export function handleWrapped(event: Wrapped): void {
@@ -55,11 +50,6 @@ function createTransaction(event: ethereum.Event, type: string, fee: BigInt): vo
   transaction.smartVault = event.address.toHexString()
   transaction.type = type
   transaction.fee = fee
-  //eslint-disable-next-line-no-non-null-assertion
-  transaction.gasUsed = event.receipt!.gasUsed
-  transaction.gasPrice = event.transaction.gasPrice
-  transaction.costNative = transaction.gasPrice.times(transaction.gasUsed)
-  transaction.costUsd = rateInUsd(getWrappedNativeToken(), transaction.costNative)
   transaction.save()
 
   // eslint-disable-next-line no-constant-condition
@@ -97,32 +87,6 @@ export function handleBalanceConnectorUpdated(event: BalanceConnectorUpdated): v
       movement.save()
     }
   }
-}
-
-export function handleUsdWithdraw(event: Withdrawn, fee: BigInt): void {
-  const transactionId = getNextTransactionId(event.transaction.hash)
-  const transaction = Transaction.load(transactionId)
-  if (transaction == null) return log.warning('Missing transaction vault entity {}', [event.address.toHexString()])
-
-  const feeUsd = rateInUsd(event.params.token, fee)
-  transaction.feeUsd = feeUsd
-  transaction.save()
-
-  const smartVault = SmartVault.load(event.address.toHexString())
-  const amountUsd = rateInUsd(event.params.token, event.params.amount)
-  if (smartVault == null) return log.warning('Missing smart vault entity {}', [event.address.toHexString()])
-
-  smartVault.totalFeesUsd = smartVault.totalFeesUsd.plus(transaction.feeUsd)
-  smartVault.totalValueManaged = smartVault.totalValueManaged.plus(amountUsd)
-
-  const isRelayedTx = event.params.recipient.toHexString() == REDEEM_GAS_NOTE
-  const gasRefundUsd = isRelayedTx ? amountUsd : BigInt.zero()
-  smartVault.totalGasRefundsUsd = smartVault.totalGasRefundsUsd.plus(gasRefundUsd)
-
-  const relayedCostUsd = isRelayedTx ? transaction.costUsd : BigInt.zero()
-  smartVault.totalRelayedCostUsd = smartVault.totalRelayedCostUsd.plus(relayedCostUsd)
-  smartVault.save()
-  trackGlobalStats(amountUsd, feeUsd, gasRefundUsd, relayedCostUsd)
 }
 
 export function handlePaused(event: Paused): void {
@@ -203,23 +167,4 @@ function getNextTransactionId(hash: Bytes): string {
   }
 
   throw Error('Could not find next transaction ID')
-}
-
-function trackGlobalStats(valueManagedUsd: BigInt, feeUsd: BigInt, gasRefundUsd: BigInt, relayedCostUsd: BigInt): void {
-  let stats = Stats.load('MIMIC_STATS')
-
-  if (stats == null) {
-    stats = new Stats('MIMIC_STATS')
-    stats.totalValueManaged = BigInt.zero()
-    stats.totalFeesUsd = BigInt.zero()
-    stats.totalGasRefundsUsd = BigInt.zero()
-    stats.totalRelayedCostUsd = BigInt.zero()
-    stats.save()
-  }
-
-  stats.totalValueManaged = stats.totalValueManaged.plus(valueManagedUsd)
-  stats.totalFeesUsd = stats.totalFeesUsd.plus(feeUsd)
-  stats.totalGasRefundsUsd = stats.totalGasRefundsUsd.plus(gasRefundUsd)
-  stats.totalRelayedCostUsd = stats.totalRelayedCostUsd.plus(relayedCostUsd)
-  stats.save()
 }
