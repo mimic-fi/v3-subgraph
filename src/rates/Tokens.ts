@@ -4,12 +4,10 @@ import {
   isArbitrum,
   isAvalanche,
   isBinance,
-  isEthNetwork,
   isFantom,
   isGnosis,
   isGoerli,
   isMainnet,
-  isMaticNetwork,
   isMumbai,
   isOptimism,
   isPolygon,
@@ -39,8 +37,6 @@ function getUsdcAddress(): string {
   return '0x0000000000000000000000000000000000000000'
 }
 
-/* eslint-disable no-secrets/no-secrets */
-
 function getWrappedNativeTokenAddress(): string {
   if (isMainnet()) return '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' // WETH
   if (isPolygon()) return '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270' // WMATIC
@@ -53,24 +49,4 @@ function getWrappedNativeTokenAddress(): string {
   if (isGoerli()) return '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6' // WETH
   if (isMumbai()) return '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889' // WMATIC
   return '0x0000000000000000000000000000000000000000'
-}
-
-export function getNativeTokenSymbol(): string {
-  if (isEthNetwork()) return 'ETH'
-  if (isMaticNetwork()) return 'MATIC'
-  if (isAvalanche()) return 'AVAX'
-  if (isBinance()) return 'BNB'
-  if (isFantom()) return 'FTM'
-  if (isGnosis()) return 'DAI'
-  return 'Unknown'
-}
-
-export function getNativeTokenName(): string {
-  if (isEthNetwork()) return 'Ether'
-  if (isMaticNetwork()) return 'Matic'
-  if (isAvalanche()) return 'Avax'
-  if (isBinance()) return 'BNB'
-  if (isFantom()) return 'Fantom'
-  if (isGnosis()) return 'Dai'
-  return 'Unknown'
 }

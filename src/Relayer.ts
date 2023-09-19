@@ -4,6 +4,7 @@ import { TaskExecuted } from '../types/Relayer/Relayer'
 import { Movement, RelayedExecution, Task, Transaction } from '../types/schema'
 import { Task as TaskContract } from '../types/templates/Task/Task'
 import { rateInUsd } from './rates'
+import { getWrappedNativeToken } from './rates/Tokens'
 
 export function handleTaskExecuted(event: TaskExecuted): void {
   const task = Task.load(event.params.task.toHexString())
@@ -11,7 +12,7 @@ export function handleTaskExecuted(event: TaskExecuted): void {
 
   const executionId = event.transaction.hash.toHexString() + '#' + event.params.index.toString()
   const execution = new RelayedExecution(executionId)
-  const tokensSourceAddress = getTokensSource(event.params.task)
+  const costNative = event.transaction.gasPrice.times(event.params.gas)
   execution.hash = event.transaction.hash.toHexString()
   execution.sender = event.transaction.from.toHexString()
   execution.executedAt = event.block.timestamp
@@ -22,8 +23,8 @@ export function handleTaskExecuted(event: TaskExecuted): void {
   execution.result = event.params.result
   execution.gasUsed = event.params.gas
   execution.gasPrice = event.transaction.gasPrice
-  execution.costNative = event.transaction.gasPrice.times(event.params.gas)
-  execution.totalGasUSD = rateInUsd(tokensSourceAddress, event.params.gas)
+  execution.costNative = costNative
+  execution.costUSD = rateInUsd(getWrappedNativeToken(), costNative)
   execution.environment = task.environment
   execution.save()
 

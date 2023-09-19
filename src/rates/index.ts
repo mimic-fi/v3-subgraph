@@ -6,8 +6,9 @@ import { getUsdc } from './Tokens'
 import { rateInUsdc as rateInUsdcInUniV2 } from './UniswapV2'
 import { rateInUsdc as rateInUsdcInUniV3 } from './UniswapV3'
 
-const DECIMALS = 6 as u8
 /* eslint-disable no-secrets/no-secrets */
+
+const DECIMALS = 6 as u8
 const SUSHISWAP_FACTORY = Address.fromString('0xc35dadb65012ec5796536bd9864ed8773abc74c4')
 const HONEYSWAP_FACTORY = Address.fromString('0xA818b4F111Ccac7AA31D0BCc0806d64F2E0737D7')
 

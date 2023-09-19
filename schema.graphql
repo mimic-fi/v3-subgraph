@@ -206,7 +206,7 @@ type RelayedExecution @entity {
   result: Bytes!
   gasUsed: BigInt!
   gasPrice: BigInt!
-  totalGasUSD: BigInt!
+  costUSD: BigInt!
   costNative: BigInt!
   movements: [Movement!] @derivedFrom(field: "relayedExecution")
   transactions: [Transaction!] @derivedFrom(field: "relayedExecution")

@@ -43,7 +43,6 @@ export function handleUnwrapped(event: Unwrapped): void {
 function createTransaction(event: ethereum.Event, type: string, fee: BigInt): void {
   const transactionId = getNextTransactionId(event.transaction.hash)
   const transaction = new Transaction(transactionId)
-
   transaction.hash = event.transaction.hash.toHexString()
   transaction.sender = event.transaction.from.toHexString()
   transaction.executedAt = event.block.timestamp
