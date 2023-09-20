@@ -8,34 +8,25 @@ import {
   TaskExecuted,
   Withdrawn,
 } from '../types/Relayer/Relayer'
-import { Movement, RelayedExecution, RelayerParams, SmartVault, Task, Transaction } from '../types/schema'
+import { Movement, RelayedExecution, RelayerParams, Task, Transaction } from '../types/schema'
 import { Task as TaskContract } from '../types/templates/Task/Task'
 
 export function handleDeposited(event: Deposited): void {
-  const smartVault = SmartVault.load(event.params.smartVault.toHexString())
-  if (smartVault == null) return log.warning('Missing smart vault entity {}', [event.params.smartVault.toHexString()])
-
-  const relayerParams = loadOrCreateRelayerParams(smartVault.id, event.address)
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
   relayerParams.balance = relayerParams.balance.plus(event.params.amount)
   relayerParams.save()
 }
 
 export function handleSmartVaultCollectorSet(event: SmartVaultCollectorSet): void {
-  const smartVault = SmartVault.load(event.params.smartVault.toHexString())
-  if (smartVault == null) return log.warning('Missing smart vault entity {}', [event.params.smartVault.toHexString()])
-
-  const relayerParams = loadOrCreateRelayerParams(smartVault.id, event.address)
-  const collectorAddress = event.params.collector.toHexString()
-  collectorAddress == Address.zero().toHexString() ? getFeeCollector(event.address) : collectorAddress
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
+  let collectorAddress = event.params.collector.toHexString()
+  collectorAddress = event.params.collector.equals(Address.zero()) ? collectorAddress : getFeeCollector(event.address)
   relayerParams.feeCollector = collectorAddress
   relayerParams.save()
 }
 
 export function handleSmartVaultMaxQuotaSet(event: SmartVaultMaxQuotaSet): void {
-  const smartVault = SmartVault.load(event.params.smartVault.toHexString())
-  if (smartVault == null) return log.warning('Missing smart vault entity {}', [event.params.smartVault.toHexString()])
-
-  const relayerParams = loadOrCreateRelayerParams(smartVault.id, event.address)
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
   relayerParams.maxQuota = event.params.maxQuota
   relayerParams.save()
 }
@@ -84,10 +75,7 @@ export function handleTaskExecuted(event: TaskExecuted): void {
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
-  const smartVault = SmartVault.load(event.params.smartVault.toHexString())
-  if (smartVault == null) return log.warning('Missing smart vault entity {}', [event.params.smartVault.toHexString()])
-
-  const relayerParams = loadOrCreateRelayerParams(smartVault.id, event.address)
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
   relayerParams.balance = relayerParams.balance.minus(event.params.amount)
   relayerParams.save()
 }
@@ -111,16 +99,16 @@ function getFeeCollector(address: Address): string {
     return feeCollectorCall.value.toHexString()
   }
 
-  log.warning('feeCollector() call reverted for {}', [address.toHexString()])
+  log.warning('defaultCollector() call reverted for {}', [address.toHexString()])
   return 'Unknown'
 }
 
-export function loadOrCreateRelayerParams(relayerParamsId: string, address: Address): RelayerParams {
-  let relayerParams = RelayerParams.load(relayerParamsId)
+export function loadOrCreateRelayerParams(smartVaultId: string, address: Address): RelayerParams {
+  let relayerParams = RelayerParams.load(smartVaultId)
 
   if (relayerParams === null) {
-    relayerParams = new RelayerParams(relayerParamsId)
-    relayerParams.smartVault = relayerParamsId
+    relayerParams = new RelayerParams(smartVaultId)
+    relayerParams.smartVault = smartVaultId
     relayerParams.balance = BigInt.zero()
     relayerParams.feeCollector = getFeeCollector(address)
     relayerParams.maxQuota = BigInt.zero()
