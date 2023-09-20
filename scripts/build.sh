@@ -7,48 +7,56 @@ set -o errexit
 registry_arbitrum=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
 deployer_arbitrum=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
 relayer_arbitrum=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+feeController_arbitrum=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_arbitrum=117042327
 
 # Avalanche
 registry_avalanche=0x0000000000000000000000000000000000000000
 deployer_avalanche=0x0000000000000000000000000000000000000000
 relayer_avalanche=0x0000000000000000000000000000000000000000
+feeController_avalanche=0x0000000000000000000000000000000000000000
 block_avalanche=0
 
 # BSC
 registry_bsc=0x0000000000000000000000000000000000000000
 deployer_bsc=0x0000000000000000000000000000000000000000
 relayer_bsc=0x0000000000000000000000000000000000000000
+feeController_bsc=0x0000000000000000000000000000000000000000
 block_bsc=0
 
 # Fantom
 registry_fantom=0x0000000000000000000000000000000000000000
 deployer_fantom=0x0000000000000000000000000000000000000000
 relayer_fantom=0x0000000000000000000000000000000000000000
+feeController_fantom=0x0000000000000000000000000000000000000000
 block_fantom=0
 
 # Gnosis
 registry_gnosis=0x0000000000000000000000000000000000000000
 deployer_gnosis=0x0000000000000000000000000000000000000000
 relayer_gnosis=0x0000000000000000000000000000000000000000
+feeController_gnosis=0x0000000000000000000000000000000000000000
 block_gnosis=0
 
 # Mainnet
 registry_mainnet=0x0000000000000000000000000000000000000000
 deployer_mainnet=0x0000000000000000000000000000000000000000
 relayer_mainnet=0x0000000000000000000000000000000000000000
+feeController_mainnet=0x0000000000000000000000000000000000000000
 block_mainnet=0
 
 # Optimism
 registry_optimism=0x0000000000000000000000000000000000000000
 deployer_optimism=0x0000000000000000000000000000000000000000
 relayer_optimism=0x0000000000000000000000000000000000000000
+feeController_optimism=0x0000000000000000000000000000000000000000
 block_optimism=0
 
 # Polygon
 registry_polygon=0x0000000000000000000000000000000000000000
 deployer_polygon=0x0000000000000000000000000000000000000000
 relayer_polygon=0x0000000000000000000000000000000000000000
+feeController_poligon=0x0000000000000000000000000000000000000000
 block_polygon=0
 
 # Validate network
@@ -114,6 +122,18 @@ if [[ -z $RELAYER_ADDRESS ]]; then
   exit 1
 fi
 
+# Load feeController address
+if [[ -z $FEE_CONTROLLER_ADDRESS ]]; then
+  FEE_CONTROLLER_ADDRESS_VAR=feeController_$NETWORK
+  FEE_CONTROLLER_ADDRESS=${!FEE_CONTROLLER_ADDRESS_VAR}
+fi
+
+# Validate relayer address
+if [[ -z $FEE_CONTROLLER_ADDRESS ]]; then
+  echo 'Please make sure a Fee Controller address is provided'
+  exit 1
+fi
+
 #################################################################
 #####                     FINALIZE                         ######
 #################################################################
@@ -131,6 +151,7 @@ sed -i -e "s/{{network}}/${ENV}/g" subgraph.yaml
 sed -i -e "s/{{registryAddress}}/${REGISTRY_ADDRESS}/g" subgraph.yaml
 sed -i -e "s/{{deployerAddress}}/${DEPLOYER_ADDRESS}/g" subgraph.yaml
 sed -i -e "s/{{relayerAddress}}/${RELAYER_ADDRESS}/g" subgraph.yaml
+sed -i -e "s/{{feeControllerAddress}}/${FEE_CONTROLLER_ADDRESS}/g" subgraph.yaml
 sed -i -e "s/{{blockNumber}}/${BLOCK_NUMBER}/g" subgraph.yaml
 rm -f subgraph.yaml-e
 
