@@ -8,7 +8,7 @@ import {
   SmartVault as SmartVaultTemplate,
   Task as TaskTemplate,
 } from '../types/templates'
-import { getNetworkName } from './Networks'
+import { getNetworkId } from './Networks'
 import { loadOrCreateImplementation } from './Registry'
 import { getAuthorizer, getPriceOracle, getRegistry } from './SmartVault'
 import { getExecutionType, getSmartVault, getTokensSource } from './Task'
@@ -89,7 +89,7 @@ export function loadOrCreateEnvironment(creator: Address, namespace: string): En
     environment = new Environment(id)
     environment.creator = creator.toHexString()
     environment.namespace = namespace
-    environment.network = getNetworkName()
+    environment.network = getNetworkId()
     environment.save()
   }
 
