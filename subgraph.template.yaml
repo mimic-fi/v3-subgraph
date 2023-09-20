@@ -90,6 +90,30 @@ dataSources:
         - event: SmartVaultMaxQuotaSet(indexed address,uint256)
           handler: handleSmartVaultMaxQuotaSet
       file: ./src/Relayer.ts
+  - kind: ethereum/contract
+    name: FeeController
+    network: {{network}}
+    source:
+      address: '{{feeControllerAddress}}'
+      abi: FeeController
+      startBlock: {{blockNumber}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - FeeController
+      abis:
+        - name: FeeController
+          file: ./node_modules/@mimic-fi/v3-fee-controller/artifacts/contracts/interfaces/IFeeController.sol/IFeeController.json
+      eventHandlers:
+        - event: FeeCollectorSet(indexed address,indexed address)
+          handler: handleFeeCollectorSet
+        - event: FeePercentageSet(indexed address,uint256)
+          handler: handleFeePercentageSet
+        - event: MaxFeePercentageSet(indexed address,uint256)
+          handler: handleMaxFeePercentageSet
+      file: ./src/FeeController.ts
 templates:
   - kind: ethereum/contract
     name: Authorizer
@@ -151,6 +175,16 @@ templates:
           file: ./node_modules/@mimic-fi/v3-smart-vault/artifacts/contracts/interfaces/ISmartVault.sol/ISmartVault.json
         - name: ERC20
           file: ./abis/IERC20.json
+        - name: UniswapPairV2
+          file: ./node_modules/@uniswap/v2-core/build/IUniswapV2Pair.json
+        - name: UniswapFactoryV2
+          file: ./node_modules/@uniswap/v2-core/build/IUniswapV2Factory.json
+        - name: UniswapPoolV3
+          file: ./node_modules/@uniswap/v3-core/artifacts/contracts/interfaces/pool/IUniswapV3PoolState.sol/IUniswapV3PoolState.json
+        - name: UniswapFactoryV3
+          file: ./node_modules/@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json
+        - name: UniswapRouterV3
+          file: ./node_modules/@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryImmutableState.sol/IPeripheryImmutableState.json
       eventHandlers:
         - event: Paused()
           handler: handlePause

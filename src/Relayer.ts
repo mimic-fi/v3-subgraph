@@ -10,6 +10,8 @@ import {
 } from '../types/Relayer/Relayer'
 import { Movement, RelayedExecution, RelayerParams, Task, Transaction } from '../types/schema'
 import { Task as TaskContract } from '../types/templates/Task/Task'
+import { rateInUsd } from './rates'
+import { getWrappedNativeToken } from './rates/Tokens'
 
 export function handleDeposited(event: Deposited): void {
   const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
@@ -20,7 +22,9 @@ export function handleDeposited(event: Deposited): void {
 export function handleSmartVaultCollectorSet(event: SmartVaultCollectorSet): void {
   const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
   let collectorAddress = event.params.collector.toHexString()
-  collectorAddress = event.params.collector.equals(Address.zero()) ? collectorAddress : getFeeCollector(event.address)
+  collectorAddress = event.params.collector.equals(Address.zero())
+    ? getDefaultFeeCollector(event.address)
+    : collectorAddress
   relayerParams.feeCollector = collectorAddress
   relayerParams.save()
 }
@@ -37,6 +41,7 @@ export function handleTaskExecuted(event: TaskExecuted): void {
 
   const executionId = event.transaction.hash.toHexString() + '#' + event.params.index.toString()
   const execution = new RelayedExecution(executionId)
+  const costNative = event.transaction.gasPrice.times(event.params.gas)
   execution.hash = event.transaction.hash.toHexString()
   execution.sender = event.transaction.from.toHexString()
   execution.executedAt = event.block.timestamp
@@ -47,7 +52,8 @@ export function handleTaskExecuted(event: TaskExecuted): void {
   execution.result = event.params.result
   execution.gasUsed = event.params.gas
   execution.gasPrice = event.transaction.gasPrice
-  execution.costNative = event.transaction.gasPrice.times(event.params.gas)
+  execution.costNative = costNative
+  execution.costUSD = rateInUsd(getWrappedNativeToken(), costNative)
   execution.environment = task.environment
   execution.save()
 
@@ -92,7 +98,7 @@ export function getSmartVault(address: Address): Address {
   return Address.zero()
 }
 
-function getFeeCollector(address: Address): string {
+function getDefaultFeeCollector(address: Address): string {
   const contract = Relayer.bind(address)
   const feeCollectorCall = contract.try_defaultCollector()
   if (!feeCollectorCall.reverted) {
@@ -110,7 +116,7 @@ export function loadOrCreateRelayerParams(smartVaultId: string, address: Address
     relayerParams = new RelayerParams(smartVaultId)
     relayerParams.smartVault = smartVaultId
     relayerParams.balance = BigInt.zero()
-    relayerParams.feeCollector = getFeeCollector(address)
+    relayerParams.feeCollector = getDefaultFeeCollector(address)
     relayerParams.maxQuota = BigInt.zero()
     relayerParams.quotaUsed = BigInt.zero()
     relayerParams.save()

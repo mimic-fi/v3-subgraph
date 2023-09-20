@@ -19,6 +19,7 @@ type SmartVault @entity {
   authorizer: Authorizer!
   priceOracle: PriceOracle!
   paused: Boolean!
+  smartVaultFee: SmartVaultFee @derivedFrom(field: "smartVault")
   tasks: [Task!] @derivedFrom(field: "smartVault")
   movements: [Movement!] @derivedFrom(field: "smartVault")
   transactions: [Transaction!] @derivedFrom(field: "smartVault")
@@ -32,6 +33,14 @@ type RelayerParams @entity {
   feeCollector: String!
   maxQuota: BigInt!
   quotaUsed: BigInt!
+}
+
+type SmartVaultFee @entity {
+  id: ID!
+  smartVault: SmartVault!
+  feeCollector: String!
+  feePercentage: BigInt!
+  maxFeePercentage: BigInt!
 }
 
 type Authorizer @entity {
@@ -88,9 +97,15 @@ type Task @entity {
   environment: Environment!
   smartVault: SmartVault!
   tokensSource: String!
+  executionType: String!
+  taskConfig: TaskConfig @derivedFrom(field: "task")
+}
+
+type TaskConfig @entity{
+  id: ID!
+  task: Task!
   nextBalanceConnector: String!
   previousBalanceConnector: String!
-  executionType: String!
   gasPriceLimit: BigInt!
   priorityFeeLimit: BigInt!
   txCostLimitPct: BigInt!
@@ -101,22 +116,21 @@ type Task @entity {
   acceptanceList: AcceptanceList!
   defaultVolumeLimit: VolumeLimit
   defaultTokenThreshold: TokenThreshold
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "task")
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "task")
-  # Specific tasks config
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "taskConfig")
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "taskConfig")
   connector: String
   defaultDestinationChain: BigInt
   defaultMaxSlippage: BigInt
   defaultTokenOut: ERC20
   recipient: String
-  customDestinationChain: [CustomDestinationChain!] @derivedFrom(field: "task")
-  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "task")
-  customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "task")
+  customDestinationChain: [CustomDestinationChain!] @derivedFrom(field: "taskConfig")
+  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "taskConfig")
+  customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "taskConfig")
 }
 
 type AcceptanceList @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   type: String!
   tokens: [String!]!
 }
@@ -130,21 +144,21 @@ type VolumeLimit @entity {
 
 type CustomDestinationChain @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   token: ERC20!
   destinationChain: BigInt!
 }
 
 type CustomMaxSlippage @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   token: ERC20!
   maxSlippage: BigInt!
 }
 
 type CustomTokenOut @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   token: ERC20!
   tokenOut: ERC20!
 }
@@ -158,14 +172,14 @@ type TokenThreshold @entity {
 
 type CustomTokenThreshold @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   token: ERC20!
   threshold: TokenThreshold!
 }
 
 type CustomVolumeLimit @entity {
   id: ID!
-  task: Task!
+  taskConfig: TaskConfig!
   token: ERC20!
   volumeLimit: VolumeLimit!
 }
@@ -216,6 +230,7 @@ type RelayedExecution @entity {
   result: Bytes!
   gasUsed: BigInt!
   gasPrice: BigInt!
+  costUSD: BigInt!
   costNative: BigInt!
   movements: [Movement!] @derivedFrom(field: "relayedExecution")
   transactions: [Transaction!] @derivedFrom(field: "relayedExecution")
