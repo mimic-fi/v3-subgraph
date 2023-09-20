@@ -19,9 +19,18 @@ type SmartVault @entity {
   authorizer: Authorizer!
   priceOracle: PriceOracle!
   paused: Boolean!
+  smartVaultFee: SmartVaultFee @derivedFrom(field: "smartVault")
   tasks: [Task!] @derivedFrom(field: "smartVault")
   movements: [Movement!] @derivedFrom(field: "smartVault")
   transactions: [Transaction!] @derivedFrom(field: "smartVault")
+}
+
+type SmartVaultFee @entity {
+  id: ID!
+  smartVault: SmartVault!
+  feeCollector: String!
+  feePercentage: BigInt!
+  maxFeePercentage: BigInt!
 }
 
 type Authorizer @entity {
