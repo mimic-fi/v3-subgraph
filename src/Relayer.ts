@@ -62,15 +62,3 @@ export function getSmartVault(address: Address): Address {
   log.warning('smartVault() call reverted for task {}', [address.toHexString()])
   return Address.zero()
 }
-
-export function getTokensSource(address: Address): Address {
-  const taskContract = TaskContract.bind(address)
-  const tokensSourceCall = taskContract.try_getTokensSource()
-
-  if (!tokensSourceCall.reverted) {
-    return tokensSourceCall.value
-  }
-
-  log.warning('getTokensSource() call reverted for task {}', [address.toHexString()])
-  return Address.zero()
-}
