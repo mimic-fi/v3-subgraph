@@ -11,7 +11,7 @@ import { SmartVaultFee } from '../types/schema'
 export function handleFeeCollectorSet(event: FeeCollectorSet): void {
   const smartVaultFee = loadOrCreateSmartVaultFee(event.params.smartVault.toHexString(), event.address)
   let feeCollector = event.params.collector.toHexString()
-  feeCollector = Address.zero().toHexString() ? feeCollector : getDefaultFeeCollector(event.address)
+  feeCollector = event.params.collector.equals(Address.zero()) ? feeCollector : getDefaultFeeCollector(event.address)
   smartVaultFee.feeCollector = feeCollector
   smartVaultFee.save()
 }
@@ -36,7 +36,7 @@ function getDefaultFeeCollector(address: Address): string {
   }
 
   log.warning('feeController() call reverted for {}', [address.toHexString()])
-  return 'Unkonwn'
+  return 'Unknown'
 }
 
 export function loadOrCreateSmartVaultFee(smartVaultFeeId: string, address: Address): SmartVaultFee {
