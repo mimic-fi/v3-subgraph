@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes, crypto, log } from '@graphprotocol/graph-ts'
+import { Address, Bytes, crypto, log } from '@graphprotocol/graph-ts'
 
 import { AuthorizerDeployed, PriceOracleDeployed, SmartVaultDeployed, TaskDeployed } from '../types/Deployer/Deployer'
 import { Authorizer, Environment, PriceOracle, SmartVault, Task } from '../types/schema'
@@ -11,7 +11,7 @@ import {
 import { getNetworkName } from './Networks'
 import { loadOrCreateImplementation } from './Registry'
 import { getAuthorizer, getPriceOracle, getRegistry } from './SmartVault'
-import { getExecutionType, getSmartVault, getTokensSource, loadOrCreateAcceptanceList } from './Task'
+import { getExecutionType, getSmartVault, getTokensSource } from './Task'
 
 export function handleAuthorizerDeployed(event: AuthorizerDeployed): void {
   log.warning('New authorizer deployed {}', [event.params.instance.toHexString()])
@@ -74,17 +74,7 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   task.environment = environment.id
   task.smartVault = getSmartVault(event.params.instance).toHexString()
   task.tokensSource = getTokensSource(event.params.instance).toHexString()
-  task.previousBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
-  task.nextBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
   task.executionType = getExecutionType(event.params.instance).toHexString()
-  task.gasPriceLimit = BigInt.zero()
-  task.priorityFeeLimit = BigInt.zero()
-  task.txCostLimitPct = BigInt.zero()
-  task.txCostLimit = BigInt.zero()
-  task.timeLockDelay = BigInt.zero()
-  task.timeLockExecutionPeriod = BigInt.zero()
-  task.timeLockExpiration = BigInt.zero()
-  task.acceptanceList = loadOrCreateAcceptanceList(taskId).id
   task.save()
 
   TaskTemplate.create(event.params.instance)
