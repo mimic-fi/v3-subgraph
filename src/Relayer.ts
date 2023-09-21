@@ -2,6 +2,8 @@ import { Address, BigInt, log } from '@graphprotocol/graph-ts'
 
 import {
   Deposited,
+  GasPaid,
+  QuotaPaid,
   Relayer,
   SmartVaultCollectorSet,
   SmartVaultMaxQuotaSet,
@@ -16,6 +18,22 @@ import { getWrappedNativeToken } from './rates/Tokens'
 export function handleDeposited(event: Deposited): void {
   const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
   relayerParams.balance = relayerParams.balance.plus(event.params.amount)
+  relayerParams.save()
+}
+
+export function handleGasPaid(event: GasPaid): void {
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
+  const gasPaidAmount = event.params.amount
+  relayerParams.balance = relayerParams.balance.minus(gasPaidAmount)
+  relayerParams.quotaUsed = relayerParams.balance.plus(gasPaidAmount)
+  relayerParams.save()
+}
+
+export function handleQuotaPaid(event: QuotaPaid): void {
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
+  const quotaPaidAmount = event.params.amount
+  relayerParams.balance = relayerParams.balance.minus(quotaPaidAmount)
+  relayerParams.quotaUsed = relayerParams.quotaUsed.minus(quotaPaidAmount)
   relayerParams.save()
 }
 
@@ -109,14 +127,14 @@ function getDefaultFeeCollector(address: Address): string {
   return 'Unknown'
 }
 
-export function loadOrCreateRelayerParams(smartVaultId: string, address: Address): RelayerParams {
+export function loadOrCreateRelayerParams(smartVaultId: string, relayer: Address): RelayerParams {
   let relayerParams = RelayerParams.load(smartVaultId)
 
   if (relayerParams === null) {
     relayerParams = new RelayerParams(smartVaultId)
     relayerParams.smartVault = smartVaultId
     relayerParams.balance = BigInt.zero()
-    relayerParams.feeCollector = getDefaultFeeCollector(address)
+    relayerParams.feeCollector = getDefaultFeeCollector(relayer)
     relayerParams.maxQuota = BigInt.zero()
     relayerParams.quotaUsed = BigInt.zero()
     relayerParams.save()

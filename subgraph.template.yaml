@@ -79,16 +79,20 @@ dataSources:
         - name: Task
           file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
       eventHandlers:
-        - event: TaskExecuted(indexed address,indexed address,bytes,bool,bytes,uint256,uint256)
-          handler: handleTaskExecuted
         - event: Deposited(indexed address,uint256)
           handler: handleDeposited
-        - event: Withdrawn(indexed address,uint256)
-          handler: handleWithdrawn
+        - event: GasPaid(indexed address,uint256,uint256)
+          handler: handleGasPaid
+        - event: QuotaPaid(indexed address,uint256)
+          handler: handleQuotaPaid
         - event: SmartVaultCollectorSet(indexed address,indexed address)
           handler: handleSmartVaultCollectorSet
         - event: SmartVaultMaxQuotaSet(indexed address,uint256)
           handler: handleSmartVaultMaxQuotaSet
+        - event: TaskExecuted(indexed address,indexed address,bytes,bool,bytes,uint256,uint256)
+          handler: handleTaskExecuted
+        - event: Withdrawn(indexed address,uint256)
+          handler: handleWithdrawn
       file: ./src/Relayer.ts
   - kind: ethereum/contract
     name: FeeController
