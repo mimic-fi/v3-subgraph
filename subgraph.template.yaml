@@ -78,6 +78,18 @@ dataSources:
           file: ./node_modules/@mimic-fi/v3-relayer/artifacts/contracts/interfaces/IRelayer.sol/IRelayer.json
         - name: Task
           file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
+        - name: ERC20
+          file: ./abis/IERC20.json
+        - name: UniswapPairV2
+          file: ./node_modules/@uniswap/v2-core/build/IUniswapV2Pair.json
+        - name: UniswapFactoryV2
+          file: ./node_modules/@uniswap/v2-core/build/IUniswapV2Factory.json
+        - name: UniswapPoolV3
+          file: ./node_modules/@uniswap/v3-core/artifacts/contracts/interfaces/pool/IUniswapV3PoolState.sol/IUniswapV3PoolState.json
+        - name: UniswapFactoryV3
+          file: ./node_modules/@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json
+        - name: UniswapRouterV3
+          file: ./node_modules/@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryImmutableState.sol/IPeripheryImmutableState.json
       eventHandlers:
         - event: TaskExecuted(indexed address,indexed address,bytes,bool,bytes,uint256,uint256)
           handler: handleTaskExecuted
