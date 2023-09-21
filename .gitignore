@@ -2,4 +2,5 @@ build
 types
 node_modules
 subgraph.yaml
+dictionary.json
 *.log

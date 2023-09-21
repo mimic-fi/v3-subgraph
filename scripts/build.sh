@@ -158,3 +158,7 @@ rm -f subgraph.yaml-e
 # Run codegen and build
 rm -rf ./types && yarn graph codegen -o types
 yarn graph build
+
+# Build functions selector dictionary
+echo "Building functions selector dictionary"
+yarn ts-node ./src/permissions/build.ts
