@@ -1,4 +1,4 @@
-import { dataSource } from '@graphprotocol/graph-ts'
+import { BigInt, dataSource } from '@graphprotocol/graph-ts'
 
 export function isEthNetwork(): boolean {
   return isMainnet() || isGoerli() || isArbitrum() || isOptimism()
@@ -48,16 +48,16 @@ export function isGnosis(): boolean {
   return dataSource.network() == 'gnosis'
 }
 
-export function getNetworkName(): string {
-  if (isMainnet()) return 'ethereum'
-  if (isGoerli()) return 'goerli'
-  if (isArbitrum()) return 'arbitrum'
-  if (isOptimism()) return 'optimism'
-  if (isPolygon()) return 'polygon'
-  if (isMumbai()) return 'mumbai'
-  if (isAvalanche()) return 'avalanche'
-  if (isBinance()) return 'bsc'
-  if (isFantom()) return 'fantom'
-  if (isGnosis()) return 'gnosis'
-  return 'Unknown'
+export function getNetworkId(): BigInt {
+  if (isMainnet()) return BigInt.fromI32(1)
+  if (isGoerli()) return BigInt.fromI32(5)
+  if (isArbitrum()) return BigInt.fromI32(42161)
+  if (isOptimism()) return BigInt.fromI32(10)
+  if (isPolygon()) return BigInt.fromI32(137)
+  if (isMumbai()) return BigInt.fromI32(80001)
+  if (isAvalanche()) return BigInt.fromI32(43114)
+  if (isBinance()) return BigInt.fromI32(56)
+  if (isFantom()) return BigInt.fromI32(250)
+  if (isGnosis()) return BigInt.fromI32(100)
+  return BigInt.fromI32(0)
 }
