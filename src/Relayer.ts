@@ -23,9 +23,8 @@ export function handleDeposited(event: Deposited): void {
 
 export function handleGasPaid(event: GasPaid): void {
   const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
-  const gasPaidAmount = event.params.amount
-  relayerParams.balance = relayerParams.balance.minus(gasPaidAmount)
-  relayerParams.quotaUsed = relayerParams.balance.plus(gasPaidAmount)
+  relayerParams.balance = relayerParams.balance.minus(event.params.amount)
+  relayerParams.quotaUsed = relayerParams.balance.plus(event.params.quota)
   relayerParams.save()
 }
 
@@ -39,11 +38,9 @@ export function handleQuotaPaid(event: QuotaPaid): void {
 
 export function handleSmartVaultCollectorSet(event: SmartVaultCollectorSet): void {
   const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
-  let collectorAddress = event.params.collector.toHexString()
-  collectorAddress = event.params.collector.equals(Address.zero())
-    ? getDefaultFeeCollector(event.address)
-    : collectorAddress
-  relayerParams.feeCollector = collectorAddress
+  let feeCollector = event.params.collector.toHexString()
+  if (feeCollector == Address.zero().toHexString()) feeCollector = getDefaultFeeCollector(event.address)
+  relayerParams.feeCollector = feeCollector
   relayerParams.save()
 }
 
@@ -119,6 +116,7 @@ export function getSmartVault(address: Address): Address {
 function getDefaultFeeCollector(address: Address): string {
   const contract = Relayer.bind(address)
   const feeCollectorCall = contract.try_defaultCollector()
+
   if (!feeCollectorCall.reverted) {
     return feeCollectorCall.value.toHexString()
   }
@@ -133,8 +131,8 @@ export function loadOrCreateRelayerParams(smartVaultId: string, relayer: Address
   if (relayerParams === null) {
     relayerParams = new RelayerParams(smartVaultId)
     relayerParams.smartVault = smartVaultId
-    relayerParams.balance = BigInt.zero()
     relayerParams.feeCollector = getDefaultFeeCollector(relayer)
+    relayerParams.balance = BigInt.zero()
     relayerParams.maxQuota = BigInt.zero()
     relayerParams.quotaUsed = BigInt.zero()
     relayerParams.save()

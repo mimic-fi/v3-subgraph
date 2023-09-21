@@ -29,11 +29,9 @@ type SmartVault @entity {
 type RelayerParams @entity {
   id: ID!
   smartVault: SmartVault!
-  balance: BigInt!
   feeCollector: String!
-  gasPaid: BigInt!
+  balance: BigInt!
   maxQuota: BigInt!
-  quotaPaid: BigInt!
   quotaUsed: BigInt!
 }
 
