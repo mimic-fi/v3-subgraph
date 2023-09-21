@@ -47,6 +47,7 @@ type Permission @entity {
   who: String!
   where: String!
   what: String!
+  method: String!
   params: [PermissionParam!] @derivedFrom(field: "permission")
 }
 

@@ -2,14 +2,17 @@ import { Address, Bytes, crypto, log, store } from '@graphprotocol/graph-ts'
 
 import { Permission, PermissionParam } from '../types/schema'
 import { Authorized, Authorizer as AuthorizerContract, Unauthorized } from '../types/templates/Authorizer/Authorizer'
+import { getFunctionNameForSelector } from './permissions/index'
 
 export function handleAuthorized(event: Authorized): void {
   const permissionId = getPermissionId(event.address, event.params.who, event.params.where, event.params.what)
   const permission = new Permission(permissionId)
+  const what = event.params.what.toHexString()
   permission.authorizer = event.address.toHexString()
   permission.who = event.params.who.toHexString()
   permission.where = event.params.where.toHexString()
-  permission.what = event.params.what.toHexString()
+  permission.what = what
+  permission.method = getFunctionNameForSelector(what)
   permission.save()
 
   const authorizerContract = AuthorizerContract.bind(event.address)
