@@ -1,6 +1,6 @@
-import dictionary from './dictionary.json'
+import dictionary from './dictionary'
 
 export function getFunctionNameForSelector(selector: string): string {
-  const data = dictionary.find(fn => fn.selector == selector)
-  return data ? data.function : 'Unknown'
+  const name = dictionary[selector]
+  return name || 'Unknown'
 }

@@ -161,4 +161,4 @@ yarn graph build
 
 # Build functions selector dictionary
 echo "Building functions selector dictionary"
-yarn ts-node ./src/permissions/build.ts
+yarn ts-node ./scripts/build-permissions-dictionary.ts

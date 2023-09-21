@@ -2,5 +2,5 @@ build
 types
 node_modules
 subgraph.yaml
-dictionary.json
+/src/permissions/dictionary.ts
 *.log
