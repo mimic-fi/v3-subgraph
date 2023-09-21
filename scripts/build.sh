@@ -155,10 +155,10 @@ sed -i -e "s/{{feeControllerAddress}}/${FEE_CONTROLLER_ADDRESS}/g" subgraph.yaml
 sed -i -e "s/{{blockNumber}}/${BLOCK_NUMBER}/g" subgraph.yaml
 rm -f subgraph.yaml-e
 
-# Run codegen and build
-rm -rf ./types && yarn graph codegen -o types
-yarn graph build
-
 # Build functions selector dictionary
 echo "Building functions selector dictionary"
 yarn ts-node ./scripts/build-permissions-dictionary.ts
+
+# Run codegen and build
+rm -rf ./types && yarn graph codegen -o types
+yarn graph build
