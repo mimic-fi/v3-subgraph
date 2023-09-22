@@ -24,7 +24,12 @@ function processInterfaces(path: string): void {
   data.abi
     .filter((input) => input.type === 'function')
     .filter((input) => input.stateMutability === 'nonpayable')
-    .forEach((input) => (FUNCTIONS[iface.getSighash(input.name)] = input.name))
+    .forEach((input) => (FUNCTIONS[iface.getSighash(input.name)] = functionDefinition(input.name, input.inputs)))
+}
+
+function functionDefinition(name: string, inputs: { type: string; name: string }[]): string {
+  const args = inputs.map((input) => `${input.type} ${input.name}`).join(', ')
+  return `${name}(${args})`
 }
 
 function writeOutput(): void {
