@@ -10,44 +10,44 @@ import {
   TaskExecuted,
   Withdrawn,
 } from '../types/Relayer/Relayer'
-import { Movement, RelayedExecution, RelayerParams, Task, Transaction } from '../types/schema'
+import { Movement, RelayedExecution, RelayerConfig, Task, Transaction } from '../types/schema'
 import { Task as TaskContract } from '../types/templates/Task/Task'
 import { rateInUsd } from './rates'
 import { getWrappedNativeToken } from './rates/Tokens'
 
 export function handleDeposited(event: Deposited): void {
-  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
-  relayerParams.balance = relayerParams.balance.plus(event.params.amount)
-  relayerParams.save()
+  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
+  relayerConfig.balance = relayerConfig.balance.plus(event.params.amount)
+  relayerConfig.save()
 }
 
 export function handleGasPaid(event: GasPaid): void {
-  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
-  relayerParams.balance = relayerParams.balance.minus(event.params.amount)
-  relayerParams.quotaUsed = relayerParams.balance.plus(event.params.quota)
-  relayerParams.save()
+  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
+  relayerConfig.balance = relayerConfig.balance.minus(event.params.amount)
+  relayerConfig.quotaUsed = relayerConfig.balance.plus(event.params.quota)
+  relayerConfig.save()
 }
 
 export function handleQuotaPaid(event: QuotaPaid): void {
-  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
+  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
   const quotaPaidAmount = event.params.amount
-  relayerParams.balance = relayerParams.balance.minus(quotaPaidAmount)
-  relayerParams.quotaUsed = relayerParams.quotaUsed.minus(quotaPaidAmount)
-  relayerParams.save()
+  relayerConfig.balance = relayerConfig.balance.minus(quotaPaidAmount)
+  relayerConfig.quotaUsed = relayerConfig.quotaUsed.minus(quotaPaidAmount)
+  relayerConfig.save()
 }
 
 export function handleSmartVaultCollectorSet(event: SmartVaultCollectorSet): void {
-  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
+  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
   let feeCollector = event.params.collector.toHexString()
   if (feeCollector == Address.zero().toHexString()) feeCollector = getDefaultFeeCollector(event.address)
-  relayerParams.feeCollector = feeCollector
-  relayerParams.save()
+  relayerConfig.feeCollector = feeCollector
+  relayerConfig.save()
 }
 
 export function handleSmartVaultMaxQuotaSet(event: SmartVaultMaxQuotaSet): void {
-  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
-  relayerParams.maxQuota = event.params.maxQuota
-  relayerParams.save()
+  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
+  relayerConfig.maxQuota = event.params.maxQuota
+  relayerConfig.save()
 }
 
 export function handleTaskExecuted(event: TaskExecuted): void {
@@ -96,9 +96,9 @@ export function handleTaskExecuted(event: TaskExecuted): void {
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
-  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
-  relayerParams.balance = relayerParams.balance.minus(event.params.amount)
-  relayerParams.save()
+  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
+  relayerConfig.balance = relayerConfig.balance.minus(event.params.amount)
+  relayerConfig.save()
 }
 
 export function getSmartVault(address: Address): Address {
@@ -125,17 +125,17 @@ function getDefaultFeeCollector(address: Address): string {
   return 'Unknown'
 }
 
-export function loadOrCreateRelayerParams(smartVaultId: string, relayer: Address): RelayerParams {
-  let relayerParams = RelayerParams.load(smartVaultId)
+export function loadOrCreateRelayerConfig(smartVaultId: string, relayer: Address): RelayerConfig {
+  let relayerConfig = RelayerConfig.load(smartVaultId)
 
-  if (relayerParams === null) {
-    relayerParams = new RelayerParams(smartVaultId)
-    relayerParams.smartVault = smartVaultId
-    relayerParams.feeCollector = getDefaultFeeCollector(relayer)
-    relayerParams.balance = BigInt.zero()
-    relayerParams.maxQuota = BigInt.zero()
-    relayerParams.quotaUsed = BigInt.zero()
-    relayerParams.save()
+  if (relayerConfig === null) {
+    relayerConfig = new RelayerConfig(smartVaultId)
+    relayerConfig.smartVault = smartVaultId
+    relayerConfig.feeCollector = getDefaultFeeCollector(relayer)
+    relayerConfig.balance = BigInt.zero()
+    relayerConfig.maxQuota = BigInt.zero()
+    relayerConfig.quotaUsed = BigInt.zero()
+    relayerConfig.save()
   }
-  return relayerParams
+  return relayerConfig
 }
