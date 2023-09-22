@@ -1,10 +1,54 @@
-import { Address, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, log } from '@graphprotocol/graph-ts'
 
-import { TaskExecuted } from '../types/Relayer/Relayer'
-import { Movement, RelayedExecution, Task, Transaction } from '../types/schema'
+import {
+  Deposited,
+  GasPaid,
+  QuotaPaid,
+  Relayer,
+  SmartVaultCollectorSet,
+  SmartVaultMaxQuotaSet,
+  TaskExecuted,
+  Withdrawn,
+} from '../types/Relayer/Relayer'
+import { Movement, RelayedExecution, RelayerParams, Task, Transaction } from '../types/schema'
 import { Task as TaskContract } from '../types/templates/Task/Task'
 import { rateInUsd } from './rates'
 import { getWrappedNativeToken } from './rates/Tokens'
+
+export function handleDeposited(event: Deposited): void {
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
+  relayerParams.balance = relayerParams.balance.plus(event.params.amount)
+  relayerParams.save()
+}
+
+export function handleGasPaid(event: GasPaid): void {
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
+  relayerParams.balance = relayerParams.balance.minus(event.params.amount)
+  relayerParams.quotaUsed = relayerParams.balance.plus(event.params.quota)
+  relayerParams.save()
+}
+
+export function handleQuotaPaid(event: QuotaPaid): void {
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
+  const quotaPaidAmount = event.params.amount
+  relayerParams.balance = relayerParams.balance.minus(quotaPaidAmount)
+  relayerParams.quotaUsed = relayerParams.quotaUsed.minus(quotaPaidAmount)
+  relayerParams.save()
+}
+
+export function handleSmartVaultCollectorSet(event: SmartVaultCollectorSet): void {
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
+  let feeCollector = event.params.collector.toHexString()
+  if (feeCollector == Address.zero().toHexString()) feeCollector = getDefaultFeeCollector(event.address)
+  relayerParams.feeCollector = feeCollector
+  relayerParams.save()
+}
+
+export function handleSmartVaultMaxQuotaSet(event: SmartVaultMaxQuotaSet): void {
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
+  relayerParams.maxQuota = event.params.maxQuota
+  relayerParams.save()
+}
 
 export function handleTaskExecuted(event: TaskExecuted): void {
   const task = Task.load(event.params.task.toHexString())
@@ -51,6 +95,12 @@ export function handleTaskExecuted(event: TaskExecuted): void {
   }
 }
 
+export function handleWithdrawn(event: Withdrawn): void {
+  const relayerParams = loadOrCreateRelayerParams(event.params.smartVault.toHexString(), event.address)
+  relayerParams.balance = relayerParams.balance.minus(event.params.amount)
+  relayerParams.save()
+}
+
 export function getSmartVault(address: Address): Address {
   const taskContract = TaskContract.bind(address)
   const smartVaultCall = taskContract.try_smartVault()
@@ -61,4 +111,31 @@ export function getSmartVault(address: Address): Address {
 
   log.warning('smartVault() call reverted for task {}', [address.toHexString()])
   return Address.zero()
+}
+
+function getDefaultFeeCollector(address: Address): string {
+  const contract = Relayer.bind(address)
+  const feeCollectorCall = contract.try_defaultCollector()
+
+  if (!feeCollectorCall.reverted) {
+    return feeCollectorCall.value.toHexString()
+  }
+
+  log.warning('defaultCollector() call reverted for {}', [address.toHexString()])
+  return 'Unknown'
+}
+
+export function loadOrCreateRelayerParams(smartVaultId: string, relayer: Address): RelayerParams {
+  let relayerParams = RelayerParams.load(smartVaultId)
+
+  if (relayerParams === null) {
+    relayerParams = new RelayerParams(smartVaultId)
+    relayerParams.smartVault = smartVaultId
+    relayerParams.feeCollector = getDefaultFeeCollector(relayer)
+    relayerParams.balance = BigInt.zero()
+    relayerParams.maxQuota = BigInt.zero()
+    relayerParams.quotaUsed = BigInt.zero()
+    relayerParams.save()
+  }
+  return relayerParams
 }
