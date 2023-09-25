@@ -23,10 +23,10 @@ type SmartVault @entity {
   tasks: [Task!] @derivedFrom(field: "smartVault")
   movements: [Movement!] @derivedFrom(field: "smartVault")
   transactions: [Transaction!] @derivedFrom(field: "smartVault")
-  relayerParams: RelayerParams @derivedFrom(field: "smartVault")
+  relayerconfig: RelayerConfig @derivedFrom(field: "smartVault")
 }
 
-type RelayerParams @entity {
+type RelayerConfig @entity {
   id: ID!
   smartVault: SmartVault!
   feeCollector: String!
