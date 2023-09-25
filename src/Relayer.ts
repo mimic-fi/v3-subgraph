@@ -23,7 +23,7 @@ export function handleDeposited(event: Deposited): void {
 
 export function handleGasPaid(event: GasPaid): void {
   const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
-  relayerConfig.balance = relayerConfig.balance.minus(event.params.amount)
+  relayerConfig.balance = relayerConfig.balance.minus(event.params.amount.minus(event.params.quota))
   relayerConfig.quotaUsed = relayerConfig.quotaUsed.plus(event.params.quota)
   relayerConfig.save()
 }
@@ -31,7 +31,6 @@ export function handleGasPaid(event: GasPaid): void {
 export function handleQuotaPaid(event: QuotaPaid): void {
   const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
   const quotaPaidAmount = event.params.amount
-  relayerConfig.balance = relayerConfig.balance.minus(quotaPaidAmount)
   relayerConfig.quotaUsed = relayerConfig.quotaUsed.minus(quotaPaidAmount)
   relayerConfig.save()
 }
