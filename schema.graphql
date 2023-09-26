@@ -22,7 +22,7 @@ type SmartVault @entity {
   smartVaultFee: SmartVaultFee @derivedFrom(field: "smartVault")
   tasks: [Task!] @derivedFrom(field: "smartVault")
   movements: [Movement!] @derivedFrom(field: "smartVault")
-  smartVaultCall: [SmartVaultCall!] @derivedFrom(field: "smartVault")
+  smartVaultCalls: [SmartVaultCall!] @derivedFrom(field: "smartVault")
   relayerconfig: RelayerConfig @derivedFrom(field: "smartVault")
 }
 
@@ -203,7 +203,7 @@ type SmartVaultCall @entity {
   hash: String!
   sender: String!
   executedAt: BigInt!
-  smartVaultCallType: SmartVaultCallType!
+  type: SmartVaultCallType!
   fee: BigInt!
   smartVault: SmartVault!
   relayedExecution: RelayedExecution
@@ -234,7 +234,7 @@ type RelayedExecution @entity {
   costUSD: BigInt!
   costNative: BigInt!
   movements: [Movement!] @derivedFrom(field: "relayedExecution")
-  smartVaultCall: [SmartVaultCall!] @derivedFrom(field: "relayedExecution")
+  smartVaultCalls: [SmartVaultCall!] @derivedFrom(field: "relayedExecution")
 }
 
 type Implementation @entity {
