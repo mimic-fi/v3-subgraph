@@ -47,7 +47,7 @@ function createSmartVaultCall(event: ethereum.Event, smartVaultCallType: string,
   smartVaultCall.sender = event.transaction.from.toHexString()
   smartVaultCall.executedAt = event.block.timestamp
   smartVaultCall.smartVault = event.address.toHexString()
-  smartVaultCall.smartVaultCallType = smartVaultCallType
+  smartVaultCall.type = smartVaultCallType
   smartVaultCall.fee = fee
   smartVaultCall.save()
 
@@ -56,7 +56,7 @@ function createSmartVaultCall(event: ethereum.Event, smartVaultCallType: string,
     const executionId = event.transaction.hash.toHexString() + '#' + i.toString()
     const execution = RelayedExecution.load(executionId)
     if (execution == null) break
-    if (execution.smartVaultCall.load().length == 0) {
+    if (execution.smartVaultCalls.load().length == 0) {
       smartVaultCall.relayedExecution = executionId
       smartVaultCall.save()
     }
