@@ -203,13 +203,13 @@ type SmartVaultCall @entity {
   hash: String!
   sender: String!
   executedAt: BigInt!
-  type: TransactionType!
+  smartVaultCallType: SmartVaultCallType!
   fee: BigInt!
   smartVault: SmartVault!
   relayedExecution: RelayedExecution
 }
 
-enum TransactionType {
+enum SmartVaultCallType {
   Wrap
   Unwrap
   Collect

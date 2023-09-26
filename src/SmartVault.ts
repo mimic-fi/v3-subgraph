@@ -40,14 +40,14 @@ export function handleUnwrapped(event: Unwrapped): void {
   createSmartVaultCall(event, 'Unwrap', BigInt.zero())
 }
 
-function createSmartVaultCall(event: ethereum.Event, type: string, fee: BigInt): void {
+function createSmartVaultCall(event: ethereum.Event, smartVaultCallType: string, fee: BigInt): void {
   const smartVaultCallId = getNextSmartVaultCallId(event.transaction.hash)
   const smartVaultCall = new SmartVaultCall(smartVaultCallId)
   smartVaultCall.hash = event.transaction.hash.toHexString()
   smartVaultCall.sender = event.transaction.from.toHexString()
   smartVaultCall.executedAt = event.block.timestamp
   smartVaultCall.smartVault = event.address.toHexString()
-  smartVaultCall.type = type
+  smartVaultCall.smartVaultCallType = smartVaultCallType
   smartVaultCall.fee = fee
   smartVaultCall.save()
 
