@@ -10,7 +10,7 @@ import {
   TaskExecuted,
   Withdrawn,
 } from '../types/Relayer/Relayer'
-import { Movement, RelayedExecution, RelayerConfig, Task, Transaction } from '../types/schema'
+import { Movement, RelayedExecution, RelayerConfig, SmartVaultCall, Task } from '../types/schema'
 import { Task as TaskContract } from '../types/templates/Task/Task'
 import { rateInUsd } from './rates'
 import { getWrappedNativeToken } from './rates/Tokens'
@@ -84,12 +84,12 @@ export function handleTaskExecuted(event: TaskExecuted): void {
 
   // eslint-disable-next-line no-constant-condition
   for (let i: i32 = 0; true; i++) {
-    const transactionId = event.transaction.hash.toHexString() + '#' + i.toString()
-    const transaction = Transaction.load(transactionId)
-    if (transaction == null) break
-    if (transaction.relayedExecution == null) {
-      transaction.relayedExecution = executionId
-      transaction.save()
+    const smartVaultCallId = event.transaction.hash.toHexString() + '#' + i.toString()
+    const smartVaultCall = SmartVaultCall.load(smartVaultCallId)
+    if (smartVaultCall == null) break
+    if (smartVaultCall.relayedExecution == null) {
+      smartVaultCall.relayedExecution = executionId
+      smartVaultCall.save()
     }
   }
 }

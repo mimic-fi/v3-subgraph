@@ -1,6 +1,6 @@
 import { Address, BigInt, Bytes, ethereum, log } from '@graphprotocol/graph-ts'
 
-import { Movement, RelayedExecution, SmartVault, Transaction } from '../types/schema'
+import { Movement, RelayedExecution, SmartVault, SmartVaultCall } from '../types/schema'
 import {
   BalanceConnectorUpdated,
   Called,
@@ -17,48 +17,48 @@ import {
 import { loadOrCreateERC20 } from './ERC20'
 
 export function handleExecuted(event: Executed): void {
-  createTransaction(event, 'Execute', BigInt.zero())
+  createSmartVaultCall(event, 'Execute', BigInt.zero())
 }
 
 export function handleCalled(event: Called): void {
-  createTransaction(event, 'Call', BigInt.zero())
+  createSmartVaultCall(event, 'Call', BigInt.zero())
 }
 
 export function handleCollected(event: Collected): void {
-  createTransaction(event, 'Collect', BigInt.zero())
+  createSmartVaultCall(event, 'Collect', BigInt.zero())
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
-  createTransaction(event, 'Withdraw', event.params.fee)
+  createSmartVaultCall(event, 'Withdraw', event.params.fee)
 }
 
 export function handleWrapped(event: Wrapped): void {
-  createTransaction(event, 'Wrap', BigInt.zero())
+  createSmartVaultCall(event, 'Wrap', BigInt.zero())
 }
 
 export function handleUnwrapped(event: Unwrapped): void {
-  createTransaction(event, 'Unwrap', BigInt.zero())
+  createSmartVaultCall(event, 'Unwrap', BigInt.zero())
 }
 
-function createTransaction(event: ethereum.Event, type: string, fee: BigInt): void {
-  const transactionId = getNextTransactionId(event.transaction.hash)
-  const transaction = new Transaction(transactionId)
-  transaction.hash = event.transaction.hash.toHexString()
-  transaction.sender = event.transaction.from.toHexString()
-  transaction.executedAt = event.block.timestamp
-  transaction.smartVault = event.address.toHexString()
-  transaction.type = type
-  transaction.fee = fee
-  transaction.save()
+function createSmartVaultCall(event: ethereum.Event, type: string, fee: BigInt): void {
+  const smartVaultCallId = getNextSmartVaultCallId(event.transaction.hash)
+  const smartVaultCall = new SmartVaultCall(smartVaultCallId)
+  smartVaultCall.hash = event.transaction.hash.toHexString()
+  smartVaultCall.sender = event.transaction.from.toHexString()
+  smartVaultCall.executedAt = event.block.timestamp
+  smartVaultCall.smartVault = event.address.toHexString()
+  smartVaultCall.type = type
+  smartVaultCall.fee = fee
+  smartVaultCall.save()
 
   // eslint-disable-next-line no-constant-condition
   for (let i: i32 = 0; true; i++) {
     const executionId = event.transaction.hash.toHexString() + '#' + i.toString()
     const execution = RelayedExecution.load(executionId)
     if (execution == null) break
-    if (execution.transactions.load().length == 0) {
-      transaction.relayedExecution = executionId
-      transaction.save()
+    if (execution.smartVaultCall.load().length == 0) {
+      smartVaultCall.relayedExecution = executionId
+      smartVaultCall.save()
     }
   }
 }
@@ -158,12 +158,12 @@ function getNextMovementId(hash: Bytes): string {
   throw Error('Could not find next movement ID')
 }
 
-function getNextTransactionId(hash: Bytes): string {
+function getNextSmartVaultCallId(hash: Bytes): string {
   // eslint-disable-next-line no-constant-condition
   for (let i: i32 = 0; true; i++) {
-    const transactionId = hash.toHexString() + '#' + i.toString()
-    if (Transaction.load(transactionId) == null) return transactionId
+    const smartVaultCallId = hash.toHexString() + '#' + i.toString()
+    if (SmartVaultCall.load(smartVaultCallId) == null) return smartVaultCallId
   }
 
-  throw Error('Could not find next transaction ID')
+  throw Error('Could not find next smartVaultCall ID')
 }
