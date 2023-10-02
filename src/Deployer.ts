@@ -8,6 +8,7 @@ import {
   SmartVault as SmartVaultTemplate,
   Task as TaskTemplate,
 } from '../types/templates'
+import { loadOrCreateNativeToken } from './ERC20'
 import { getNetworkId } from './Networks'
 import { loadOrCreateImplementation } from './Registry'
 import { getAuthorizer, getPriceOracle, getRegistry } from './SmartVault'
@@ -57,6 +58,7 @@ export function handleSmartVaultDeployed(event: SmartVaultDeployed): void {
   smartVault.authorizer = getAuthorizer(event.params.instance).toHexString()
   smartVault.priceOracle = getPriceOracle(event.params.instance).toHexString()
   smartVault.paused = false
+  smartVault.nativeToken = loadOrCreateNativeToken().id
   smartVault.save()
 
   SmartVaultTemplate.create(event.params.instance)
