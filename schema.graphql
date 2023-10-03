@@ -19,7 +19,6 @@ type SmartVault @entity {
   authorizer: Authorizer!
   priceOracle: PriceOracle!
   paused: Boolean!
-  nativeToken: ERC20!
   smartVaultFee: SmartVaultFee @derivedFrom(field: "smartVault")
   tasks: [Task!] @derivedFrom(field: "smartVault")
   movements: [Movement!] @derivedFrom(field: "smartVault")
@@ -32,6 +31,7 @@ type RelayerConfig @entity {
   smartVault: SmartVault!
   feeCollector: String!
   balance: BigInt!
+  nativeToken: ERC20!
   maxQuota: BigInt!
   quotaUsed: BigInt!
 }
