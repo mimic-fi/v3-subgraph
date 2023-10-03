@@ -31,6 +31,7 @@ type RelayerConfig @entity {
   smartVault: SmartVault!
   feeCollector: String!
   balance: BigInt!
+  nativeToken: ERC20!
   maxQuota: BigInt!
   quotaUsed: BigInt!
 }

@@ -12,6 +12,7 @@ import {
 } from '../types/Relayer/Relayer'
 import { Movement, RelayedExecution, RelayerConfig, SmartVaultCall, Task } from '../types/schema'
 import { Task as TaskContract } from '../types/templates/Task/Task'
+import { loadOrCreateNativeToken } from './ERC20'
 import { rateInUsd } from './rates'
 import { getWrappedNativeToken } from './rates/Tokens'
 
@@ -133,6 +134,7 @@ export function loadOrCreateRelayerConfig(smartVaultId: string, relayer: Address
     relayerConfig.feeCollector = getDefaultFeeCollector(relayer)
     relayerConfig.balance = BigInt.zero()
     relayerConfig.maxQuota = BigInt.zero()
+    relayerConfig.nativeToken = loadOrCreateNativeToken().id
     relayerConfig.quotaUsed = BigInt.zero()
     relayerConfig.save()
   }
