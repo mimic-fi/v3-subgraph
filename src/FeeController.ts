@@ -18,7 +18,7 @@ export function handleFeeCollectorSet(event: FeeCollectorSet): void {
 
 export function handleFeePercentageSet(event: FeePercentageSet): void {
   const smartVaultFee = loadOrCreateSmartVaultFee(event.params.smartVault.toHexString(), event.address)
-  smartVaultFee.maxFeePercentage = event.params.pct
+  smartVaultFee.feePercentage = event.params.pct
   smartVaultFee.save()
 }
 
