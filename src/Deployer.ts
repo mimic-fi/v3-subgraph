@@ -75,7 +75,7 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   task.smartVault = getSmartVault(event.params.instance).toHexString()
   task.tokensSource = getTokensSource(event.params.instance).toHexString()
   task.executionType = getExecutionType(event.params.instance).toHexString()
-  task.status = 'Unpaused'
+  task.paused = false
   task.save()
 
   TaskTemplate.create(event.params.instance)

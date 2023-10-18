@@ -253,7 +253,7 @@ templates:
         - event: GasPriceLimitSet(uint256)
           handler: handleGasPriceLimitSet
         - event: Paused()
-          handler: handlePausedSet
+          handler: handlePaused
         - event: PriorityFeeLimitSet(uint256)
           handler: handlePriorityFeeLimitSet
         - event: TimeLockDelaySet(uint256)
@@ -271,7 +271,7 @@ templates:
         - event: TxCostLimitSet(uint256)
           handler: handleTxCostLimitSet
         - event: Unpaused()
-          handler: handleUnpausedSet
+          handler: handleUnpaused
         - event: ConnectorSet(indexed address)
           handler: handleConnectorSet
         - event: DefaultMaxSlippageSet(uint256)

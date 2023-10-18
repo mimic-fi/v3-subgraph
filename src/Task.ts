@@ -171,11 +171,11 @@ export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
   taskConfig.save()
 }
 
-export function handlePausedSet(event: Paused): void {
+export function handlePaused(event: Paused): void {
   const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  task.status = 'Paused'
+  task.paused = true
   task.save
 }
 
@@ -240,11 +240,11 @@ export function handleTxCostLimitSet(event: TxCostLimitSet): void {
   taskConfig.save()
 }
 
-export function handleUnpausedSet(event: Unpaused): void {
+export function handleUnpaused(event: Unpaused): void {
   const task = Task.load(event.address.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
 
-  task.status = 'Unpaused'
+  task.paused = false
   task.save
 }
 
