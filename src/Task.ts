@@ -7,6 +7,7 @@ import {
   CustomTokenOut,
   CustomTokenThreshold,
   CustomVolumeLimit,
+  Task,
   TaskConfig,
   TokenThreshold,
   VolumeLimit,
@@ -25,6 +26,7 @@ import {
   DefaultTokenThresholdSet,
   DefaultVolumeLimitSet,
   GasPriceLimitSet,
+  Paused,
   PriorityFeeLimitSet,
   RecipientSet,
   Task as TaskContract,
@@ -35,6 +37,7 @@ import {
   TokensAcceptanceTypeSet,
   TxCostLimitPctSet,
   TxCostLimitSet,
+  Unpaused,
 } from '../types/templates/Task/Task'
 import { loadOrCreateERC20 } from './ERC20'
 
@@ -168,6 +171,14 @@ export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
   taskConfig.save()
 }
 
+export function handlePausedSet(event: Paused): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  task.status = 'Paused'
+  task.save
+}
+
 export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
   taskConfig.priorityFeeLimit = event.params.priorityFeeLimit
@@ -227,6 +238,14 @@ export function handleTxCostLimitSet(event: TxCostLimitSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
   taskConfig.txCostLimit = event.params.txCostLimit
   taskConfig.save()
+}
+
+export function handleUnpausedSet(event: Unpaused): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  task.status = 'Unpaused'
+  task.save
 }
 
 export function getExecutionType(address: Address): Bytes {
