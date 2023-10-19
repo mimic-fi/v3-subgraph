@@ -18,3 +18,15 @@ jobs:
         env:
           GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
         run: yarn deploy:arbitrum
+  deploy-mainnet:
+      name: Deploy Mainnet
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Set up environment
+          uses: ./.github/actions/setup
+        - name: Deploy Mainnet
+          env:
+            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+          run: yarn deploy:mainnet
