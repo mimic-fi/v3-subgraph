@@ -98,6 +98,7 @@ type Task @entity {
   implementation: Implementation!
   environment: Environment!
   smartVault: SmartVault!
+  paused: Boolean!
   tokensSource: String!
   executionType: String!
   taskConfig: TaskConfig @derivedFrom(field: "task")
