@@ -18,3 +18,7 @@ jobs:
         env:
           GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
         run: yarn deploy:arbitrum
+      - name: Deploy Mainnet
+        env:
+          GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+        run: yarn deploy:mainnet
