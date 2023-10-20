@@ -920,6 +920,14 @@
     "@mimic-fi/v3-helpers" "0.1.0"
     "@openzeppelin/contracts" "4.7.0"
 
+"@mimic-fi/v3-authorizer@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@mimic-fi/v3-authorizer/-/v3-authorizer-0.1.1.tgz#e5fd7191d9735bd4ea82d1a14540ecd04c34e7ca"
+  integrity sha512-WMKXW0r5LEAMzA3jHnVO5XC/dg/SGTYhzAPw69dWpG9p6Fmw5jXTbSmpvrx5yZs6iTdIvvCjuwFeWnDmVVUYNQ==
+  dependencies:
+    "@mimic-fi/v3-helpers" "0.1.0"
+    "@openzeppelin/contracts" "4.9.3"
+
 "@mimic-fi/v3-connectors@0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@mimic-fi/v3-connectors/-/v3-connectors-0.1.0.tgz#1ed64c2007f6c388d1e2e7911faaca3e5fb160d1"
@@ -927,6 +935,14 @@
   dependencies:
     "@mimic-fi/v3-helpers" "0.1.0"
     "@openzeppelin/contracts" "4.7.0"
+
+"@mimic-fi/v3-connectors@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@mimic-fi/v3-connectors/-/v3-connectors-0.1.1.tgz#c475d7d86fd9571989f9b530fd521dc4251a5630"
+  integrity sha512-d05D7lbYv8UbzdgvgYepOhAUJZ/RwujwYdgBqnxXcgBO0ErOeZmAtW8RZ9bzoan7d0ltceVISwGfd2NX8Kbmzg==
+  dependencies:
+    "@mimic-fi/v3-helpers" "0.1.0"
+    "@openzeppelin/contracts" "4.9.3"
 
 "@mimic-fi/v3-deployer@0.1.0":
   version "0.1.0"
@@ -1017,6 +1033,19 @@
     "@mimic-fi/v3-price-oracle" "0.1.0"
     "@mimic-fi/v3-smart-vault" "0.1.0"
     "@openzeppelin/contracts" "4.7.0"
+
+"@mimic-fi/v3-tasks@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@mimic-fi/v3-tasks/-/v3-tasks-0.2.0.tgz#5c037bdd3d15bdebdb62583a101271f80468eca4"
+  integrity sha512-23elbQSjxgnukrgx7G0yavjJoLss1AeMU0kPhCL//P0lFDhzRVlcP7o9Hwoi4QE175phbEaWGSSEYB71GLiz2A==
+  dependencies:
+    "@mimic-fi/v3-authorizer" "0.1.1"
+    "@mimic-fi/v3-connectors" "0.1.1"
+    "@mimic-fi/v3-helpers" "0.1.0"
+    "@mimic-fi/v3-price-oracle" "0.1.0"
+    "@mimic-fi/v3-smart-vault" "0.1.0"
+    "@openzeppelin/contracts" "4.9.3"
+    "@quant-finance/solidity-datetime" "2.2.0"
 
 "@noble/hashes@1.2.0", "@noble/hashes@~1.2.0":
   version "1.2.0"
@@ -1312,6 +1341,11 @@
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.7.0.tgz#3092d70ea60e3d1835466266b1d68ad47035a2d5"
   integrity sha512-52Qb+A1DdOss8QvJrijYYPSf32GUg2pGaG/yCxtaA3cu4jduouTdg4XZSMLW9op54m1jH7J8hoajhHKOPsoJFw==
 
+"@openzeppelin/contracts@4.9.3":
+  version "4.9.3"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.9.3.tgz#00d7a8cf35a475b160b3f0293a6403c511099364"
+  integrity sha512-He3LieZ1pP2TNt5JbkPA4PNT9WC3gOTOlDcFGJW4Le4QKqwmiNJCRt44APfxMxvq7OugU/cqYuPcSBzOw38DAg==
+
 "@peculiar/asn1-schema@^2.3.6":
   version "2.3.6"
   resolved "https://registry.yarnpkg.com/@peculiar/asn1-schema/-/asn1-schema-2.3.6.tgz#3dd3c2ade7f702a9a94dfb395c192f5fa5d6b922"
@@ -1391,6 +1425,11 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
+
+"@quant-finance/solidity-datetime@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@quant-finance/solidity-datetime/-/solidity-datetime-2.2.0.tgz#50f2d00a571d8cc2d962257b40b70fc44450dcaa"
+  integrity sha512-iO0EnqPKTzGCgQOkI9lerpJc0XKUhMNurSjHcA7p7nlP2K2z3U4kk9OC9eQkZUrdBtltft+kIibiDdIOYWuQMg==
 
 "@rescript/std@9.0.0":
   version "9.0.0"
