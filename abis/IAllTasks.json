@@ -1707,5 +1707,42 @@
     ],
     "name": "CustomTokenThresholdSet",
     "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "Executed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "gasPriceLimit",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "priorityFeeLimit",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "txCostLimit",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "txCostLimitPct",
+        "type": "uint256"
+      }
+    ],
+    "name": "GasLimitsSet",
+    "type": "event"
   }
 ]

@@ -250,6 +250,8 @@ templates:
           handler: handleDefaultVolumeLimitSet
         - event: DefaultTokenThresholdSet(address,uint256,uint256)
           handler: handleDefaultTokenThresholdSet
+        - event: GasLimitsSet(uint256,uint256,uint256,uint256)
+          handler: GasLimitsSet
         - event: GasPriceLimitSet(uint256)
           handler: handleGasPriceLimitSet
         - event: Paused()
