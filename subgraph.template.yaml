@@ -274,10 +274,14 @@ templates:
           handler: handleUnpaused
         - event: ConnectorSet(indexed address)
           handler: handleConnectorSet
+        - event: DefaultMaxFeeSet(indexed address,uint256)
+          handler: handleDefaultMaxFeeSet
         - event: DefaultMaxSlippageSet(uint256)
           handler: handleDefaultMaxSlippageSet
         - event: DefaultTokenOutSet(indexed address)
           handler: handleDefaultTokenOutSet
+        - event: CustomMaxFeeSet(indexed address,indexed address,uint256)
+          handler: defaultCustomMaxFeeSet
         - event: CustomMaxSlippageSet(indexed address,uint256)
           handler: handleCustomMaxSlippageSet
         - event: CustomTokenOutSet(indexed address,address)
