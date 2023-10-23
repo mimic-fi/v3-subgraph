@@ -3,7 +3,7 @@ import { Address, BigInt, Bytes, log } from '@graphprotocol/graph-ts'
 import {
   AcceptanceList,
   CustomDestinationChain,
-  CustomMaxFee,
+  CustomMaxBridgeFee,
   CustomMaxSlippage,
   CustomTokenOut,
   CustomTokenThreshold,
@@ -72,19 +72,19 @@ export function handleCustomDestinationChainSet(event: CustomDestinationChainSet
 
 export function handleCustomMaxFeeSet(event: CustomMaxFeeSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const customMaxFeeId = getTaskCustomConfigId(taskConfig, event.params.token)
+  const customMaxBridgeFeeId = getTaskCustomConfigId(taskConfig, event.params.token)
 
-  let customMaxFee = CustomMaxFee.load(customMaxFeeId)
-  if (customMaxFee === null) customMaxFee = new CustomMaxFee(customMaxFeeId)
-  customMaxFee.taskConfig = taskConfig.id
-  customMaxFee.token = loadOrCreateERC20(event.params.token).id
-  customMaxFee.save()
-
-  let maxBridgeFee = MaxBridgeFee.load(customMaxFeeId)
-  if (maxBridgeFee == null) maxBridgeFee = new MaxBridgeFee(customMaxFeeId)
+  let maxBridgeFee = MaxBridgeFee.load(customMaxBridgeFeeId)
+  if (maxBridgeFee == null) maxBridgeFee = new MaxBridgeFee(customMaxBridgeFeeId)
   maxBridgeFee.amount = event.params.amount
   maxBridgeFee.token = loadOrCreateERC20(event.params.maxFeeToken).id
   maxBridgeFee.save()
+
+  let customMaxBridgeFee = CustomMaxBridgeFee.load(customMaxBridgeFeeId)
+  if (customMaxBridgeFee === null) customMaxBridgeFee = new CustomMaxBridgeFee(customMaxBridgeFeeId)
+  customMaxBridgeFee.taskConfig = taskConfig.id
+  customMaxBridgeFee.token = loadOrCreateERC20(event.params.token).id
+  customMaxBridgeFee.save()
 }
 
 export function handleCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
