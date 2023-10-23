@@ -5,7 +5,6 @@
   "license": "GPL-3.0",
   "scripts": {
     "lint": "eslint . --ext .ts",
-    "codegen": "graph codegen",
     "build:arbitrum": "NETWORK=arbitrum ./scripts/build.sh",
     "build:avalanche": "NETWORK=avalanche ./scripts/build.sh",
     "build:bsc": "NETWORK=bsc ./scripts/build.sh",

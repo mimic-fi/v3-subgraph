@@ -193,16 +193,14 @@ export function handleRecipientSet(event: RecipientSet): void {
 
 export function handleTimeLockAllowedAtSet(event: TimeLockAllowedAtSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  let timelock = Timelock.load(taskConfig.id)
-  if (timelock == null) timelock = new Timelock(taskConfig.id)
+  const timelock = loadOrCreateTimelock(taskConfig.id)
   timelock.allowedAt = event.params.allowedAt
   timelock.save()
 }
 
 export function handleTimelockSet(event: TimeLockSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  let timelock = Timelock.load(taskConfig.id)
-  if (timelock == null) timelock = new Timelock(taskConfig.id)
+  const timelock = loadOrCreateTimelock(taskConfig.id)
   timelock.mode = parseTimelockMode(event.params.mode)
   timelock.frequency = event.params.frequency
   timelock.allowedAt = event.params.allowedAt
@@ -317,6 +315,19 @@ export function loadOrCreateAcceptanceList(tokensAcceptanceListId: string): Acce
   return acceptanceList
 }
 
+export function loadOrCreateTimelock(timelockId: string): Timelock {
+  let timelock = Timelock.load(timelockId)
+
+  if (timelock === null) {
+    timelock = new Timelock(timelockId)
+    timelock.allowedAt = BigInt.zero()
+    timelock.frequency = BigInt.zero()
+    timelock.window = BigInt.zero()
+  }
+
+  return timelock
+}
+
 export function parseAcceptanceType(op: i32): string {
   if (op == 0) return 'DenyList'
   else return 'AllowList'
@@ -324,7 +335,7 @@ export function parseAcceptanceType(op: i32): string {
 
 export function parseTimelockMode(mode: i32): string {
   if (mode == 0) return 'Seconds'
-  if (mode == 1) return 'Day'
+  if (mode == 1) return 'On day'
   else return 'Last month day'
 }
 
