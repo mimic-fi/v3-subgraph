@@ -8,6 +8,7 @@ import {
   CustomTokenOut,
   CustomTokenThreshold,
   CustomVolumeLimit,
+  MaxBridgeFee,
   Task,
   TaskConfig,
   TokenThreshold,
@@ -77,9 +78,13 @@ export function handleCustomMaxFeeSet(event: CustomMaxFeeSet): void {
   if (customMaxFee === null) customMaxFee = new CustomMaxFee(customMaxFeeId)
   customMaxFee.taskConfig = taskConfig.id
   customMaxFee.token = loadOrCreateERC20(event.params.token).id
-  customMaxFee.maxFeeToken = loadOrCreateERC20(event.params.maxFeeToken).id
-  customMaxFee.maxFee = event.params.amount
   customMaxFee.save()
+
+  let maxBridgeFee = MaxBridgeFee.load(customMaxFeeId)
+  if (maxBridgeFee == null) maxBridgeFee = new MaxBridgeFee(customMaxFeeId)
+  maxBridgeFee.amount = event.params.amount
+  maxBridgeFee.token = loadOrCreateERC20(event.params.maxFeeToken).id
+  maxBridgeFee.save()
 }
 
 export function handleCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
@@ -151,9 +156,13 @@ export function handleDefaultDestinationChainSet(event: DefaultDestinationChainS
 
 export function handleDefaultMaxFeeSet(event: DefaultMaxFeeSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.defaultMaxFee = event.params.amount
-  taskConfig.defaultMaxFeeToken = event.params.maxFeeToken.toHexString()
-  taskConfig.save()
+  const maxBridgeFeeId = getTaskCustomConfigId(taskConfig, event.params.maxFeeToken)
+
+  let maxBridgeFee = MaxBridgeFee.load(maxBridgeFeeId)
+  if (maxBridgeFee == null) maxBridgeFee = new MaxBridgeFee(maxBridgeFeeId)
+  maxBridgeFee.amount = event.params.amount
+  maxBridgeFee.token = loadOrCreateERC20(event.params.maxFeeToken).id
+  maxBridgeFee.save()
 }
 
 export function handleDefaultMaxSlippageSet(event: DefaultMaxSlippageSet): void {

@@ -125,8 +125,7 @@ type TaskConfig @entity{
   recipient: String
   defaultDestinationChain: BigInt
   customDestinationChain: [CustomDestinationChain!] @derivedFrom(field: "taskConfig")
-  defaultMaxFee: BigInt
-  defaultMaxFeeToken: String
+  defaultMaxFee: MaxBridgeFee
   customMaxFee: [CustomMaxFee!] @derivedFrom(field: "taskConfig")
   defaultMaxSlippage: BigInt
   customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "taskConfig")
@@ -159,8 +158,13 @@ type CustomMaxFee  @entity {
   id: ID!
   taskConfig: TaskConfig!
   token: ERC20!
-  maxFeeToken: ERC20!
-  maxFee: BigInt!
+  maxBridgeFee: MaxBridgeFee!
+}
+
+type MaxBridgeFee @entity {
+  id: ID!
+  amount: BigInt!
+  token: ERC20!
 }
 
 type CustomMaxSlippage @entity {
