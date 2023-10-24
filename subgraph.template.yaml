@@ -251,7 +251,7 @@ templates:
         - event: TokensAcceptanceTypeSet(uint8)
           handler: handleTokensAcceptanceTypeSet
         - event: GasLimitsSet(uint256,uint256,uint256,uint256)
-          handler: GasLimitsSet
+          handler: handleGasLimitsSet
         - event: GasPriceLimitSet(uint256)
           handler: handleGasPriceLimitSet
         - event: PriorityFeeLimitSet(uint256)
