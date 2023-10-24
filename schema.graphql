@@ -109,11 +109,9 @@ type TaskConfig @entity{
   task: Task!
   nextBalanceConnector: String!
   previousBalanceConnector: String!
-  gasLimits: GasLimits
-  timeLockDelay: BigInt!
-  timeLockExecutionPeriod: BigInt!
-  timeLockExpiration: BigInt!
   acceptanceList: AcceptanceList!
+  timelock: Timelock
+  gasLimits: GasLimits
   defaultVolumeLimit: VolumeLimit
   defaultTokenThreshold: TokenThreshold
   customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "taskConfig")
@@ -170,6 +168,22 @@ type GasLimits @entity {
   priorityFeeLimit: BigInt!
   txCostLimitPct: BigInt!
   txCostLimit: BigInt!
+}
+
+type Timelock @entity{
+  id: ID!
+  taskConfig: TaskConfig!
+  mode: TimelockMode!
+  allowedAt: BigInt!
+  frequency: BigInt!
+  window: BigInt!
+}
+
+enum TimelockMode {
+  Seconds
+  OnDay
+  LastMonthDay
+  Unkown
 }
 
 type TokenThreshold @entity {
