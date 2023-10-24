@@ -7,6 +7,7 @@ import {
   CustomTokenOut,
   CustomTokenThreshold,
   CustomVolumeLimit,
+  GasLimits,
   Task,
   TaskConfig,
   Timelock,
@@ -26,6 +27,7 @@ import {
   DefaultTokenOutSet,
   DefaultTokenThresholdSet,
   DefaultVolumeLimitSet,
+  GasLimitsSet,
   GasPriceLimitSet,
   Paused,
   PriorityFeeLimitSet,
@@ -165,10 +167,21 @@ export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet):
   defaultTokenThreshold.save()
 }
 
+export function handleGasLimitsSet(event: GasLimitsSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.gasPriceLimit = event.params.gasPriceLimit
+  gasLimits.priorityFeeLimit = event.params.priorityFeeLimit
+  gasLimits.txCostLimitPct = event.params.txCostLimitPct
+  gasLimits.txCostLimit = event.params.txCostLimit
+  gasLimits.save()
+}
+
 export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.gasPriceLimit = event.params.gasPriceLimit
-  taskConfig.save()
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.gasPriceLimit = event.params.gasPriceLimit
+  gasLimits.save()
 }
 
 export function handlePaused(event: Paused): void {
@@ -181,8 +194,9 @@ export function handlePaused(event: Paused): void {
 
 export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.priorityFeeLimit = event.params.priorityFeeLimit
-  taskConfig.save()
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.priorityFeeLimit = event.params.priorityFeeLimit
+  gasLimits.save()
 }
 
 export function handleRecipientSet(event: RecipientSet): void {
@@ -229,14 +243,16 @@ export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): v
 
 export function handleTxCostLimitPctSet(event: TxCostLimitPctSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.txCostLimitPct = event.params.txCostLimitPct
-  taskConfig.save()
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.txCostLimitPct = event.params.txCostLimitPct
+  gasLimits.save()
 }
 
 export function handleTxCostLimitSet(event: TxCostLimitSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.txCostLimit = event.params.txCostLimit
-  taskConfig.save()
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.txCostLimit = event.params.txCostLimit
+  gasLimits.save()
 }
 
 export function handleUnpaused(event: Unpaused): void {
@@ -292,10 +308,6 @@ export function loadOrCreateTaskConfig(taskId: string): TaskConfig {
     taskConfig.acceptanceList = loadOrCreateAcceptanceList(taskId).id
     taskConfig.previousBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
     taskConfig.nextBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
-    taskConfig.gasPriceLimit = BigInt.zero()
-    taskConfig.priorityFeeLimit = BigInt.zero()
-    taskConfig.txCostLimitPct = BigInt.zero()
-    taskConfig.txCostLimit = BigInt.zero()
     taskConfig.save()
   }
 
@@ -315,14 +327,29 @@ export function loadOrCreateAcceptanceList(tokensAcceptanceListId: string): Acce
   return acceptanceList
 }
 
+export function loadOrCreateGasLimits(gasPriceLimitsId: string): GasLimits {
+  let gasLimits = GasLimits.load(gasPriceLimitsId)
+
+  if (gasLimits === null) {
+    gasLimits = new GasLimits(gasPriceLimitsId)
+    gasLimits.gasPriceLimit = BigInt.zero()
+    gasLimits.priorityFeeLimit = BigInt.zero()
+    gasLimits.txCostLimitPct = BigInt.zero()
+    gasLimits.txCostLimit = BigInt.zero()
+    gasLimits.save()
+  }
+
+  return gasLimits
+}
+
 export function loadOrCreateTimelock(timelockId: string): Timelock {
   let timelock = Timelock.load(timelockId)
 
   if (timelock === null) {
     timelock = new Timelock(timelockId)
+    timelock.mode = 'Seconds'
     timelock.allowedAt = BigInt.zero()
     timelock.frequency = BigInt.zero()
-    timelock.mode = 'Seconds'
     timelock.window = BigInt.zero()
     timelock.save()
   }
