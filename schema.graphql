@@ -113,17 +113,19 @@ type TaskConfig @entity{
   timelock: Timelock
   gasLimits: GasLimits
   defaultVolumeLimit: VolumeLimit
-  defaultTokenThreshold: TokenThreshold
   customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "taskConfig")
+  defaultTokenThreshold: TokenThreshold
   customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "taskConfig")
   connector: String
-  defaultDestinationChain: BigInt
-  defaultMaxSlippage: BigInt
-  defaultTokenOut: ERC20
   recipient: String
+  defaultDestinationChain: BigInt
   customDestinationChain: [CustomDestinationChain!] @derivedFrom(field: "taskConfig")
-  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "taskConfig")
+  defaultMaxBridgeFee: MaxBridgeFee
+  customMaxBridgeFee: [CustomMaxBridgeFee!] @derivedFrom(field: "taskConfig")
+  defaultMaxSlippage: BigInt
   customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "taskConfig")
+  defaultTokenOut: ERC20
+  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "taskConfig")
 }
 
 type AcceptanceList @entity {
@@ -145,6 +147,19 @@ type CustomDestinationChain @entity {
   taskConfig: TaskConfig!
   token: ERC20!
   destinationChain: BigInt!
+}
+
+type CustomMaxBridgeFee  @entity {
+  id: ID!
+  taskConfig: TaskConfig!
+  token: ERC20!
+  maxBridgeFee: MaxBridgeFee!
+}
+
+type MaxBridgeFee @entity {
+  id: ID!
+  amount: BigInt!
+  token: ERC20!
 }
 
 type CustomMaxSlippage @entity {
