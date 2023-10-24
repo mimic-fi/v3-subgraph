@@ -240,57 +240,57 @@ templates:
         - name: ERC20
           file: ./abis/IERC20.json
       eventHandlers:
+        - event: Paused()
+          handler: handlePaused
+        - event: Unpaused()
+          handler: handleUnpaused
         - event: BalanceConnectorsSet(indexed bytes32,indexed bytes32)
           handler: handleBalanceConnectorsSet
-        - event: CustomTokenThresholdSet(indexed address,address,uint256,uint256)
-          handler: handleCustomTokenThresholdSet 
-        - event: CustomVolumeLimitSet(indexed address,indexed address,uint256,uint256)
-          handler: handleCustomVolumeLimitSet
-        - event: DefaultVolumeLimitSet(indexed address,uint256,uint256)
-          handler: handleDefaultVolumeLimitSet
-        - event: DefaultTokenThresholdSet(address,uint256,uint256)
-          handler: handleDefaultTokenThresholdSet
+        - event: TokensAcceptanceListSet(indexed address,bool)
+          handler: handleTokensAcceptanceListSet
+        - event: TokensAcceptanceTypeSet(uint8)
+          handler: handleTokensAcceptanceTypeSet
         - event: GasLimitsSet(uint256,uint256,uint256,uint256)
           handler: GasLimitsSet
         - event: GasPriceLimitSet(uint256)
           handler: handleGasPriceLimitSet
-        - event: Paused()
-          handler: handlePaused
         - event: PriorityFeeLimitSet(uint256)
           handler: handlePriorityFeeLimitSet
-        - event: TimeLockAllowedAtSet(uint256)
-          handler: handleTimeLockAllowedAtSet
-        - event: TimeLockSet(uint8,uint256,uint256,uint256)
-          handler: handleTimeLockSet
-        - event: TokensAcceptanceListSet(indexed address,bool)
-          handler: handleTokensAcceptanceListSet        
-        - event: TokensAcceptanceTypeSet(uint8)
-          handler: handleTokensAcceptanceTypeSet
         - event: TxCostLimitPctSet(uint256)
           handler: handleTxCostLimitPctSet
         - event: TxCostLimitSet(uint256)
           handler: handleTxCostLimitSet
-        - event: Unpaused()
-          handler: handleUnpaused
+        - event: TimeLockSet(uint8,uint256,uint256,uint256)
+          handler: handleTimeLockSet
+        - event: TimeLockAllowedAtSet(uint256)
+          handler: handleTimeLockAllowedAtSet
         - event: ConnectorSet(indexed address)
           handler: handleConnectorSet
-        - event: DefaultMaxFeeSet(indexed address,uint256)
-          handler: handleDefaultMaxFeeSet
-        - event: DefaultMaxSlippageSet(uint256)
-          handler: handleDefaultMaxSlippageSet
-        - event: DefaultTokenOutSet(indexed address)
-          handler: handleDefaultTokenOutSet
-        - event: CustomMaxFeeSet(indexed address,indexed address,uint256)
-          handler: defaultCustomMaxFeeSet
-        - event: CustomMaxSlippageSet(indexed address,uint256)
-          handler: handleCustomMaxSlippageSet
-        - event: CustomTokenOutSet(indexed address,address)
-          handler: handleCustomTokenOutSet
         - event: RecipientSet(indexed address)
           handler: handleRecipientSet
+        - event: DefaultTokenThresholdSet(address,uint256,uint256)
+          handler: handleDefaultTokenThresholdSet
+        - event: CustomTokenThresholdSet(indexed address,address,uint256,uint256)
+          handler: handleCustomTokenThresholdSet
+        - event: DefaultVolumeLimitSet(indexed address,uint256,uint256)
+          handler: handleDefaultVolumeLimitSet
+        - event: CustomVolumeLimitSet(indexed address,indexed address,uint256,uint256)
+          handler: handleCustomVolumeLimitSet
+        - event: DefaultTokenOutSet(indexed address)
+          handler: handleDefaultTokenOutSet
+        - event: CustomTokenOutSet(indexed address,address)
+          handler: handleCustomTokenOutSet
+        - event: DefaultMaxSlippageSet(uint256)
+          handler: handleDefaultMaxSlippageSet
+        - event: CustomMaxSlippageSet(indexed address,uint256)
+          handler: handleCustomMaxSlippageSet
         - event: DefaultDestinationChainSet(indexed uint256)
           handler: handleDefaultDestinationChainSet
         - event: CustomDestinationChainSet(indexed address,indexed uint256)
           handler: handleCustomDestinationChainSet
+        - event: DefaultMaxFeeSet(indexed address,uint256)
+          handler: handleDefaultMaxFeeSet
+        - event: CustomMaxFeeSet(indexed address,indexed address,uint256)
+          handler: defaultCustomMaxFeeSet
       file: ./src/Task.ts
       
