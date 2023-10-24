@@ -324,6 +324,7 @@ export function loadOrCreateTimelock(timelockId: string): Timelock {
     timelock.frequency = BigInt.zero()
     timelock.mode = 'Seconds'
     timelock.window = BigInt.zero()
+    timelock.save()
   }
 
   return timelock
