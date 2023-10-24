@@ -250,18 +250,18 @@ templates:
           handler: handleDefaultVolumeLimitSet
         - event: DefaultTokenThresholdSet(address,uint256,uint256)
           handler: handleDefaultTokenThresholdSet
+        - event: GasLimitsSet(uint256,uint256,uint256,uint256)
+          handler: GasLimitsSet
         - event: GasPriceLimitSet(uint256)
           handler: handleGasPriceLimitSet
         - event: Paused()
           handler: handlePaused
         - event: PriorityFeeLimitSet(uint256)
           handler: handlePriorityFeeLimitSet
-        - event: TimeLockDelaySet(uint256)
-          handler: handleTimeLockDelaySet
-        - event: TimeLockExecutionPeriodSet(uint256)
-          handler: handleTimeLockExecutionPeriodSet
-        - event: TimeLockExpirationSet(uint256)
-          handler: handleTimeLockExpirationSet
+        - event: TimeLockAllowedAtSet(uint256)
+          handler: handleTimeLockAllowedAtSet
+        - event: TimeLockSet(uint8,uint256,uint256,uint256)
+          handler: handleTimeLockSet
         - event: TokensAcceptanceListSet(indexed address,bool)
           handler: handleTokensAcceptanceListSet        
         - event: TokensAcceptanceTypeSet(uint8)
@@ -293,4 +293,4 @@ templates:
         - event: CustomDestinationChainSet(indexed address,indexed uint256)
           handler: handleCustomDestinationChainSet
       file: ./src/Task.ts
-
+      

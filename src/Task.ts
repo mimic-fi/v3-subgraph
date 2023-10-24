@@ -8,9 +8,11 @@ import {
   CustomTokenOut,
   CustomTokenThreshold,
   CustomVolumeLimit,
+  GasLimits,
   MaxBridgeFee,
   Task,
   TaskConfig,
+  Timelock,
   TokenThreshold,
   VolumeLimit,
 } from '../types/schema'
@@ -29,14 +31,14 @@ import {
   DefaultTokenOutSet,
   DefaultTokenThresholdSet,
   DefaultVolumeLimitSet,
+  GasLimitsSet,
   GasPriceLimitSet,
   Paused,
   PriorityFeeLimitSet,
   RecipientSet,
   Task as TaskContract,
-  TimeLockDelaySet,
-  TimeLockExecutionPeriodSet,
-  TimeLockExpirationSet,
+  TimeLockAllowedAtSet,
+  TimeLockSet,
   TokensAcceptanceListSet,
   TokensAcceptanceTypeSet,
   TxCostLimitPctSet,
@@ -196,10 +198,21 @@ export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet):
   defaultTokenThreshold.save()
 }
 
+export function handleGasLimitsSet(event: GasLimitsSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.gasPriceLimit = event.params.gasPriceLimit
+  gasLimits.priorityFeeLimit = event.params.priorityFeeLimit
+  gasLimits.txCostLimitPct = event.params.txCostLimitPct
+  gasLimits.txCostLimit = event.params.txCostLimit
+  gasLimits.save()
+}
+
 export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.gasPriceLimit = event.params.gasPriceLimit
-  taskConfig.save()
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.gasPriceLimit = event.params.gasPriceLimit
+  gasLimits.save()
 }
 
 export function handlePaused(event: Paused): void {
@@ -212,8 +225,9 @@ export function handlePaused(event: Paused): void {
 
 export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.priorityFeeLimit = event.params.priorityFeeLimit
-  taskConfig.save()
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.priorityFeeLimit = event.params.priorityFeeLimit
+  gasLimits.save()
 }
 
 export function handleRecipientSet(event: RecipientSet): void {
@@ -222,22 +236,21 @@ export function handleRecipientSet(event: RecipientSet): void {
   taskConfig.save()
 }
 
-export function handleTimeLockDelaySet(event: TimeLockDelaySet): void {
+export function handleTimeLockAllowedAtSet(event: TimeLockAllowedAtSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.timeLockDelay = event.params.delay
-  taskConfig.save()
+  const timelock = loadOrCreateTimelock(taskConfig.id)
+  timelock.allowedAt = event.params.allowedAt
+  timelock.save()
 }
 
-export function handleTimeLockExecutionPeriodSet(event: TimeLockExecutionPeriodSet): void {
+export function handleTimelockSet(event: TimeLockSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.timeLockExecutionPeriod = event.params.period
-  taskConfig.save()
-}
-
-export function handleTimeLockExpirationSet(event: TimeLockExpirationSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.timeLockExpiration = event.params.expiration
-  taskConfig.save()
+  const timelock = loadOrCreateTimelock(taskConfig.id)
+  timelock.mode = parseTimelockMode(event.params.mode)
+  timelock.frequency = event.params.frequency
+  timelock.allowedAt = event.params.allowedAt
+  timelock.window = event.params.window
+  timelock.save()
 }
 
 export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): void {
@@ -261,14 +274,16 @@ export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): v
 
 export function handleTxCostLimitPctSet(event: TxCostLimitPctSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.txCostLimitPct = event.params.txCostLimitPct
-  taskConfig.save()
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.txCostLimitPct = event.params.txCostLimitPct
+  gasLimits.save()
 }
 
 export function handleTxCostLimitSet(event: TxCostLimitSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.txCostLimit = event.params.txCostLimit
-  taskConfig.save()
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.txCostLimit = event.params.txCostLimit
+  gasLimits.save()
 }
 
 export function handleUnpaused(event: Unpaused): void {
@@ -324,13 +339,6 @@ export function loadOrCreateTaskConfig(taskId: string): TaskConfig {
     taskConfig.acceptanceList = loadOrCreateAcceptanceList(taskId).id
     taskConfig.previousBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
     taskConfig.nextBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
-    taskConfig.gasPriceLimit = BigInt.zero()
-    taskConfig.priorityFeeLimit = BigInt.zero()
-    taskConfig.txCostLimitPct = BigInt.zero()
-    taskConfig.txCostLimit = BigInt.zero()
-    taskConfig.timeLockDelay = BigInt.zero()
-    taskConfig.timeLockExecutionPeriod = BigInt.zero()
-    taskConfig.timeLockExpiration = BigInt.zero()
     taskConfig.save()
   }
 
@@ -350,9 +358,46 @@ export function loadOrCreateAcceptanceList(tokensAcceptanceListId: string): Acce
   return acceptanceList
 }
 
+export function loadOrCreateGasLimits(gasPriceLimitsId: string): GasLimits {
+  let gasLimits = GasLimits.load(gasPriceLimitsId)
+
+  if (gasLimits === null) {
+    gasLimits = new GasLimits(gasPriceLimitsId)
+    gasLimits.gasPriceLimit = BigInt.zero()
+    gasLimits.priorityFeeLimit = BigInt.zero()
+    gasLimits.txCostLimitPct = BigInt.zero()
+    gasLimits.txCostLimit = BigInt.zero()
+    gasLimits.save()
+  }
+
+  return gasLimits
+}
+
+export function loadOrCreateTimelock(timelockId: string): Timelock {
+  let timelock = Timelock.load(timelockId)
+
+  if (timelock === null) {
+    timelock = new Timelock(timelockId)
+    timelock.mode = 'Seconds'
+    timelock.allowedAt = BigInt.zero()
+    timelock.frequency = BigInt.zero()
+    timelock.window = BigInt.zero()
+    timelock.save()
+  }
+
+  return timelock
+}
+
 export function parseAcceptanceType(op: i32): string {
   if (op == 0) return 'DenyList'
   else return 'AllowList'
+}
+
+export function parseTimelockMode(mode: i32): string {
+  if (mode == 0) return 'Seconds'
+  if (mode == 1) return 'OnDay'
+  if (mode == 2) return 'LastMonthDay'
+  else return 'Unkown'
 }
 
 export function getTaskCustomConfigId(taskConfig: TaskConfig, token: Address): string {
