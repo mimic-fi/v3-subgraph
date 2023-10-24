@@ -109,7 +109,7 @@ type TaskConfig @entity{
   task: Task!
   nextBalanceConnector: String!
   previousBalanceConnector: String!
-  gasLimits: GasLimits!
+  gasLimits: GasLimits
   timeLockDelay: BigInt!
   timeLockExecutionPeriod: BigInt!
   timeLockExpiration: BigInt!

@@ -340,6 +340,7 @@ export function loadOrCreateGasLimits(gasPriceLimitsId: string): GasLimits {
     gasLimits.priorityFeeLimit = BigInt.zero()
     gasLimits.txCostLimitPct = BigInt.zero()
     gasLimits.txCostLimit = BigInt.zero()
+    gasLimits.save()
   }
 
   return gasLimits
