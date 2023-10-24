@@ -110,22 +110,22 @@ type TaskConfig @entity{
   nextBalanceConnector: String!
   previousBalanceConnector: String!
   acceptanceList: AcceptanceList!
-  timelock: Timelock
   gasLimits: GasLimits
-  defaultVolumeLimit: VolumeLimit
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "taskConfig")
-  defaultTokenThreshold: TokenThreshold
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "taskConfig")
+  timeLock: TimeLock
   connector: String
   recipient: String
-  defaultDestinationChain: BigInt
-  customDestinationChain: [CustomDestinationChain!] @derivedFrom(field: "taskConfig")
-  defaultMaxBridgeFee: MaxBridgeFee
-  customMaxBridgeFee: [CustomMaxBridgeFee!] @derivedFrom(field: "taskConfig")
-  defaultMaxSlippage: BigInt
-  customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "taskConfig")
+  defaultTokenThreshold: TokenThreshold
+  defaultVolumeLimit: VolumeLimit
   defaultTokenOut: ERC20
+  defaultMaxSlippage: BigInt
+  defaultDestinationChain: BigInt
+  defaultMaxBridgeFee: MaxBridgeFee
+  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "taskConfig")
+  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "taskConfig")
   customTokenOut: [CustomTokenOut!] @derivedFrom(field: "taskConfig")
+  customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "taskConfig")
+  customDestinationChain: [CustomDestinationChain!] @derivedFrom(field: "taskConfig")
+  customMaxBridgeFee: [CustomMaxBridgeFee!] @derivedFrom(field: "taskConfig")
 }
 
 type AcceptanceList @entity {
@@ -133,47 +133,6 @@ type AcceptanceList @entity {
   taskConfig: TaskConfig!
   type: String!
   tokens: [String!]!
-}
-
-type VolumeLimit @entity {
-  id: ID!
-  token: ERC20!
-  period: BigInt!
-  amount: BigInt!
-}
-
-type CustomDestinationChain @entity {
-  id: ID!
-  taskConfig: TaskConfig!
-  token: ERC20!
-  destinationChain: BigInt!
-}
-
-type CustomMaxBridgeFee  @entity {
-  id: ID!
-  taskConfig: TaskConfig!
-  token: ERC20!
-  maxBridgeFee: MaxBridgeFee!
-}
-
-type MaxBridgeFee @entity {
-  id: ID!
-  amount: BigInt!
-  token: ERC20!
-}
-
-type CustomMaxSlippage @entity {
-  id: ID!
-  taskConfig: TaskConfig!
-  token: ERC20!
-  maxSlippage: BigInt!
-}
-
-type CustomTokenOut @entity {
-  id: ID!
-  taskConfig: TaskConfig!
-  token: ERC20!
-  tokenOut: ERC20!
 }
 
 type GasLimits @entity {
@@ -185,20 +144,20 @@ type GasLimits @entity {
   txCostLimit: BigInt!
 }
 
-type Timelock @entity{
+type TimeLock @entity{
   id: ID!
   taskConfig: TaskConfig!
-  mode: TimelockMode!
+  mode: TimeLockMode!
   allowedAt: BigInt!
   frequency: BigInt!
   window: BigInt!
 }
 
-enum TimelockMode {
+enum TimeLockMode {
   Seconds
   OnDay
   LastMonthDay
-  Unkown
+  Unknown
 }
 
 type TokenThreshold @entity {
@@ -206,6 +165,19 @@ type TokenThreshold @entity {
   token: ERC20!
   min: BigInt!
   max: BigInt!
+}
+
+type VolumeLimit @entity {
+  id: ID!
+  token: ERC20!
+  period: BigInt!
+  amount: BigInt!
+}
+
+type MaxBridgeFee @entity {
+  id: ID!
+  amount: BigInt!
+  token: ERC20!
 }
 
 type CustomTokenThreshold @entity {
@@ -220,6 +192,34 @@ type CustomVolumeLimit @entity {
   taskConfig: TaskConfig!
   token: ERC20!
   volumeLimit: VolumeLimit!
+}
+
+type CustomTokenOut @entity {
+  id: ID!
+  taskConfig: TaskConfig!
+  token: ERC20!
+  tokenOut: ERC20!
+}
+
+type CustomMaxSlippage @entity {
+  id: ID!
+  taskConfig: TaskConfig!
+  token: ERC20!
+  maxSlippage: BigInt!
+}
+
+type CustomDestinationChain @entity {
+  id: ID!
+  taskConfig: TaskConfig!
+  token: ERC20!
+  destinationChain: BigInt!
+}
+
+type CustomMaxBridgeFee  @entity {
+  id: ID!
+  taskConfig: TaskConfig!
+  token: ERC20!
+  maxBridgeFee: MaxBridgeFee!
 }
 
 type Movement @entity {

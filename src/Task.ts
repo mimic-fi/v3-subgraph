@@ -12,7 +12,7 @@ import {
   MaxBridgeFee,
   Task,
   TaskConfig,
-  Timelock,
+  TimeLock,
   TokenThreshold,
   VolumeLimit,
 } from '../types/schema'
@@ -47,210 +47,26 @@ import {
 } from '../types/templates/Task/Task'
 import { loadOrCreateERC20 } from './ERC20'
 
+export function handlePaused(event: Paused): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+  task.paused = true
+  task.save()
+}
+
+export function handleUnpaused(event: Unpaused): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  task.paused = false
+  task.save
+}
+
 export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
   taskConfig.previousBalanceConnector = event.params.previous.toHexString()
   taskConfig.nextBalanceConnector = event.params.next.toHexString()
   taskConfig.save()
-}
-
-export function handleConnectorSet(event: ConnectorSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.connector = event.params.connector.toHexString()
-  taskConfig.save()
-}
-
-export function handleCustomDestinationChainSet(event: CustomDestinationChainSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const customDestinationChainId = getTaskCustomConfigId(taskConfig, event.params.token)
-
-  let customDestinationChain = CustomDestinationChain.load(customDestinationChainId)
-  if (customDestinationChain === null) customDestinationChain = new CustomDestinationChain(customDestinationChainId)
-  customDestinationChain.taskConfig = taskConfig.id
-  customDestinationChain.token = loadOrCreateERC20(event.params.token).id
-  customDestinationChain.destinationChain = event.params.destinationChain
-  customDestinationChain.save()
-}
-
-export function handleCustomMaxFeeSet(event: CustomMaxFeeSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const customMaxBridgeFeeId = getTaskCustomConfigId(taskConfig, event.params.token)
-
-  let maxBridgeFee = MaxBridgeFee.load(customMaxBridgeFeeId)
-  if (maxBridgeFee == null) maxBridgeFee = new MaxBridgeFee(customMaxBridgeFeeId)
-  maxBridgeFee.amount = event.params.amount
-  maxBridgeFee.token = loadOrCreateERC20(event.params.maxFeeToken).id
-  maxBridgeFee.save()
-
-  let customMaxBridgeFee = CustomMaxBridgeFee.load(customMaxBridgeFeeId)
-  if (customMaxBridgeFee === null) customMaxBridgeFee = new CustomMaxBridgeFee(customMaxBridgeFeeId)
-  customMaxBridgeFee.taskConfig = taskConfig.id
-  customMaxBridgeFee.token = loadOrCreateERC20(event.params.token).id
-  customMaxBridgeFee.maxBridgeFee = maxBridgeFee.id
-  customMaxBridgeFee.save()
-}
-
-export function handleCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const customMaxSlippageId = getTaskCustomConfigId(taskConfig, event.params.token)
-
-  let customMaxSlippage = CustomMaxSlippage.load(customMaxSlippageId)
-  if (customMaxSlippage === null) customMaxSlippage = new CustomMaxSlippage(customMaxSlippageId)
-  customMaxSlippage.taskConfig = taskConfig.id
-  customMaxSlippage.token = loadOrCreateERC20(event.params.token).id
-  customMaxSlippage.maxSlippage = event.params.maxSlippage
-  customMaxSlippage.save()
-}
-
-export function handleCustomTokenOutSet(event: CustomTokenOutSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const customTokenOutId = getTaskCustomConfigId(taskConfig, event.params.token)
-
-  let customTokenOut = CustomTokenOut.load(customTokenOutId)
-  if (customTokenOut === null) customTokenOut = new CustomTokenOut(customTokenOutId)
-  customTokenOut.taskConfig = taskConfig.id
-  customTokenOut.token = loadOrCreateERC20(event.params.token).id
-  customTokenOut.tokenOut = loadOrCreateERC20(event.params.tokenOut).id
-  customTokenOut.save()
-}
-
-export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const customTokenThresholdId = getTaskCustomConfigId(taskConfig, event.params.token)
-
-  let tokenThreshold = TokenThreshold.load(customTokenThresholdId)
-  if (tokenThreshold == null) tokenThreshold = new TokenThreshold(customTokenThresholdId)
-  tokenThreshold.token = loadOrCreateERC20(event.params.thresholdToken).id
-  tokenThreshold.min = event.params.min
-  tokenThreshold.max = event.params.max
-  tokenThreshold.save()
-
-  const customTokenThreshold = new CustomTokenThreshold(customTokenThresholdId)
-  customTokenThreshold.taskConfig = taskConfig.id
-  customTokenThreshold.token = loadOrCreateERC20(event.params.token).id
-  customTokenThreshold.threshold = tokenThreshold.id
-  customTokenThreshold.save()
-}
-
-export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const customVolumeLimitId = getTaskCustomConfigId(taskConfig, event.params.token)
-
-  let volumeLimit = VolumeLimit.load(customVolumeLimitId)
-  if (volumeLimit == null) volumeLimit = new VolumeLimit(customVolumeLimitId)
-  volumeLimit.token = loadOrCreateERC20(event.params.limitToken).id
-  volumeLimit.amount = event.params.amount
-  volumeLimit.period = event.params.period
-  volumeLimit.save()
-
-  let customVolumeLimit = CustomVolumeLimit.load(customVolumeLimitId)
-  if (customVolumeLimit == null) customVolumeLimit = new CustomVolumeLimit(customVolumeLimitId)
-  customVolumeLimit.taskConfig = taskConfig.id
-  customVolumeLimit.token = loadOrCreateERC20(event.params.token).id
-  customVolumeLimit.volumeLimit = volumeLimit.id
-  customVolumeLimit.save()
-}
-
-export function handleDefaultDestinationChainSet(event: DefaultDestinationChainSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.defaultDestinationChain = event.params.defaultDestinationChain
-  taskConfig.save()
-}
-
-export function handleDefaultMaxFeeSet(event: DefaultMaxFeeSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  let maxBridgeFee = MaxBridgeFee.load(taskConfig.id)
-  if (maxBridgeFee == null) maxBridgeFee = new MaxBridgeFee(taskConfig.id)
-  maxBridgeFee.amount = event.params.amount
-  maxBridgeFee.token = loadOrCreateERC20(event.params.maxFeeToken).id
-  maxBridgeFee.save()
-}
-
-export function handleDefaultMaxSlippageSet(event: DefaultMaxSlippageSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.defaultMaxSlippage = event.params.maxSlippage
-  taskConfig.save()
-}
-
-export function handleDefaultTokenOutSet(event: DefaultTokenOutSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.defaultTokenOut = loadOrCreateERC20(event.params.tokenOut).id
-  taskConfig.save()
-}
-
-export function handleDefaultVolumeLimitSet(event: DefaultVolumeLimitSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  let defaultVolumeLimit = VolumeLimit.load(taskConfig.id)
-  if (defaultVolumeLimit == null) defaultVolumeLimit = new VolumeLimit(taskConfig.id)
-  defaultVolumeLimit.token = loadOrCreateERC20(event.params.token).id
-  defaultVolumeLimit.amount = event.params.amount
-  defaultVolumeLimit.period = event.params.period
-  defaultVolumeLimit.save()
-}
-
-export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  let defaultTokenThreshold = TokenThreshold.load(taskConfig.id)
-  if (defaultTokenThreshold == null) defaultTokenThreshold = new TokenThreshold(taskConfig.id)
-  defaultTokenThreshold.token = loadOrCreateERC20(event.params.token).id
-  defaultTokenThreshold.min = event.params.min
-  defaultTokenThreshold.max = event.params.max
-  defaultTokenThreshold.save()
-}
-
-export function handleGasLimitsSet(event: GasLimitsSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
-  gasLimits.gasPriceLimit = event.params.gasPriceLimit
-  gasLimits.priorityFeeLimit = event.params.priorityFeeLimit
-  gasLimits.txCostLimitPct = event.params.txCostLimitPct
-  gasLimits.txCostLimit = event.params.txCostLimit
-  gasLimits.save()
-}
-
-export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
-  gasLimits.gasPriceLimit = event.params.gasPriceLimit
-  gasLimits.save()
-}
-
-export function handlePaused(event: Paused): void {
-  const task = Task.load(event.address.toHexString())
-  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
-
-  task.paused = true
-  task.save
-}
-
-export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
-  gasLimits.priorityFeeLimit = event.params.priorityFeeLimit
-  gasLimits.save()
-}
-
-export function handleRecipientSet(event: RecipientSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.recipient = event.params.recipient.toHexString()
-  taskConfig.save()
-}
-
-export function handleTimeLockAllowedAtSet(event: TimeLockAllowedAtSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const timelock = loadOrCreateTimelock(taskConfig.id)
-  timelock.allowedAt = event.params.allowedAt
-  timelock.save()
-}
-
-export function handleTimelockSet(event: TimeLockSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  const timelock = loadOrCreateTimelock(taskConfig.id)
-  timelock.mode = parseTimelockMode(event.params.mode)
-  timelock.frequency = event.params.frequency
-  timelock.allowedAt = event.params.allowedAt
-  timelock.window = event.params.window
-  timelock.save()
 }
 
 export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): void {
@@ -272,6 +88,30 @@ export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): v
   acceptanceList.save()
 }
 
+export function handleGasLimitsSet(event: GasLimitsSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.gasPriceLimit = event.params.gasPriceLimit
+  gasLimits.priorityFeeLimit = event.params.priorityFeeLimit
+  gasLimits.txCostLimitPct = event.params.txCostLimitPct
+  gasLimits.txCostLimit = event.params.txCostLimit
+  gasLimits.save()
+}
+
+export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.gasPriceLimit = event.params.gasPriceLimit
+  gasLimits.save()
+}
+
+export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const gasLimits = loadOrCreateGasLimits(taskConfig.id)
+  gasLimits.priorityFeeLimit = event.params.priorityFeeLimit
+  gasLimits.save()
+}
+
 export function handleTxCostLimitPctSet(event: TxCostLimitPctSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
   const gasLimits = loadOrCreateGasLimits(taskConfig.id)
@@ -286,12 +126,171 @@ export function handleTxCostLimitSet(event: TxCostLimitSet): void {
   gasLimits.save()
 }
 
-export function handleUnpaused(event: Unpaused): void {
-  const task = Task.load(event.address.toHexString())
-  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+export function handleTimeLockSet(event: TimeLockSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const timelock = loadOrCreateTimeLock(taskConfig.id)
+  timelock.mode = parseTimeLockMode(event.params.mode)
+  timelock.frequency = event.params.frequency
+  timelock.allowedAt = event.params.allowedAt
+  timelock.window = event.params.window
+  timelock.save()
+}
 
-  task.paused = false
-  task.save
+export function handleTimeLockAllowedAtSet(event: TimeLockAllowedAtSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const timelock = loadOrCreateTimeLock(taskConfig.id)
+  timelock.allowedAt = event.params.allowedAt
+  timelock.save()
+}
+
+export function handleConnectorSet(event: ConnectorSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  taskConfig.connector = event.params.connector.toHexString()
+  taskConfig.save()
+}
+
+export function handleRecipientSet(event: RecipientSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  taskConfig.recipient = event.params.recipient.toHexString()
+  taskConfig.save()
+}
+
+export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  let defaultTokenThreshold = TokenThreshold.load(taskConfig.id)
+  if (defaultTokenThreshold == null) defaultTokenThreshold = new TokenThreshold(taskConfig.id)
+  defaultTokenThreshold.token = loadOrCreateERC20(event.params.token).id
+  defaultTokenThreshold.min = event.params.min
+  defaultTokenThreshold.max = event.params.max
+  defaultTokenThreshold.save()
+}
+
+export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const customTokenThresholdId = getTaskCustomConfigId(taskConfig, event.params.token)
+
+  let tokenThreshold = TokenThreshold.load(customTokenThresholdId)
+  if (tokenThreshold == null) tokenThreshold = new TokenThreshold(customTokenThresholdId)
+  tokenThreshold.token = loadOrCreateERC20(event.params.thresholdToken).id
+  tokenThreshold.min = event.params.min
+  tokenThreshold.max = event.params.max
+  tokenThreshold.save()
+
+  const customTokenThreshold = new CustomTokenThreshold(customTokenThresholdId)
+  customTokenThreshold.taskConfig = taskConfig.id
+  customTokenThreshold.token = loadOrCreateERC20(event.params.token).id
+  customTokenThreshold.threshold = tokenThreshold.id
+  customTokenThreshold.save()
+}
+
+export function handleDefaultVolumeLimitSet(event: DefaultVolumeLimitSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  let defaultVolumeLimit = VolumeLimit.load(taskConfig.id)
+  if (defaultVolumeLimit == null) defaultVolumeLimit = new VolumeLimit(taskConfig.id)
+  defaultVolumeLimit.token = loadOrCreateERC20(event.params.token).id
+  defaultVolumeLimit.amount = event.params.amount
+  defaultVolumeLimit.period = event.params.period
+  defaultVolumeLimit.save()
+}
+
+export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const customVolumeLimitId = getTaskCustomConfigId(taskConfig, event.params.token)
+
+  let volumeLimit = VolumeLimit.load(customVolumeLimitId)
+  if (volumeLimit == null) volumeLimit = new VolumeLimit(customVolumeLimitId)
+  volumeLimit.token = loadOrCreateERC20(event.params.limitToken).id
+  volumeLimit.amount = event.params.amount
+  volumeLimit.period = event.params.period
+  volumeLimit.save()
+
+  let customVolumeLimit = CustomVolumeLimit.load(customVolumeLimitId)
+  if (customVolumeLimit == null) customVolumeLimit = new CustomVolumeLimit(customVolumeLimitId)
+  customVolumeLimit.taskConfig = taskConfig.id
+  customVolumeLimit.token = loadOrCreateERC20(event.params.token).id
+  customVolumeLimit.volumeLimit = volumeLimit.id
+  customVolumeLimit.save()
+}
+
+export function handleDefaultTokenOutSet(event: DefaultTokenOutSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  taskConfig.defaultTokenOut = loadOrCreateERC20(event.params.tokenOut).id
+  taskConfig.save()
+}
+
+export function handleCustomTokenOutSet(event: CustomTokenOutSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const customTokenOutId = getTaskCustomConfigId(taskConfig, event.params.token)
+
+  let customTokenOut = CustomTokenOut.load(customTokenOutId)
+  if (customTokenOut === null) customTokenOut = new CustomTokenOut(customTokenOutId)
+  customTokenOut.taskConfig = taskConfig.id
+  customTokenOut.token = loadOrCreateERC20(event.params.token).id
+  customTokenOut.tokenOut = loadOrCreateERC20(event.params.tokenOut).id
+  customTokenOut.save()
+}
+
+export function handleDefaultMaxSlippageSet(event: DefaultMaxSlippageSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  taskConfig.defaultMaxSlippage = event.params.maxSlippage
+  taskConfig.save()
+}
+
+export function handleCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const customMaxSlippageId = getTaskCustomConfigId(taskConfig, event.params.token)
+
+  let customMaxSlippage = CustomMaxSlippage.load(customMaxSlippageId)
+  if (customMaxSlippage === null) customMaxSlippage = new CustomMaxSlippage(customMaxSlippageId)
+  customMaxSlippage.taskConfig = taskConfig.id
+  customMaxSlippage.token = loadOrCreateERC20(event.params.token).id
+  customMaxSlippage.maxSlippage = event.params.maxSlippage
+  customMaxSlippage.save()
+}
+
+export function handleDefaultDestinationChainSet(event: DefaultDestinationChainSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  taskConfig.defaultDestinationChain = event.params.defaultDestinationChain
+  taskConfig.save()
+}
+
+export function handleCustomDestinationChainSet(event: CustomDestinationChainSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const customDestinationChainId = getTaskCustomConfigId(taskConfig, event.params.token)
+
+  let customDestinationChain = CustomDestinationChain.load(customDestinationChainId)
+  if (customDestinationChain === null) customDestinationChain = new CustomDestinationChain(customDestinationChainId)
+  customDestinationChain.taskConfig = taskConfig.id
+  customDestinationChain.token = loadOrCreateERC20(event.params.token).id
+  customDestinationChain.destinationChain = event.params.destinationChain
+  customDestinationChain.save()
+}
+
+export function handleDefaultMaxFeeSet(event: DefaultMaxFeeSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  let maxBridgeFee = MaxBridgeFee.load(taskConfig.id)
+  if (maxBridgeFee == null) maxBridgeFee = new MaxBridgeFee(taskConfig.id)
+  maxBridgeFee.amount = event.params.amount
+  maxBridgeFee.token = loadOrCreateERC20(event.params.maxFeeToken).id
+  maxBridgeFee.save()
+}
+
+export function handleCustomMaxFeeSet(event: CustomMaxFeeSet): void {
+  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const customMaxBridgeFeeId = getTaskCustomConfigId(taskConfig, event.params.token)
+
+  let maxBridgeFee = MaxBridgeFee.load(customMaxBridgeFeeId)
+  if (maxBridgeFee == null) maxBridgeFee = new MaxBridgeFee(customMaxBridgeFeeId)
+  maxBridgeFee.amount = event.params.amount
+  maxBridgeFee.token = loadOrCreateERC20(event.params.maxFeeToken).id
+  maxBridgeFee.save()
+
+  let customMaxBridgeFee = CustomMaxBridgeFee.load(customMaxBridgeFeeId)
+  if (customMaxBridgeFee === null) customMaxBridgeFee = new CustomMaxBridgeFee(customMaxBridgeFeeId)
+  customMaxBridgeFee.taskConfig = taskConfig.id
+  customMaxBridgeFee.token = loadOrCreateERC20(event.params.token).id
+  customMaxBridgeFee.maxBridgeFee = maxBridgeFee.id
+  customMaxBridgeFee.save()
 }
 
 export function getExecutionType(address: Address): Bytes {
@@ -363,6 +362,7 @@ export function loadOrCreateGasLimits(gasPriceLimitsId: string): GasLimits {
 
   if (gasLimits === null) {
     gasLimits = new GasLimits(gasPriceLimitsId)
+    gasLimits.taskConfig = gasPriceLimitsId
     gasLimits.gasPriceLimit = BigInt.zero()
     gasLimits.priorityFeeLimit = BigInt.zero()
     gasLimits.txCostLimitPct = BigInt.zero()
@@ -373,19 +373,20 @@ export function loadOrCreateGasLimits(gasPriceLimitsId: string): GasLimits {
   return gasLimits
 }
 
-export function loadOrCreateTimelock(timelockId: string): Timelock {
-  let timelock = Timelock.load(timelockId)
+export function loadOrCreateTimeLock(timeLockId: string): TimeLock {
+  let timeLock = TimeLock.load(timeLockId)
 
-  if (timelock === null) {
-    timelock = new Timelock(timelockId)
-    timelock.mode = 'Seconds'
-    timelock.allowedAt = BigInt.zero()
-    timelock.frequency = BigInt.zero()
-    timelock.window = BigInt.zero()
-    timelock.save()
+  if (timeLock === null) {
+    timeLock = new TimeLock(timeLockId)
+    timeLock.taskConfig = timeLockId
+    timeLock.mode = 'Seconds'
+    timeLock.allowedAt = BigInt.zero()
+    timeLock.frequency = BigInt.zero()
+    timeLock.window = BigInt.zero()
+    timeLock.save()
   }
 
-  return timelock
+  return timeLock
 }
 
 export function parseAcceptanceType(op: i32): string {
@@ -393,11 +394,11 @@ export function parseAcceptanceType(op: i32): string {
   else return 'AllowList'
 }
 
-export function parseTimelockMode(mode: i32): string {
+export function parseTimeLockMode(mode: i32): string {
   if (mode == 0) return 'Seconds'
   if (mode == 1) return 'OnDay'
   if (mode == 2) return 'LastMonthDay'
-  else return 'Unkown'
+  else return 'Unknown'
 }
 
 export function getTaskCustomConfigId(taskConfig: TaskConfig, token: Address): string {
