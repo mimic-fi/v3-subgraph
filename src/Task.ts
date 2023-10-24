@@ -362,6 +362,7 @@ export function loadOrCreateGasLimits(gasPriceLimitsId: string): GasLimits {
 
   if (gasLimits === null) {
     gasLimits = new GasLimits(gasPriceLimitsId)
+    gasLimits.taskConfig = gasPriceLimitsId
     gasLimits.gasPriceLimit = BigInt.zero()
     gasLimits.priorityFeeLimit = BigInt.zero()
     gasLimits.txCostLimitPct = BigInt.zero()
@@ -372,11 +373,12 @@ export function loadOrCreateGasLimits(gasPriceLimitsId: string): GasLimits {
   return gasLimits
 }
 
-export function loadOrCreateTimeLock(timelockId: string): TimeLock {
-  let timeLock = TimeLock.load(timelockId)
+export function loadOrCreateTimeLock(timeLockId: string): TimeLock {
+  let timeLock = TimeLock.load(timeLockId)
 
   if (timeLock === null) {
-    timeLock = new TimeLock(timelockId)
+    timeLock = new TimeLock(timeLockId)
+    timeLock.taskConfig = timeLockId
     timeLock.mode = 'Seconds'
     timeLock.allowedAt = BigInt.zero()
     timeLock.frequency = BigInt.zero()
