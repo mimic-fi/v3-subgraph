@@ -287,3 +287,4 @@ templates:
         - event: CustomDestinationChainSet(indexed address,indexed uint256)
           handler: handleCustomDestinationChainSet
       file: ./src/Task.ts
+      

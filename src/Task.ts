@@ -322,6 +322,7 @@ export function loadOrCreateTimelock(timelockId: string): Timelock {
     timelock = new Timelock(timelockId)
     timelock.allowedAt = BigInt.zero()
     timelock.frequency = BigInt.zero()
+    timelock.mode = 'Seconds'
     timelock.window = BigInt.zero()
   }
 
@@ -335,8 +336,9 @@ export function parseAcceptanceType(op: i32): string {
 
 export function parseTimelockMode(mode: i32): string {
   if (mode == 0) return 'Seconds'
-  if (mode == 1) return 'On day'
-  else return 'Last month day'
+  if (mode == 1) return 'OnDay'
+  if (mode == 2) return 'LastMonthDay'
+  else return 'Unkown'
 }
 
 export function getTaskCustomConfigId(taskConfig: TaskConfig, token: Address): string {

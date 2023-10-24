@@ -167,7 +167,7 @@ type CustomTokenOut @entity {
 type Timelock @entity{
   id: ID!
   taskConfig: TaskConfig!
-  mode: TimelockMode
+  mode: TimelockMode!
   allowedAt: BigInt!
   frequency: BigInt!
   window: BigInt!
@@ -175,8 +175,9 @@ type Timelock @entity{
 
 enum TimelockMode {
   Seconds
-  On day
-  Last month day
+  OnDay
+  LastMonthDay
+  Unkown
 }
 
 type TokenThreshold @entity {
