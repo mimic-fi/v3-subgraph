@@ -9,6 +9,7 @@ import {
   CustomVolumeLimit,
   Task,
   TaskConfig,
+  Timelock,
   TokenThreshold,
   VolumeLimit,
 } from '../types/schema'
@@ -30,9 +31,8 @@ import {
   PriorityFeeLimitSet,
   RecipientSet,
   Task as TaskContract,
-  TimeLockDelaySet,
-  TimeLockExecutionPeriodSet,
-  TimeLockExpirationSet,
+  TimeLockAllowedAtSet,
+  TimeLockSet,
   TokensAcceptanceListSet,
   TokensAcceptanceTypeSet,
   TxCostLimitPctSet,
@@ -191,22 +191,21 @@ export function handleRecipientSet(event: RecipientSet): void {
   taskConfig.save()
 }
 
-export function handleTimeLockDelaySet(event: TimeLockDelaySet): void {
+export function handleTimeLockAllowedAtSet(event: TimeLockAllowedAtSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.timeLockDelay = event.params.delay
-  taskConfig.save()
+  const timelock = loadOrCreateTimelock(taskConfig.id)
+  timelock.allowedAt = event.params.allowedAt
+  timelock.save()
 }
 
-export function handleTimeLockExecutionPeriodSet(event: TimeLockExecutionPeriodSet): void {
+export function handleTimelockSet(event: TimeLockSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.timeLockExecutionPeriod = event.params.period
-  taskConfig.save()
-}
-
-export function handleTimeLockExpirationSet(event: TimeLockExpirationSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
-  taskConfig.timeLockExpiration = event.params.expiration
-  taskConfig.save()
+  const timelock = loadOrCreateTimelock(taskConfig.id)
+  timelock.mode = parseTimelockMode(event.params.mode)
+  timelock.frequency = event.params.frequency
+  timelock.allowedAt = event.params.allowedAt
+  timelock.window = event.params.window
+  timelock.save()
 }
 
 export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): void {
@@ -297,9 +296,6 @@ export function loadOrCreateTaskConfig(taskId: string): TaskConfig {
     taskConfig.priorityFeeLimit = BigInt.zero()
     taskConfig.txCostLimitPct = BigInt.zero()
     taskConfig.txCostLimit = BigInt.zero()
-    taskConfig.timeLockDelay = BigInt.zero()
-    taskConfig.timeLockExecutionPeriod = BigInt.zero()
-    taskConfig.timeLockExpiration = BigInt.zero()
     taskConfig.save()
   }
 
@@ -319,9 +315,31 @@ export function loadOrCreateAcceptanceList(tokensAcceptanceListId: string): Acce
   return acceptanceList
 }
 
+export function loadOrCreateTimelock(timelockId: string): Timelock {
+  let timelock = Timelock.load(timelockId)
+
+  if (timelock === null) {
+    timelock = new Timelock(timelockId)
+    timelock.allowedAt = BigInt.zero()
+    timelock.frequency = BigInt.zero()
+    timelock.mode = 'Seconds'
+    timelock.window = BigInt.zero()
+    timelock.save()
+  }
+
+  return timelock
+}
+
 export function parseAcceptanceType(op: i32): string {
   if (op == 0) return 'DenyList'
   else return 'AllowList'
+}
+
+export function parseTimelockMode(mode: i32): string {
+  if (mode == 0) return 'Seconds'
+  if (mode == 1) return 'OnDay'
+  if (mode == 2) return 'LastMonthDay'
+  else return 'Unkown'
 }
 
 export function getTaskCustomConfigId(taskConfig: TaskConfig, token: Address): string {

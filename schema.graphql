@@ -113,9 +113,7 @@ type TaskConfig @entity{
   priorityFeeLimit: BigInt!
   txCostLimitPct: BigInt!
   txCostLimit: BigInt!
-  timeLockDelay: BigInt!
-  timeLockExecutionPeriod: BigInt!
-  timeLockExpiration: BigInt!
+  timelock: Timelock
   acceptanceList: AcceptanceList!
   defaultVolumeLimit: VolumeLimit
   defaultTokenThreshold: TokenThreshold
@@ -164,6 +162,22 @@ type CustomTokenOut @entity {
   taskConfig: TaskConfig!
   token: ERC20!
   tokenOut: ERC20!
+}
+
+type Timelock @entity{
+  id: ID!
+  taskConfig: TaskConfig!
+  mode: TimelockMode!
+  allowedAt: BigInt!
+  frequency: BigInt!
+  window: BigInt!
+}
+
+enum TimelockMode {
+  Seconds
+  OnDay
+  LastMonthDay
+  Unkown
 }
 
 type TokenThreshold @entity {
