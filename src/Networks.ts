@@ -1,19 +1,11 @@
 import { BigInt, dataSource } from '@graphprotocol/graph-ts'
 
 export function isEthNetwork(): boolean {
-  return isMainnet() || isGoerli() || isArbitrum() || isOptimism()
-}
-
-export function isMaticNetwork(): boolean {
-  return isPolygon() || isMumbai()
+  return isMainnet() || isArbitrum() || isOptimism() || isBase() || isZkEvm()
 }
 
 export function isMainnet(): boolean {
   return dataSource.network() == 'mainnet'
-}
-
-export function isGoerli(): boolean {
-  return dataSource.network() == 'goerli'
 }
 
 export function isArbitrum(): boolean {
@@ -26,10 +18,6 @@ export function isOptimism(): boolean {
 
 export function isPolygon(): boolean {
   return dataSource.network() == 'matic' || dataSource.network() == 'polygon'
-}
-
-export function isMumbai(): boolean {
-  return dataSource.network() == 'mumbai'
 }
 
 export function isAvalanche(): boolean {
@@ -48,16 +36,24 @@ export function isGnosis(): boolean {
   return dataSource.network() == 'gnosis'
 }
 
+export function isBase(): boolean {
+  return dataSource.network() == 'base'
+}
+
+export function isZkEvm(): boolean {
+  return dataSource.network() == 'polygon-zkevm' || dataSource.network() == 'zkevm'
+}
+
 export function getNetworkId(): BigInt {
   if (isMainnet()) return BigInt.fromI32(1)
-  if (isGoerli()) return BigInt.fromI32(5)
   if (isArbitrum()) return BigInt.fromI32(42161)
   if (isOptimism()) return BigInt.fromI32(10)
   if (isPolygon()) return BigInt.fromI32(137)
-  if (isMumbai()) return BigInt.fromI32(80001)
   if (isAvalanche()) return BigInt.fromI32(43114)
   if (isBinance()) return BigInt.fromI32(56)
   if (isFantom()) return BigInt.fromI32(250)
   if (isGnosis()) return BigInt.fromI32(100)
+  if (isZkEvm()) return BigInt.fromI32(1101)
+  if (isBase()) return BigInt.fromI32(8453)
   return BigInt.fromI32(0)
 }

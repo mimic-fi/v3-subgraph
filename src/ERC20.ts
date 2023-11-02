@@ -2,7 +2,7 @@ import { Address, log } from '@graphprotocol/graph-ts'
 
 import { ERC20 as ERC20Entity } from '../types/schema'
 import { ERC20 as ERC20Contract } from '../types/templates/PriceOracle/ERC20'
-import { isAvalanche, isBinance, isEthNetwork, isFantom, isGnosis, isMaticNetwork } from './Networks'
+import { isAvalanche, isBinance, isEthNetwork, isFantom, isGnosis, isPolygon } from './Networks'
 
 const NATIVE_TOKEN_ADDRESS = Address.fromString('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
 
@@ -76,7 +76,7 @@ export function getERC20Symbol(address: Address): string {
 
 export function getNativeTokenSymbol(): string {
   if (isEthNetwork()) return 'ETH'
-  if (isMaticNetwork()) return 'MATIC'
+  if (isPolygon()) return 'MATIC'
   if (isAvalanche()) return 'AVAX'
   if (isBinance()) return 'BNB'
   if (isFantom()) return 'FTM'
@@ -86,7 +86,7 @@ export function getNativeTokenSymbol(): string {
 
 export function getNativeTokenName(): string {
   if (isEthNetwork()) return 'Ether'
-  if (isMaticNetwork()) return 'Matic'
+  if (isPolygon()) return 'Matic'
   if (isAvalanche()) return 'Avax'
   if (isBinance()) return 'BNB'
   if (isFantom()) return 'Fantom'
