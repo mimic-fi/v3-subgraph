@@ -18,6 +18,72 @@ jobs:
         env:
           GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
         run: yarn deploy:arbitrum
+
+  deploy-avalanche:
+      name: Deploy Avalanche
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Set up environment
+          uses: ./.github/actions/setup
+        - name: Deploy Avalanche
+          env:
+            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+          run: yarn deploy:avalanche
+
+  deploy-base:
+      name: Deploy Base
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Set up environment
+          uses: ./.github/actions/setup
+        - name: Deploy Base
+          env:
+            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+          run: yarn deploy:base
+
+  deploy-bsc:
+      name: Deploy BSC
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Set up environment
+          uses: ./.github/actions/setup
+        - name: Deploy BSC
+          env:
+            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+          run: yarn deploy:bsc
+
+  deploy-fantom:
+      name: Deploy Fantom
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Set up environment
+          uses: ./.github/actions/setup
+        - name: Deploy Fantom
+          env:
+            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+          run: yarn deploy:fantom
+
+  deploy-gnosis:
+      name: Deploy Gnosis
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Set up environment
+          uses: ./.github/actions/setup
+        - name: Deploy Gnosis
+          env:
+            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+          run: yarn deploy:gnosis
+
   deploy-mainnet:
       name: Deploy Mainnet
       runs-on: ubuntu-latest
@@ -30,3 +96,42 @@ jobs:
           env:
             GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
           run: yarn deploy:mainnet
+
+  deploy-optimism:
+      name: Deploy Optimism
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Set up environment
+          uses: ./.github/actions/setup
+        - name: Deploy Optimism
+          env:
+            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+          run: yarn deploy:optimism
+
+  deploy-polygon:
+      name: Deploy Polygon
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Set up environment
+          uses: ./.github/actions/setup
+        - name: Deploy Polygon
+          env:
+            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+          run: yarn deploy:polygon
+
+  deploy-zkevm:
+      name: Deploy zkEVM
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Set up environment
+          uses: ./.github/actions/setup
+        - name: Deploy zkEVM
+          env:
+            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+          run: yarn deploy:zkevm

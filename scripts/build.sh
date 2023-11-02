@@ -11,32 +11,39 @@ feeController_arbitrum=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_arbitrum=117042327
 
 # Avalanche
-registry_avalanche=0x0000000000000000000000000000000000000000
-deployer_avalanche=0x0000000000000000000000000000000000000000
-relayer_avalanche=0x0000000000000000000000000000000000000000
-feeController_avalanche=0x0000000000000000000000000000000000000000
-block_avalanche=0
+registry_avalanche=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_avalanche=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_avalanche=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+feeController_avalanche=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_avalanche=37130982
+
+# Base
+registry_base=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_base=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_base=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+feeController_base=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_base=5957564
 
 # BSC
-registry_bsc=0x0000000000000000000000000000000000000000
-deployer_bsc=0x0000000000000000000000000000000000000000
-relayer_bsc=0x0000000000000000000000000000000000000000
-feeController_bsc=0x0000000000000000000000000000000000000000
-block_bsc=0
+registry_bsc=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_bsc=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_bsc=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+feeController_bsc=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_bsc=33066995
 
 # Fantom
-registry_fantom=0x0000000000000000000000000000000000000000
-deployer_fantom=0x0000000000000000000000000000000000000000
-relayer_fantom=0x0000000000000000000000000000000000000000
-feeController_fantom=0x0000000000000000000000000000000000000000
-block_fantom=0
+registry_fantom=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_fantom=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_fantom=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+feeController_fantom=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_fantom=69985942
 
 # Gnosis
-registry_gnosis=0x0000000000000000000000000000000000000000
-deployer_gnosis=0x0000000000000000000000000000000000000000
-relayer_gnosis=0x0000000000000000000000000000000000000000
-feeController_gnosis=0x0000000000000000000000000000000000000000
-block_gnosis=0
+registry_gnosis=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_gnosis=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_gnosis=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+feeController_gnosis=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_gnosis=30715174
 
 # Mainnet
 registry_mainnet=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
@@ -46,23 +53,30 @@ feeController_mainnet=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_mainnet=18386855
 
 # Optimism
-registry_optimism=0x0000000000000000000000000000000000000000
-deployer_optimism=0x0000000000000000000000000000000000000000
-relayer_optimism=0x0000000000000000000000000000000000000000
-feeController_optimism=0x0000000000000000000000000000000000000000
-block_optimism=0
+registry_optimism=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_optimism=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_optimism=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+feeController_optimism=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_optimism=111552683
 
 # Polygon
-registry_polygon=0x0000000000000000000000000000000000000000
-deployer_polygon=0x0000000000000000000000000000000000000000
-relayer_polygon=0x0000000000000000000000000000000000000000
-feeController_poligon=0x0000000000000000000000000000000000000000
-block_polygon=0
+registry_polygon=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_polygon=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_polygon=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+feeController_polygon=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_polygon=49350048
+
+# zkEVM
+registry_zkevm=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_zkevm=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_zkevm=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+feeController_zkevm=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_zkevm=6788022
 
 # Validate network
-networks=(arbitrum avalanche bsc fantom gnosis goerli mainnet polygon mumbai optimism)
+networks=(arbitrum avalanche base bsc fantom gnosis mainnet optimism polygon zkevm)
 if [[ -z $NETWORK || ! " ${networks[@]} " =~ " ${NETWORK} " ]]; then
-  echo 'Please make sure the network provided is either: arbitrum, avalanche, bsc, fantom, gnosis, goerli, mainnet, polygon, mumbai, or optimism.'
+  echo 'Please make sure the network provided is either: arbitrum, avalanche, base, bsc, fantom, gnosis, mainnet, optimism, polygon, or zkevm.'
   exit 1
 fi
 
@@ -73,6 +87,8 @@ elif [[ "$NETWORK" = "polygon" ]]; then
   ENV='matic'
 elif [[ "$NETWORK" = "arbitrum" ]]; then
   ENV='arbitrum-one'
+elif [[ "$NETWORK" = "zkevm" ]]; then
+  ENV='polygon-zkevm'
 else
   ENV=${NETWORK}
 fi

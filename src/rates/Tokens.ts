@@ -3,14 +3,14 @@ import { Address } from '@graphprotocol/graph-ts'
 import {
   isArbitrum,
   isAvalanche,
+  isBase,
   isBinance,
   isFantom,
   isGnosis,
-  isGoerli,
   isMainnet,
-  isMumbai,
   isOptimism,
   isPolygon,
+  isZkEvm,
 } from '../Networks'
 
 export function getUsdc(): Address {
@@ -32,8 +32,8 @@ function getUsdcAddress(): string {
   if (isBinance()) return '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d'
   if (isFantom()) return '0x04068DA6C83AFCFA0e13ba15A6696662335D5B75'
   if (isGnosis()) return '0xddafbb505ad214d7b80b1f830fccc89b60fb7a83'
-  if (isGoerli()) return '0x98339D8C260052B7ad81c28c16C0b98420f2B46a'
-  if (isMumbai()) return '0x6D4dd09982853F08d9966aC3cA4Eb5885F16f2b2'
+  if (isBase()) return '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+  if (isZkEvm()) return '0xa8ce8aee21bc2a48a5ef670afcc9274c7bbbc035'
   return '0x0000000000000000000000000000000000000000'
 }
 
@@ -46,7 +46,7 @@ function getWrappedNativeTokenAddress(): string {
   if (isBinance()) return '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' // WBNB
   if (isFantom()) return '0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83' // WFTM
   if (isGnosis()) return '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d' // WXDAI
-  if (isGoerli()) return '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6' // WETH
-  if (isMumbai()) return '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889' // WMATIC
+  if (isBase()) return '0x4200000000000000000000000000000000000006' // WETH
+  if (isZkEvm()) return '0x4F9A0e7FD2Bf6067db6994CF12E4495Df938E6e9' // WETH
   return '0x0000000000000000000000000000000000000000'
 }
