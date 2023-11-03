@@ -1,7 +1,7 @@
 import { BigInt, dataSource } from '@graphprotocol/graph-ts'
 
 export function isEthNetwork(): boolean {
-  return isMainnet() || isArbitrum() || isOptimism() || isBase() || isZkEvm()
+  return isMainnet() || isArbitrum() || isOptimism() || isBase() || isZkEvm() || isAurora()
 }
 
 export function isMainnet(): boolean {
@@ -44,6 +44,10 @@ export function isZkEvm(): boolean {
   return dataSource.network() == 'polygon-zkevm' || dataSource.network() == 'zkevm'
 }
 
+export function isAurora(): boolean {
+  return dataSource.network() == 'aurora'
+}
+
 export function getNetworkId(): BigInt {
   if (isMainnet()) return BigInt.fromI32(1)
   if (isArbitrum()) return BigInt.fromI32(42161)
@@ -55,5 +59,6 @@ export function getNetworkId(): BigInt {
   if (isGnosis()) return BigInt.fromI32(100)
   if (isZkEvm()) return BigInt.fromI32(1101)
   if (isBase()) return BigInt.fromI32(8453)
+  if (isAurora()) return BigInt.fromI32(1313161555)
   return BigInt.fromI32(0)
 }

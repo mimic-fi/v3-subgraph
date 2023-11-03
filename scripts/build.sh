@@ -10,6 +10,13 @@ relayer_arbitrum=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
 feeController_arbitrum=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_arbitrum=117042327
 
+# Aurora
+registry_aurora=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_aurora=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_aurora=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+feeController_aurora=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_aurora=104855032
+
 # Avalanche
 registry_avalanche=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
 deployer_avalanche=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
@@ -74,9 +81,9 @@ feeController_zkevm=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_zkevm=6788022
 
 # Validate network
-networks=(arbitrum avalanche base bsc fantom gnosis mainnet optimism polygon zkevm)
+networks=(arbitrum aurora avalanche base bsc fantom gnosis mainnet optimism polygon zkevm)
 if [[ -z $NETWORK || ! " ${networks[@]} " =~ " ${NETWORK} " ]]; then
-  echo 'Please make sure the network provided is either: arbitrum, avalanche, base, bsc, fantom, gnosis, mainnet, optimism, polygon, or zkevm.'
+  echo 'Please make sure the network provided is either: arbitrum, aurora, avalanche, base, bsc, fantom, gnosis, mainnet, optimism, polygon, or zkevm.'
   exit 1
 fi
 

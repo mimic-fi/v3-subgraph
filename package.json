@@ -6,6 +6,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "build:arbitrum": "NETWORK=arbitrum ./scripts/build.sh",
+    "build:aurora": "NETWORK=aurora ./scripts/build.sh",
     "build:avalanche": "NETWORK=avalanche ./scripts/build.sh",
     "build:base": "NETWORK=base ./scripts/build.sh",
     "build:bsc": "NETWORK=bsc ./scripts/build.sh",
@@ -16,6 +17,7 @@
     "build:polygon": "NETWORK=polygon ./scripts/build.sh",
     "build:zkevm": "NETWORK=zkevm ./scripts/build.sh",
     "deploy:arbitrum": "NETWORK=arbitrum ./scripts/deploy.sh",
+    "deploy:aurora": "NETWORK=aurora ./scripts/deploy.sh",
     "deploy:avalanche": "NETWORK=avalanche ./scripts/deploy.sh",
     "deploy:base": "NETWORK=base ./scripts/deploy.sh",
     "deploy:bsc": "NETWORK=bsc ./scripts/deploy.sh",

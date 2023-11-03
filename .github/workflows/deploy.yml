@@ -19,6 +19,19 @@ jobs:
           GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
         run: yarn deploy:arbitrum
 
+  deploy-aurora:
+    name: Deploy Aurora
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up environment
+        uses: ./.github/actions/setup
+      - name: Deploy Aurora
+        env:
+          GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+        run: yarn deploy:aurora
+
   deploy-avalanche:
       name: Deploy Avalanche
       runs-on: ubuntu-latest
