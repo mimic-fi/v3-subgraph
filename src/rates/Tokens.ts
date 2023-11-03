@@ -2,6 +2,7 @@ import { Address } from '@graphprotocol/graph-ts'
 
 import {
   isArbitrum,
+  isAurora,
   isAvalanche,
   isBase,
   isBinance,
@@ -34,6 +35,7 @@ function getUsdcAddress(): string {
   if (isGnosis()) return '0xddafbb505ad214d7b80b1f830fccc89b60fb7a83'
   if (isBase()) return '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
   if (isZkEvm()) return '0xa8ce8aee21bc2a48a5ef670afcc9274c7bbbc035'
+  if (isAurora()) return '0xB12BFcA5A55806AaF64E99521918A4bf0fC40802'
   return '0x0000000000000000000000000000000000000000'
 }
 
@@ -48,5 +50,6 @@ function getWrappedNativeTokenAddress(): string {
   if (isGnosis()) return '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d' // WXDAI
   if (isBase()) return '0x4200000000000000000000000000000000000006' // WETH
   if (isZkEvm()) return '0x4F9A0e7FD2Bf6067db6994CF12E4495Df938E6e9' // WETH
+  if (isAurora()) return '0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB' // WETH
   return '0x0000000000000000000000000000000000000000'
 }
