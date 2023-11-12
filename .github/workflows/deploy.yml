@@ -2,9 +2,8 @@ name: Deploy
 
 on:
   push:
-    branches: "*"
-  pull_request:
-    branches: "*"
+    branches:
+      - master
 
 jobs:
   deploy-arbitrum:
