@@ -16,7 +16,7 @@ jobs:
         uses: ./.github/actions/setup
       - name: Deploy Arbitrum
         env:
-          GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+          GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
         run: yarn deploy:arbitrum
 
   deploy-aurora:
@@ -29,7 +29,7 @@ jobs:
         uses: ./.github/actions/setup
       - name: Deploy Aurora
         env:
-          GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+          GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
         run: yarn deploy:aurora
 
   deploy-avalanche:
@@ -42,7 +42,7 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Avalanche
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
           run: yarn deploy:avalanche
 
   deploy-base:
@@ -55,7 +55,8 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Base
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+            VERSION_LABEL: ${{ github.sha }}
+            GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
           run: yarn deploy:base
 
   deploy-bsc:
@@ -68,7 +69,7 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy BSC
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
           run: yarn deploy:bsc
 
   deploy-fantom:
@@ -81,7 +82,7 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Fantom
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
           run: yarn deploy:fantom
 
   deploy-gnosis:
@@ -94,7 +95,7 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Gnosis
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
           run: yarn deploy:gnosis
 
   deploy-mainnet:
@@ -107,7 +108,7 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Mainnet
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
           run: yarn deploy:mainnet
 
   deploy-optimism:
@@ -120,7 +121,7 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Optimism
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
           run: yarn deploy:optimism
 
   deploy-polygon:
@@ -133,7 +134,7 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Polygon
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
           run: yarn deploy:polygon
 
   deploy-zkevm:
@@ -146,5 +147,6 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy zkEVM
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+            VERSION_LABEL: ${{ github.sha }}
           run: yarn deploy:zkevm

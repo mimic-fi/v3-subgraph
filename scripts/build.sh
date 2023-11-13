@@ -163,7 +163,7 @@ fi
 
 # Remove previous manifest if there is any
 if [ -f subgraph.yaml ]; then
-  echo 'Removing previous subgraph manifest...'
+  echo 'Removing previous subgraph manifest'
   rm subgraph.yaml
 fi
 
@@ -178,10 +178,34 @@ sed -i -e "s/{{feeControllerAddress}}/${FEE_CONTROLLER_ADDRESS}/g" subgraph.yaml
 sed -i -e "s/{{blockNumber}}/${BLOCK_NUMBER}/g" subgraph.yaml
 rm -f subgraph.yaml-e
 
-# Build functions selector dictionary
-echo "Building functions selector dictionary"
-yarn ts-node ./scripts/build-permissions-dictionary.ts
+# Build functions selectors dictionary
+echo "Building functions selectors dictionary"
+output=$(yarn ts-node ./scripts/build-permissions-dictionary.ts)
 
-# Run codegen and build
-rm -rf ./types && yarn graph codegen -o types
-yarn graph build
+# Check dictionary build status
+if [ $? -ne 0 ]; then
+    echo "Error trying to build funcitons selectors dictionary with exit status $?"
+    echo "$output"
+    exit $?
+fi
+
+# Run codegen
+echo "Generating graph types"
+output=$(rm -rf ./types && yarn graph codegen -o types 2>&1)
+
+# Check codegen status
+if [ $? -ne 0 ]; then
+    echo "Error trying to run codegen with exit status $?"
+    echo "$output"
+    exit $?
+fi
+
+# Run build
+output=$(yarn graph build 2>&1)
+
+# Check build status
+if [ $? -ne 0 ]; then
+    echo "Error trying to build subgraph with exit status $?"
+    echo "$output"
+    exit $?
+fi
