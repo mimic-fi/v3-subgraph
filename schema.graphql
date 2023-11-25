@@ -120,12 +120,12 @@ type TaskConfig @entity{
   defaultMaxSlippage: BigInt
   defaultDestinationChain: BigInt
   defaultMaxBridgeFee: MaxBridgeFee
-  customTokenThreshold: [CustomTokenThreshold!] @derivedFrom(field: "taskConfig")
-  customVolumeLimit: [CustomVolumeLimit!] @derivedFrom(field: "taskConfig")
-  customTokenOut: [CustomTokenOut!] @derivedFrom(field: "taskConfig")
-  customMaxSlippage: [CustomMaxSlippage!] @derivedFrom(field: "taskConfig")
-  customDestinationChain: [CustomDestinationChain!] @derivedFrom(field: "taskConfig")
-  customMaxBridgeFee: [CustomMaxBridgeFee!] @derivedFrom(field: "taskConfig")
+  customTokenThresholds: [CustomTokenThreshold!] @derivedFrom(field: "taskConfig")
+  customVolumeLimits: [CustomVolumeLimit!] @derivedFrom(field: "taskConfig")
+  customTokenOuts: [CustomTokenOut!] @derivedFrom(field: "taskConfig")
+  customMaxSlippages: [CustomMaxSlippage!] @derivedFrom(field: "taskConfig")
+  customDestinationChains: [CustomDestinationChain!] @derivedFrom(field: "taskConfig")
+  customMaxBridgeFees: [CustomMaxBridgeFee!] @derivedFrom(field: "taskConfig")
 }
 
 type AcceptanceList @entity {
