@@ -1,6 +1,13 @@
 import { Address, BigInt, Bytes, ethereum, log } from '@graphprotocol/graph-ts'
 
-import { Movement, RelayedExecution, SmartVault, SmartVaultCall } from '../types/schema'
+import {
+  BalanceConnector,
+  BalanceConnectorBalance,
+  Movement,
+  RelayedExecution,
+  SmartVault,
+  SmartVaultCall,
+} from '../types/schema'
 import {
   BalanceConnectorUpdated,
   Called,
@@ -76,6 +83,12 @@ export function handleBalanceConnectorUpdated(event: BalanceConnectorUpdated): v
   movement.added = event.params.added
   movement.save()
 
+  const balanceConnectorBalance = loadOrCreateBalanceConnectorBalance(event)
+  balanceConnectorBalance.amount = event.params.added
+    ? balanceConnectorBalance.amount.plus(event.params.amount)
+    : balanceConnectorBalance.amount.minus(event.params.amount)
+  balanceConnectorBalance.save()
+
   // eslint-disable-next-line no-constant-condition
   for (let i: i32 = 0; true; i++) {
     const executionId = event.transaction.hash.toHexString() + '#' + i.toString()
@@ -110,6 +123,36 @@ export function handlePriceOracleSet(event: PriceOracleSet): void {
 
   smartVault.priceOracle = event.params.priceOracle.toHexString()
   smartVault.save()
+}
+
+function loadOrCreateBalanceConnector(event: BalanceConnectorUpdated): BalanceConnector {
+  const balanceConnectorId = event.address.toHexString() + '-' + event.params.id.toHexString()
+  let balanceConnector = BalanceConnector.load(balanceConnectorId)
+
+  if (balanceConnector == null) {
+    balanceConnector = new BalanceConnector(balanceConnectorId)
+    balanceConnector.smartVault = event.address.toHexString()
+    balanceConnector.connector = event.params.id.toHexString()
+    balanceConnector.save()
+  }
+
+  return balanceConnector
+}
+
+function loadOrCreateBalanceConnectorBalance(event: BalanceConnectorUpdated): BalanceConnectorBalance {
+  const balanceConnector = loadOrCreateBalanceConnector(event)
+  const balanceConnectorBalanceId = balanceConnector.id + '-' + event.params.token.toHexString()
+  let balanceConnectorBalance = BalanceConnectorBalance.load(balanceConnectorBalanceId)
+
+  if (balanceConnectorBalance == null) {
+    balanceConnectorBalance = new BalanceConnectorBalance(balanceConnectorBalanceId)
+    balanceConnectorBalance.connector = balanceConnector.id
+    balanceConnectorBalance.token = loadOrCreateERC20(event.params.token).id
+    balanceConnectorBalance.amount = BigInt.zero()
+    balanceConnectorBalance.save()
+  }
+
+  return balanceConnectorBalance
 }
 
 export function getRegistry(address: Address): Address {

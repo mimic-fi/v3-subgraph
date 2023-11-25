@@ -20,6 +20,7 @@ type SmartVault @entity {
   priceOracle: PriceOracle!
   paused: Boolean!
   smartVaultFee: SmartVaultFee @derivedFrom(field: "smartVault")
+  balanceConnectors: [BalanceConnector!] @derivedFrom(field: "smartVault")
   tasks: [Task!] @derivedFrom(field: "smartVault")
   movements: [Movement!] @derivedFrom(field: "smartVault")
   smartVaultCalls: [SmartVaultCall!] @derivedFrom(field: "smartVault")
@@ -220,6 +221,20 @@ type CustomMaxBridgeFee  @entity {
   taskConfig: TaskConfig!
   token: ERC20!
   maxBridgeFee: MaxBridgeFee!
+}
+
+type BalanceConnector @entity {
+  id: ID!
+  smartVault: SmartVault!
+  connector: String!
+  balances: [BalanceConnectorBalance!] @derivedFrom(field: "connector")
+}
+
+type BalanceConnectorBalance @entity {
+  id: ID!
+  connector: BalanceConnector!
+  token: ERC20!
+  amount: BigInt!
 }
 
 type Movement @entity {
