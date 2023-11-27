@@ -191,21 +191,5 @@ fi
 
 # Run codegen
 echo "Generating graph types"
-output=$(rm -rf ./types && yarn graph codegen -o types 2>&1)
-
-# Check codegen status
-if [ $? -ne 0 ]; then
-    echo "Error trying to run codegen with exit status $?"
-    echo "$output"
-    exit $?
-fi
-
-# Run build
-output=$(yarn graph build 2>&1)
-
-# Check build status
-if [ $? -ne 0 ]; then
-    echo "Error trying to build subgraph with exit status $?"
-    echo "$output"
-    exit $?
-fi
+rm -rf ./types && yarn graph codegen -o types
+yarn graph build
