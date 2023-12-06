@@ -102,6 +102,7 @@ type Task @entity {
   paused: Boolean!
   tokensSource: String!
   executionType: String!
+  permissions: BigInt!
   taskConfig: TaskConfig @derivedFrom(field: "task")
 }
 
