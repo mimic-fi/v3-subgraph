@@ -1,4 +1,4 @@
-import { Address, Bytes, crypto, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes, crypto, log } from '@graphprotocol/graph-ts'
 
 import { AuthorizerDeployed, PriceOracleDeployed, SmartVaultDeployed, TaskDeployed } from '../types/Deployer/Deployer'
 import { Authorizer, Environment, PriceOracle, SmartVault, Task } from '../types/schema'
@@ -76,6 +76,7 @@ export function handleTaskDeployed(event: TaskDeployed): void {
   task.tokensSource = getTokensSource(event.params.instance).toHexString()
   task.executionType = getExecutionType(event.params.instance).toHexString()
   task.paused = false
+  task.permissions = BigInt.zero()
   task.save()
 
   TaskTemplate.create(event.params.instance)
