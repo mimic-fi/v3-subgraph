@@ -73,13 +73,21 @@ export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
 export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): void {
   const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
   const acceptanceList = loadOrCreateAcceptanceList(taskConfig.id)
-  const tokens = acceptanceList.tokens
   const token = loadOrCreateERC20(event.params.token).id
+
+  const tokens = acceptanceList.tokens
   const index = tokens.indexOf(token)
-  if (token && index < 0) tokens.push(token)
-  else if (token && index >= 0) tokens.splice(index, 1)
+  if (event.params.added) {
+    if (index < 0) tokens.push(token)
+  } else {
+    if (index >= 0) tokens.splice(index, 1)
+  }
+
   acceptanceList.tokens = tokens
   acceptanceList.save()
+
+  taskConfig.acceptanceList = acceptanceList.id
+  taskConfig.save()
 }
 
 export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): void {
