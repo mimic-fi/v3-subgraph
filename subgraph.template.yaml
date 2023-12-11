@@ -80,16 +80,8 @@ dataSources:
           file: ./node_modules/@mimic-fi/v3-tasks/artifacts/contracts/interfaces/ITask.sol/ITask.json
         - name: ERC20
           file: ./abis/IERC20.json
-        - name: UniswapPairV2
-          file: ./node_modules/@uniswap/v2-core/build/IUniswapV2Pair.json
-        - name: UniswapFactoryV2
-          file: ./node_modules/@uniswap/v2-core/build/IUniswapV2Factory.json
-        - name: UniswapPoolV3
-          file: ./node_modules/@uniswap/v3-core/artifacts/contracts/interfaces/pool/IUniswapV3PoolState.sol/IUniswapV3PoolState.json
-        - name: UniswapFactoryV3
-          file: ./node_modules/@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json
-        - name: UniswapRouterV3
-          file: ./node_modules/@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryImmutableState.sol/IPeripheryImmutableState.json
+        - name: AggregatorV3Interface
+          file: ./node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json
       eventHandlers:
         - event: Deposited(indexed address,uint256)
           handler: handleDeposited
@@ -167,6 +159,8 @@ templates:
           file: ./node_modules/@mimic-fi/v3-price-oracle/artifacts/contracts/interfaces/IPriceOracle.sol/IPriceOracle.json
         - name: ERC20
           file: ./abis/IERC20.json
+        - name: AggregatorV3Interface
+          file: ./node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json
       eventHandlers:
         - event: SignerSet(indexed address,bool)
           handler: handleSignerSet
@@ -191,16 +185,8 @@ templates:
           file: ./node_modules/@mimic-fi/v3-smart-vault/artifacts/contracts/interfaces/ISmartVault.sol/ISmartVault.json
         - name: ERC20
           file: ./abis/IERC20.json
-        - name: UniswapPairV2
-          file: ./node_modules/@uniswap/v2-core/build/IUniswapV2Pair.json
-        - name: UniswapFactoryV2
-          file: ./node_modules/@uniswap/v2-core/build/IUniswapV2Factory.json
-        - name: UniswapPoolV3
-          file: ./node_modules/@uniswap/v3-core/artifacts/contracts/interfaces/pool/IUniswapV3PoolState.sol/IUniswapV3PoolState.json
-        - name: UniswapFactoryV3
-          file: ./node_modules/@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json
-        - name: UniswapRouterV3
-          file: ./node_modules/@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryImmutableState.sol/IPeripheryImmutableState.json
+        - name: AggregatorV3Interface
+          file: ./node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json
       eventHandlers:
         - event: Paused()
           handler: handlePause
