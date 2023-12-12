@@ -1,4 +1,4 @@
-import { Address, BigInt, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, ethereum, log } from '@graphprotocol/graph-ts'
 
 import {
   Deposited,
@@ -10,11 +10,18 @@ import {
   TaskExecuted,
   Withdrawn,
 } from '../types/Relayer/Relayer'
-import { Movement, RelayedExecution, RelayerConfig, SmartVaultCall, Task } from '../types/schema'
+import {
+  Movement,
+  RelayedExecution,
+  RelayedTransaction,
+  RelayerConfig,
+  SmartVault,
+  SmartVaultCall,
+  Task,
+} from '../types/schema'
 import { Task as TaskContract } from '../types/templates/Task/Task'
 import { loadOrCreateNativeToken } from './ERC20'
-import { rateInUsd } from './rates'
-import { getWrappedNativeToken } from './rates/Tokens'
+import { rateNativeInUsd } from './PriceOracle'
 
 export function handleDeposited(event: Deposited): void {
   const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
@@ -27,6 +34,17 @@ export function handleGasPaid(event: GasPaid): void {
   relayerConfig.balance = relayerConfig.balance.minus(event.params.amount.minus(event.params.quota))
   relayerConfig.quotaUsed = relayerConfig.quotaUsed.plus(event.params.quota)
   relayerConfig.save()
+
+  const smartVault = SmartVault.load(event.params.smartVault.toHexString())
+  if (smartVault == null) return log.warning('Missing smart vault entity {}', [event.params.smartVault.toHexString()])
+
+  const transaction = loadOrCreateRelayedTransaction(smartVault.environment, smartVault.id, event)
+  const costNative = event.transaction.gasPrice.times(event.params.amount)
+  transaction.gasUsed = event.params.amount
+  transaction.gasPrice = event.transaction.gasPrice
+  transaction.costNative = costNative
+  transaction.costUSD = rateNativeInUsd(costNative)
+  transaction.save()
 }
 
 export function handleQuotaPaid(event: QuotaPaid): void {
@@ -54,13 +72,15 @@ export function handleTaskExecuted(event: TaskExecuted): void {
   const task = Task.load(event.params.task.toHexString())
   if (task == null) return log.warning('Missing task entity {}', [event.params.task.toHexString()])
 
+  const smartVault = getSmartVault(event.params.task).toHexString()
+  const transaction = loadOrCreateRelayedTransaction(task.environment, smartVault, event)
+
   const executionId = event.transaction.hash.toHexString() + '#' + event.params.index.toString()
   const execution = new RelayedExecution(executionId)
   const costNative = event.transaction.gasPrice.times(event.params.gas)
-  execution.hash = event.transaction.hash.toHexString()
-  execution.sender = event.transaction.from.toHexString()
+  execution.transaction = transaction.id
   execution.executedAt = event.block.timestamp
-  execution.smartVault = getSmartVault(event.params.task).toHexString()
+  execution.smartVault = smartVault
   execution.task = event.params.task.toHexString()
   execution.index = event.params.index
   execution.succeeded = event.params.success
@@ -68,7 +88,7 @@ export function handleTaskExecuted(event: TaskExecuted): void {
   execution.gasUsed = event.params.gas
   execution.gasPrice = event.transaction.gasPrice
   execution.costNative = costNative
-  execution.costUSD = rateInUsd(getWrappedNativeToken(), costNative)
+  execution.costUSD = rateNativeInUsd(costNative)
   execution.environment = task.environment
   execution.save()
 
@@ -125,6 +145,31 @@ function getDefaultFeeCollector(address: Address): string {
   return 'Unknown'
 }
 
+export function loadOrCreateRelayedTransaction(
+  environment: string,
+  smartVault: string,
+  event: ethereum.Event
+): RelayedTransaction {
+  const transactionId = event.transaction.hash.toHexString()
+  let transaction = RelayedTransaction.load(transactionId)
+
+  if (transaction === null) {
+    transaction = new RelayedTransaction(transactionId)
+    transaction.environment = environment
+    transaction.smartVault = smartVault
+    transaction.hash = event.transaction.hash.toHexString()
+    transaction.sender = event.transaction.from.toHexString()
+    transaction.executedAt = event.block.timestamp
+    transaction.gasUsed = BigInt.zero()
+    transaction.gasPrice = BigInt.zero()
+    transaction.costUSD = BigInt.zero()
+    transaction.costNative = BigInt.zero()
+    transaction.save()
+  }
+
+  return transaction
+}
+
 export function loadOrCreateRelayerConfig(smartVaultId: string, relayer: Address): RelayerConfig {
   let relayerConfig = RelayerConfig.load(smartVaultId)
 
@@ -138,5 +183,6 @@ export function loadOrCreateRelayerConfig(smartVaultId: string, relayer: Address
     relayerConfig.quotaUsed = BigInt.zero()
     relayerConfig.save()
   }
+
   return relayerConfig
 }

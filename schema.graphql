@@ -273,11 +273,10 @@ enum SmartVaultCallType {
 
 type RelayedExecution @entity {
   id: ID!
-  hash: String!
-  sender: String!
   executedAt: BigInt!
   smartVault: SmartVault!
   environment: Environment!
+  transaction: RelayedTransaction!
   task: Task!
   index: BigInt!
   succeeded: Boolean!
@@ -288,6 +287,20 @@ type RelayedExecution @entity {
   costNative: BigInt!
   movements: [Movement!] @derivedFrom(field: "relayedExecution")
   smartVaultCalls: [SmartVaultCall!] @derivedFrom(field: "relayedExecution")
+}
+
+type RelayedTransaction @entity {
+  id: ID!
+  hash: String!
+  sender: String!
+  executedAt: BigInt!
+  smartVault: SmartVault!
+  environment: Environment!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  costUSD: BigInt!
+  costNative: BigInt!
+  executions: [RelayedExecution!] @derivedFrom(field: "transaction")
 }
 
 type Implementation @entity {
