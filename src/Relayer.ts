@@ -39,9 +39,8 @@ export function handleGasPaid(event: GasPaid): void {
   if (smartVault == null) return log.warning('Missing smart vault entity {}', [event.params.smartVault.toHexString()])
 
   const transaction = loadOrCreateRelayedTransaction(smartVault.environment, smartVault.id, event)
-  const gasUsed = event.params.amount.minus(event.params.quota)
-  const costNative = event.transaction.gasPrice.times(gasUsed)
-  transaction.gasUsed = gasUsed
+  const costNative = event.transaction.gasPrice.times(event.params.amount)
+  transaction.gasUsed = event.params.amount
   transaction.gasPrice = event.transaction.gasPrice
   transaction.costNative = costNative
   transaction.costUSD = rateNativeInUsd(costNative)
