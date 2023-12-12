@@ -55,10 +55,7 @@ export function rateNativeInUsd(amount: BigInt): BigInt {
   const price = getPrice(feed)
   if (price.isZero()) return BigInt.zero()
 
-  const amountInUsd = price.times(amount)
-  if (decimals == PRECISION) return amountInUsd
-  else if (decimals >= PRECISION) return amountInUsd.div(BigInt.fromI32(10).pow(decimals - PRECISION))
-  else return amountInUsd.times(BigInt.fromI32(10).pow(PRECISION - decimals))
+  return price.times(amount).div(BigInt.fromI32(10).pow(18 + decimals - PRECISION))
 }
 
 function getNativeUsdFeed(): Address {
