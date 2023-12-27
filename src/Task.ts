@@ -444,12 +444,10 @@ export function getTokensSource(address: Address): Address {
 }
 
 export function loadOrCreateTaskConfig(task: Task, block: ethereum.Block): TaskConfig {
-  const taskConfigId = task.taskConfig
+  let taskConfig: TaskConfig
+  const taskId = task.id + '#' + block.number.toString()
 
-  let taskConfig = TaskConfig.load(taskConfigId!)
-
-  if (taskConfig === null) {
-    const taskId = task.id + 'block' + block.number.toHexString()
+  if (task.taskConfig == null) {
     taskConfig = new TaskConfig(taskId)
     taskConfig.task = taskId
     taskConfig.acceptanceList = loadOrCreateAcceptanceList(taskId).id
@@ -457,33 +455,30 @@ export function loadOrCreateTaskConfig(task: Task, block: ethereum.Block): TaskC
     taskConfig.nextBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
     taskConfig.save()
   } else {
-    const taskId = task.id + 'block' + block.number.toHexString()
+    taskConfig = TaskConfig.load(task.taskConfig)
     const clonedTaskConfig = new TaskConfig(taskId)
     clonedTaskConfig.task = taskConfig.task
     clonedTaskConfig.nextBalanceConnector = taskConfig.nextBalanceConnector
     clonedTaskConfig.previousBalanceConnector = taskConfig.previousBalanceConnector
     clonedTaskConfig.acceptanceList = taskConfig.acceptanceList
-    if (taskConfig.gasLimits) clonedTaskConfig.gasLimits = taskConfig.gasLimits
-    if (taskConfig.timeLock) clonedTaskConfig.timeLock = taskConfig.timeLock
-    if (taskConfig.connector) clonedTaskConfig.connector = taskConfig.connector
-    if (taskConfig.recipient) clonedTaskConfig.recipient = taskConfig.recipient
-    if (taskConfig.defaultTokenThreshold) clonedTaskConfig.defaultTokenThreshold = taskConfig.defaultTokenThreshold
-    if (taskConfig.defaultVolumeLimit) clonedTaskConfig.defaultVolumeLimit = taskConfig.defaultVolumeLimit
-    if (taskConfig.defaultTokenOut) clonedTaskConfig.defaultTokenOut = taskConfig.defaultTokenOut
-    if (taskConfig.defaultMaxSlippage) clonedTaskConfig.defaultMaxSlippage = taskConfig.defaultMaxSlippage
-    if (taskConfig.defaultDestinationChain)
-      clonedTaskConfig.defaultDestinationChain = taskConfig.defaultDestinationChain
-    if (taskConfig.defaultMaxBridgeFee) clonedTaskConfig.defaultMaxBridgeFee = taskConfig.defaultMaxBridgeFee
-    if (taskConfig.customTokenThresholds._id)
-      clonedTaskConfig.customTokenThresholds._id = taskConfig.customTokenThresholds._id
-    if (taskConfig.customVolumeLimits._id) clonedTaskConfig.customVolumeLimits._id = taskConfig.customVolumeLimits._id
-    if (taskConfig.customTokenOuts._id) clonedTaskConfig.customTokenOuts._id = taskConfig.customTokenOuts._id
-    if (taskConfig.customMaxSlippages._id) clonedTaskConfig.customMaxSlippages._id = taskConfig.customMaxSlippages._id
-    if (taskConfig.customDestinationChains._id)
-      clonedTaskConfig.customDestinationChains._id = taskConfig.customDestinationChains._id
-    if (taskConfig.customMaxBridgeFees._id)
-      clonedTaskConfig.customMaxBridgeFees._id = taskConfig.customMaxBridgeFees._id
+    clonedTaskConfig.gasLimits = taskConfig.gasLimits
+    clonedTaskConfig.timeLock = taskConfig.timeLock
+    clonedTaskConfig.connector = taskConfig.connector
+    clonedTaskConfig.recipient = taskConfig.recipient
+    clonedTaskConfig.defaultTokenThreshold = taskConfig.defaultTokenThreshold
+    clonedTaskConfig.defaultVolumeLimit = taskConfig.defaultVolumeLimit
+    clonedTaskConfig.defaultTokenOut = taskConfig.defaultTokenOut
+    clonedTaskConfig.defaultMaxSlippage = taskConfig.defaultMaxSlippage
+    clonedTaskConfig.defaultDestinationChain = taskConfig.defaultDestinationChain
+    clonedTaskConfig.defaultMaxBridgeFee = taskConfig.defaultMaxBridgeFee
+    clonedTaskConfig.customTokenThresholds._id = taskConfig.customTokenThresholds._id
+    clonedTaskConfig.customVolumeLimits._id = taskConfig.customVolumeLimits._id
+    clonedTaskConfig.customTokenOuts._id = taskConfig.customTokenOuts._id
+    clonedTaskConfig.customMaxSlippages._id = taskConfig.customMaxSlippages._id
+    clonedTaskConfig.customDestinationChains._id = taskConfig.customDestinationChains._id
+    clonedTaskConfig.customMaxBridgeFees._id = taskConfig.customMaxBridgeFees._id
     clonedTaskConfig.save()
+    task.save()
     task.taskConfig = clonedTaskConfig.id
     taskConfig = clonedTaskConfig
   }
