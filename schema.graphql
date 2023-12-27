@@ -103,12 +103,12 @@ type Task @entity {
   tokensSource: String!
   executionType: String!
   permissions: BigInt!
-  taskConfig: TaskConfig @derivedFrom(field: "task")
+  taskConfig: TaskConfig
 }
 
 type TaskConfig @entity{
   id: ID!
-  task: Task!
+  task: Task
   nextBalanceConnector: String!
   previousBalanceConnector: String!
   acceptanceList: AcceptanceList!

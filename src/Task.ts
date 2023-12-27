@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes, ethereum, log } from '@graphprotocol/graph-ts'
 
 import {
   AcceptanceList,
@@ -64,14 +64,20 @@ export function handleUnpaused(event: Unpaused): void {
 }
 
 export function handleBalanceConnectorsSet(event: BalanceConnectorsSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   taskConfig.previousBalanceConnector = event.params.previous.toHexString()
   taskConfig.nextBalanceConnector = event.params.next.toHexString()
   taskConfig.save()
 }
 
 export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const acceptanceList = loadOrCreateAcceptanceList(taskConfig.id)
   const token = loadOrCreateERC20(event.params.token).id
 
@@ -91,7 +97,10 @@ export function handleTokensAcceptanceListSet(event: TokensAcceptanceListSet): v
 }
 
 export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const acceptanceList = loadOrCreateAcceptanceList(taskConfig.id)
   acceptanceList.type = parseAcceptanceType(event.params.acceptanceType)
   acceptanceList.save()
@@ -101,7 +110,10 @@ export function handleTokensAcceptanceTypeSet(event: TokensAcceptanceTypeSet): v
 }
 
 export function handleGasLimitsSet(event: GasLimitsSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const gasLimits = loadOrCreateGasLimits(taskConfig.id)
   gasLimits.gasPriceLimit = event.params.gasPriceLimit
   gasLimits.priorityFeeLimit = event.params.priorityFeeLimit
@@ -114,7 +126,10 @@ export function handleGasLimitsSet(event: GasLimitsSet): void {
 }
 
 export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const gasLimits = loadOrCreateGasLimits(taskConfig.id)
   gasLimits.gasPriceLimit = event.params.gasPriceLimit
   gasLimits.save()
@@ -124,7 +139,10 @@ export function handleGasPriceLimitSet(event: GasPriceLimitSet): void {
 }
 
 export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const gasLimits = loadOrCreateGasLimits(taskConfig.id)
   gasLimits.priorityFeeLimit = event.params.priorityFeeLimit
   gasLimits.save()
@@ -134,7 +152,10 @@ export function handlePriorityFeeLimitSet(event: PriorityFeeLimitSet): void {
 }
 
 export function handleTxCostLimitPctSet(event: TxCostLimitPctSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const gasLimits = loadOrCreateGasLimits(taskConfig.id)
   gasLimits.txCostLimitPct = event.params.txCostLimitPct
   gasLimits.save()
@@ -144,7 +165,10 @@ export function handleTxCostLimitPctSet(event: TxCostLimitPctSet): void {
 }
 
 export function handleTxCostLimitSet(event: TxCostLimitSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const gasLimits = loadOrCreateGasLimits(taskConfig.id)
   gasLimits.txCostLimit = event.params.txCostLimit
   gasLimits.save()
@@ -154,7 +178,10 @@ export function handleTxCostLimitSet(event: TxCostLimitSet): void {
 }
 
 export function handleTimeLockSet(event: TimeLockSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const timeLock = loadOrCreateTimeLock(taskConfig.id)
   timeLock.mode = parseTimeLockMode(event.params.mode)
   timeLock.frequency = event.params.frequency
@@ -167,7 +194,10 @@ export function handleTimeLockSet(event: TimeLockSet): void {
 }
 
 export function handleTimeLockAllowedAtSet(event: TimeLockAllowedAtSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const timeLock = loadOrCreateTimeLock(taskConfig.id)
   timeLock.allowedAt = event.params.allowedAt
   timeLock.save()
@@ -177,19 +207,28 @@ export function handleTimeLockAllowedAtSet(event: TimeLockAllowedAtSet): void {
 }
 
 export function handleConnectorSet(event: ConnectorSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   taskConfig.connector = event.params.connector.toHexString()
   taskConfig.save()
 }
 
 export function handleRecipientSet(event: RecipientSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   taskConfig.recipient = event.params.recipient.toHexString()
   taskConfig.save()
 }
 
 export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   let defaultTokenThreshold = TokenThreshold.load(taskConfig.id)
   if (defaultTokenThreshold == null) defaultTokenThreshold = new TokenThreshold(taskConfig.id)
   defaultTokenThreshold.token = loadOrCreateERC20(event.params.token).id
@@ -202,7 +241,10 @@ export function handleDefaultTokenThresholdSet(event: DefaultTokenThresholdSet):
 }
 
 export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const customTokenThresholdId = getTaskCustomConfigId(taskConfig, event.params.token)
 
   let tokenThreshold = TokenThreshold.load(customTokenThresholdId)
@@ -220,7 +262,10 @@ export function handleCustomTokenThresholdSet(event: CustomTokenThresholdSet): v
 }
 
 export function handleDefaultVolumeLimitSet(event: DefaultVolumeLimitSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   let defaultVolumeLimit = VolumeLimit.load(taskConfig.id)
   if (defaultVolumeLimit == null) defaultVolumeLimit = new VolumeLimit(taskConfig.id)
   defaultVolumeLimit.token = loadOrCreateERC20(event.params.token).id
@@ -233,7 +278,10 @@ export function handleDefaultVolumeLimitSet(event: DefaultVolumeLimitSet): void 
 }
 
 export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const customVolumeLimitId = getTaskCustomConfigId(taskConfig, event.params.token)
 
   let volumeLimit = VolumeLimit.load(customVolumeLimitId)
@@ -252,13 +300,19 @@ export function handleCustomVolumeLimitSet(event: CustomVolumeLimitSet): void {
 }
 
 export function handleDefaultTokenOutSet(event: DefaultTokenOutSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   taskConfig.defaultTokenOut = loadOrCreateERC20(event.params.tokenOut).id
   taskConfig.save()
 }
 
 export function handleCustomTokenOutSet(event: CustomTokenOutSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const customTokenOutId = getTaskCustomConfigId(taskConfig, event.params.token)
 
   let customTokenOut = CustomTokenOut.load(customTokenOutId)
@@ -270,13 +324,19 @@ export function handleCustomTokenOutSet(event: CustomTokenOutSet): void {
 }
 
 export function handleDefaultMaxSlippageSet(event: DefaultMaxSlippageSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   taskConfig.defaultMaxSlippage = event.params.maxSlippage
   taskConfig.save()
 }
 
 export function handleCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const customMaxSlippageId = getTaskCustomConfigId(taskConfig, event.params.token)
 
   let customMaxSlippage = CustomMaxSlippage.load(customMaxSlippageId)
@@ -288,13 +348,19 @@ export function handleCustomMaxSlippageSet(event: CustomMaxSlippageSet): void {
 }
 
 export function handleDefaultDestinationChainSet(event: DefaultDestinationChainSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   taskConfig.defaultDestinationChain = event.params.defaultDestinationChain
   taskConfig.save()
 }
 
 export function handleCustomDestinationChainSet(event: CustomDestinationChainSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const customDestinationChainId = getTaskCustomConfigId(taskConfig, event.params.token)
 
   let customDestinationChain = CustomDestinationChain.load(customDestinationChainId)
@@ -306,7 +372,10 @@ export function handleCustomDestinationChainSet(event: CustomDestinationChainSet
 }
 
 export function handleDefaultMaxFeeSet(event: DefaultMaxFeeSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   let defaultMaxBridgeFee = MaxBridgeFee.load(taskConfig.id)
   if (defaultMaxBridgeFee == null) defaultMaxBridgeFee = new MaxBridgeFee(taskConfig.id)
   defaultMaxBridgeFee.amount = event.params.amount
@@ -318,7 +387,10 @@ export function handleDefaultMaxFeeSet(event: DefaultMaxFeeSet): void {
 }
 
 export function handleCustomMaxFeeSet(event: CustomMaxFeeSet): void {
-  const taskConfig = loadOrCreateTaskConfig(event.address.toHexString())
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const taskConfig = loadOrCreateTaskConfig(task, event.block)
   const customMaxBridgeFeeId = getTaskCustomConfigId(taskConfig, event.params.token)
 
   let maxBridgeFee = MaxBridgeFee.load(customMaxBridgeFeeId)
@@ -371,16 +443,43 @@ export function getTokensSource(address: Address): Address {
   return Address.zero()
 }
 
-export function loadOrCreateTaskConfig(taskId: string): TaskConfig {
-  let taskConfig = TaskConfig.load(taskId)
+export function loadOrCreateTaskConfig(task: Task, block: ethereum.Block): TaskConfig {
+  const taskConfigId = task.taskConfig
+
+  let taskConfig = TaskConfig.load(taskConfigId!)
 
   if (taskConfig === null) {
+    const taskId = task.id + 'block' + block.number.toHexString()
     taskConfig = new TaskConfig(taskId)
     taskConfig.task = taskId
     taskConfig.acceptanceList = loadOrCreateAcceptanceList(taskId).id
     taskConfig.previousBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
     taskConfig.nextBalanceConnector = '0x0000000000000000000000000000000000000000000000000000000000000000'
     taskConfig.save()
+  } else {
+    const taskId = task.id + 'block' + block.number.toHexString()
+    const clonedTaskConfig = new TaskConfig(taskId)
+    clonedTaskConfig.task = taskConfig.task
+    clonedTaskConfig.acceptanceList = taskConfig.acceptanceList
+    clonedTaskConfig.gasLimits = taskConfig.gasLimits
+    clonedTaskConfig.timeLock = taskConfig.timeLock
+    clonedTaskConfig.connector = taskConfig.connector
+    clonedTaskConfig.recipient = taskConfig.recipient
+    clonedTaskConfig.defaultTokenThreshold = taskConfig.defaultTokenThreshold
+    clonedTaskConfig.defaultVolumeLimit = taskConfig.defaultVolumeLimit
+    clonedTaskConfig.defaultTokenOut = taskConfig.defaultTokenOut
+    clonedTaskConfig.defaultMaxSlippage = taskConfig.defaultMaxSlippage
+    clonedTaskConfig.defaultDestinationChain = taskConfig.defaultDestinationChain
+    clonedTaskConfig.defaultMaxBridgeFee = taskConfig.defaultMaxBridgeFee
+    clonedTaskConfig.customTokenThresholds._id = taskConfig.customTokenThresholds._id
+    clonedTaskConfig.customVolumeLimits._id = taskConfig.customVolumeLimits._id
+    clonedTaskConfig.customTokenOuts._id = taskConfig.customTokenOuts._id
+    clonedTaskConfig.customMaxSlippages._id = taskConfig.customMaxSlippages._id
+    clonedTaskConfig.customDestinationChains._id = taskConfig.customDestinationChains._id
+    clonedTaskConfig.customMaxBridgeFees._id = taskConfig.customMaxBridgeFees._id
+    clonedTaskConfig.save()
+    task.taskConfig = clonedTaskConfig.id
+    taskConfig = clonedTaskConfig
   }
 
   return taskConfig
