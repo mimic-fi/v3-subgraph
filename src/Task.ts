@@ -476,20 +476,13 @@ export function loadOrCreateTaskConfig(task: Task, block: ethereum.Block): TaskC
     clonedTaskConfig.defaultDestinationChain = taskConfig.defaultDestinationChain
     clonedTaskConfig.defaultMaxBridgeFee = taskConfig.defaultMaxBridgeFee
 
-    // cloneCustomDestinationChains(taskConfig, taskId, clonedTaskConfig)
     cloneCustomTokenThresholds(taskConfig, taskId, clonedTaskConfig)
-
-    // clonedTaskConfig.customTokenThresholds = taskConfig.customTokenThresholds
-
-    // clonedTaskConfig.customTokenThresholds.entries.fill(taskConfig.customTokenThresholds.load(taskConfig.customTokenThresholds))
-    // = cloneCustomTokenThresholds(taskConfig.customTokenThresholds)
-
-    clonedTaskConfig.customMaxSlippages.entries.copyWithin(0, taskConfig.customMaxSlippages.entries.length)
-    clonedTaskConfig.customDestinationChains.entries.copyWithin(0, taskConfig.customDestinationChains.entries.length)
-    // clonedTaskConfig.customMaxBridgeFees.entries.fill(taskConfig.customMaxBridgeFees.entries.length)
-    // clonedTaskConfig.customDestinationChains = [...taskConfig.customDestinationChains]
-
-    // clonedTaskConfig.customMaxBridgeFees = [...taskConfig.customMaxBridgeFees]
+    cloneCustomVolumeLimits(taskConfig, taskId, clonedTaskConfig)
+    cloneCustomDestinationChains(taskConfig, taskId, clonedTaskConfig)
+    cloneCustomTokenOuts(taskConfig, taskId, clonedTaskConfig)
+    cloneCustomMaxSlippages(taskConfig, taskId, clonedTaskConfig)
+    cloneCustomDestinationChains(taskConfig, taskId, clonedTaskConfig)
+    cloneCustomMaxBridgeFees(taskConfig, taskId, clonedTaskConfig)
 
     clonedTaskConfig.save()
     task.taskConfig = clonedTaskConfig.id
@@ -499,56 +492,8 @@ export function loadOrCreateTaskConfig(task: Task, block: ethereum.Block): TaskC
   }
 }
 
-// export function cloneCustomDestinationChains(
-//   taskConfig: TaskConfig,
-//   taskId: string,
-//   clonedTaskConfig: TaskConfig
-// ): void {
-//   log.warning('paso 9.1 clone custom destintation chains {}', ['customChains[0].id'])
-//   const customChains = taskConfig.customDestinationChains.load()
+// ------------------------------
 
-//   if (customChains) {
-//     log.warning('paso 9.2 clone custom destintation chains {}', [customChains[0].token])
-//     customChains.forEach((customChain: CustomDestinationChain) => {
-//       log.warning('paso 9.5 clone custom destintation chains {}', [customChain.id.toString()])
-//       const clonedCustomDestinationChain = new CustomDestinationChain( customChain.token)
-//       clonedCustomDestinationChain.taskConfig = taskConfig.id
-//       clonedCustomDestinationChain.token = customChain.token
-//       clonedCustomDestinationChain.destinationChain = customChain.destinationChain
-//       clonedCustomDestinationChain.save()
-//       clonedTaskConfig.save()
-//     })
-//     clonedTaskConfig.save()
-//   }
-// }
-
-// function cloneCustomTokenThresholds(taskConfig: TaskConfig, taskId: string, clonedTaskConfig: TaskConfig): void {
-//   const customThresholds = taskConfig.customTokenThresholds.load()
-//   // const ids = customThresholds.map((entry) => entry.id).flat()
-//   // const idsString: string = ids.join(', ')
-//   // log.warning('paso 1 clone customThresholds {}', [idsString])
-//   log.warning('paso 1 clone customThresholds {}', ['a'])
-//   for (let i: i32 = 0; i < customThresholds.length; i++) {
-//     const customTokenThresholdId = customThresholds[i].id
-//     log.warning('paso 2 clone customThresholds {}', [customTokenThresholdId])
-//     if (customTokenThresholdId) {
-//       let customTokenThreshold = CustomTokenThreshold.load(customTokenThresholdId)
-//       log.warning('paso 3 clone customThresholds {}', [customTokenThresholdId])
-//       if (customTokenThreshold !== null) {
-//         log.warning('paso 4 clone customThresholds {}', [customTokenThresholdId])
-//         const clonedCustomTokenThreshold = new CustomTokenThreshold(taskId + '/' + customTokenThreshold.token)
-//         log.warning('paso 5 clone customThresholds {}', [customTokenThresholdId])
-//         clonedCustomTokenThreshold.taskConfig = clonedTaskConfig.id
-//         clonedCustomTokenThreshold.token = customTokenThreshold.token
-//         clonedCustomTokenThreshold.threshold = customTokenThreshold.threshold
-//         clonedCustomTokenThreshold.save()
-//         clonedTaskConfig.save()
-//       }
-//     }
-//   }
-
-//   clonedTaskConfig.save()
-// }
 function cloneCustomTokenThresholds(taskConfig: TaskConfig, taskId: string, clonedTaskConfig: TaskConfig): void {
   log.warning('paso 1 clone customThresholds {}', ['a'])
   const customThresholds = taskConfig.customTokenThresholds.load()
@@ -574,6 +519,138 @@ function cloneCustomTokenThresholds(taskConfig: TaskConfig, taskId: string, clon
 
   clonedTaskConfig.save()
 }
+
+function cloneCustomVolumeLimits(taskConfig: TaskConfig, taskId: string, clonedTaskConfig: TaskConfig): void {
+  log.warning('paso 1 clone customVolumeLimits {}', ['a'])
+  const customVolumeLimits = taskConfig.customVolumeLimits.load()
+
+  for (let i: i32 = 0; i < customVolumeLimits.length; i++) {
+    const customVolumeLimitId = customVolumeLimits[i].id
+    log.warning('paso 2 clone customVolumeLimits {}', [customVolumeLimitId])
+    if (customVolumeLimitId) {
+      let customVolumeLimit = CustomVolumeLimit.load(customVolumeLimitId)
+      log.warning('paso 3 clone customVolumeLimits {}', [customVolumeLimitId])
+      if (customVolumeLimit !== null) {
+        log.warning('paso 4 clone customVolumeLimits {}', [customVolumeLimitId])
+        const clonedCustomVolumeLimit = new CustomVolumeLimit(taskId + '/' + customVolumeLimit.token)
+        log.warning('paso 5 clone customVolumeLimits {}', [customVolumeLimitId])
+        clonedCustomVolumeLimit.taskConfig = clonedTaskConfig.id
+        clonedCustomVolumeLimit.token = customVolumeLimit.token
+        clonedCustomVolumeLimit.volumeLimit = customVolumeLimit.volumeLimit
+        clonedCustomVolumeLimit.save()
+        clonedTaskConfig.save()
+      }
+    }
+  }
+
+  clonedTaskConfig.save()
+}
+
+function cloneCustomDestinationChains(taskConfig: TaskConfig, taskId: string, clonedTaskConfig: TaskConfig): void {
+  log.warning('paso 1 clone customDestinationChains {}', ['a'])
+  const customDestinationChains = taskConfig.customDestinationChains.load()
+
+  for (let i: i32 = 0; i < customDestinationChains.length; i++) {
+    const customDestinationChainId = customDestinationChains[i].id
+    log.warning('paso 2 clone customDestinationChains {}', [customDestinationChainId])
+    if (customDestinationChainId) {
+      let customDestinationChain = CustomDestinationChain.load(customDestinationChainId)
+      log.warning('paso 3 clone customDestinationChains {}', [customDestinationChainId])
+      if (customDestinationChain !== null) {
+        log.warning('paso 4 clone customDestinationChains {}', [customDestinationChainId])
+        const clonedCustomDestinationChain = new CustomDestinationChain(taskId + '/' + customDestinationChain.token)
+        log.warning('paso 5 clone customDestinationChains {}', [customDestinationChainId])
+        clonedCustomDestinationChain.taskConfig = clonedTaskConfig.id
+        clonedCustomDestinationChain.token = customDestinationChain.token
+        clonedCustomDestinationChain.destinationChain = customDestinationChain.destinationChain
+        clonedCustomDestinationChain.save()
+        clonedTaskConfig.save()
+      }
+    }
+  }
+
+  clonedTaskConfig.save()
+}
+
+function cloneCustomTokenOuts(taskConfig: TaskConfig, taskId: string, clonedTaskConfig: TaskConfig): void {
+  log.warning('paso 1 clone customTokenOuts {}', ['a'])
+  const customTokenOuts = taskConfig.customTokenOuts.load()
+
+  for (let i: i32 = 0; i < customTokenOuts.length; i++) {
+    const customTokenOutId = customTokenOuts[i].id
+    log.warning('paso 2 clone customTokenOuts {}', [customTokenOutId])
+    if (customTokenOutId) {
+      let customTokenOut = CustomTokenOut.load(customTokenOutId)
+      log.warning('paso 3 clone customTokenOuts {}', [customTokenOutId])
+      if (customTokenOut !== null) {
+        log.warning('paso 4 clone customTokenOuts {}', [customTokenOutId])
+        const clonedCustomTokenOut = new CustomTokenOut(taskId + '/' + customTokenOut.token)
+        log.warning('paso 5 clone customTokenOuts {}', [customTokenOutId])
+        clonedCustomTokenOut.taskConfig = clonedTaskConfig.id
+        clonedCustomTokenOut.token = customTokenOut.token
+        clonedCustomTokenOut.tokenOut = customTokenOut.tokenOut
+        clonedCustomTokenOut.save()
+        clonedTaskConfig.save()
+      }
+    }
+  }
+
+  clonedTaskConfig.save()
+}
+
+function cloneCustomMaxSlippages(taskConfig: TaskConfig, taskId: string, clonedTaskConfig: TaskConfig): void {
+  log.warning('paso 1 clone customMaxSlippages {}', ['a'])
+  const customMaxSlippages = taskConfig.customMaxSlippages.load()
+
+  for (let i: i32 = 0; i < customMaxSlippages.length; i++) {
+    const customMaxSlippageId = customMaxSlippages[i].id
+    log.warning('paso 2 clone customMaxSlippages {}', [customMaxSlippageId])
+    if (customMaxSlippageId) {
+      let customMaxSlippage = CustomMaxSlippage.load(customMaxSlippageId)
+      log.warning('paso 3 clone customMaxSlippages {}', [customMaxSlippageId])
+      if (customMaxSlippage !== null) {
+        log.warning('paso 4 clone customMaxSlippages {}', [customMaxSlippageId])
+        const clonedCustomMaxSlippage = new CustomMaxSlippage(taskId + '/' + customMaxSlippage.token)
+        log.warning('paso 5 clone customMaxSlippages {}', [customMaxSlippageId])
+        clonedCustomMaxSlippage.taskConfig = clonedTaskConfig.id
+        clonedCustomMaxSlippage.token = customMaxSlippage.token
+        clonedCustomMaxSlippage.maxSlippage = customMaxSlippage.maxSlippage
+        clonedCustomMaxSlippage.save()
+        clonedTaskConfig.save()
+      }
+    }
+  }
+
+  clonedTaskConfig.save()
+}
+
+function cloneCustomMaxBridgeFees(taskConfig: TaskConfig, taskId: string, clonedTaskConfig: TaskConfig): void {
+  log.warning('paso 1 clone customMaxBridgeFees {}', ['a'])
+  const customMaxBridgeFees = taskConfig.customMaxBridgeFees.load()
+
+  for (let i: i32 = 0; i < customMaxBridgeFees.length; i++) {
+    const customMaxBridgeFeeId = customMaxBridgeFees[i].id
+    log.warning('paso 2 clone customMaxBridgeFees {}', [customMaxBridgeFeeId])
+    if (customMaxBridgeFeeId) {
+      let customMaxBridgeFee = CustomMaxBridgeFee.load(customMaxBridgeFeeId)
+      log.warning('paso 3 clone customMaxBridgeFees {}', [customMaxBridgeFeeId])
+      if (customMaxBridgeFee !== null) {
+        log.warning('paso 4 clone customMaxBridgeFees {}', [customMaxBridgeFeeId])
+        const clonedCustomMaxBridgeFee = new CustomMaxBridgeFee(taskId + '/' + customMaxBridgeFee.token)
+        log.warning('paso 5 clone customMaxBridgeFees {}', [customMaxBridgeFeeId])
+        clonedCustomMaxBridgeFee.taskConfig = clonedTaskConfig.id
+        clonedCustomMaxBridgeFee.token = customMaxBridgeFee.token
+        clonedCustomMaxBridgeFee.maxBridgeFee = customMaxBridgeFee.maxBridgeFee
+        clonedCustomMaxBridgeFee.save()
+        clonedTaskConfig.save()
+      }
+    }
+  }
+
+  clonedTaskConfig.save()
+}
+
+// ------------------------------
 
 export function loadOrCreateAcceptanceList(tokensAcceptanceListId: string): AcceptanceList {
   let acceptanceList = AcceptanceList.load(tokensAcceptanceListId)
