@@ -48,7 +48,8 @@ export function handleUnwrapped(event: Unwrapped): void {
 }
 
 function createSmartVaultCall(event: ethereum.Event, smartVaultCallType: string, fee: BigInt): void {
-  const smartVaultCallId = getNextSmartVaultCallId(event.transaction.hash)
+  const relayedExecutionId = getNextRelayedExecutionId(event.transaction.hash)
+  const smartVaultCallId = getNextSmartVaultCallId(relayedExecutionId)
   const smartVaultCall = new SmartVaultCall(smartVaultCallId)
   smartVaultCall.hash = event.transaction.hash.toHexString()
   smartVaultCall.sender = event.transaction.from.toHexString()
@@ -56,22 +57,13 @@ function createSmartVaultCall(event: ethereum.Event, smartVaultCallType: string,
   smartVaultCall.smartVault = event.address.toHexString()
   smartVaultCall.type = smartVaultCallType
   smartVaultCall.fee = fee
+  smartVaultCall.relayedExecution = relayedExecutionId
   smartVaultCall.save()
-
-  // eslint-disable-next-line no-constant-condition
-  for (let i: i32 = 0; true; i++) {
-    const executionId = event.transaction.hash.toHexString() + '#' + i.toString()
-    const execution = RelayedExecution.load(executionId)
-    if (execution == null) break
-    if (execution.smartVaultCalls.load().length == 0) {
-      smartVaultCall.relayedExecution = executionId
-      smartVaultCall.save()
-    }
-  }
 }
 
 export function handleBalanceConnectorUpdated(event: BalanceConnectorUpdated): void {
-  const movementId = getNextMovementId(event.transaction.hash)
+  const relayedExecutionId = getNextRelayedExecutionId(event.transaction.hash)
+  const movementId = getNextMovementId(relayedExecutionId)
   const movement = new Movement(movementId)
   movement.hash = event.transaction.hash.toHexString()
   movement.sender = event.transaction.from.toHexString()
@@ -81,6 +73,7 @@ export function handleBalanceConnectorUpdated(event: BalanceConnectorUpdated): v
   movement.token = loadOrCreateERC20(event.params.token).id
   movement.amount = event.params.amount
   movement.added = event.params.added
+  movement.relayedExecution = relayedExecutionId
   movement.save()
 
   const balanceConnectorBalance = loadOrCreateBalanceConnectorBalance(event)
@@ -88,17 +81,6 @@ export function handleBalanceConnectorUpdated(event: BalanceConnectorUpdated): v
     ? balanceConnectorBalance.amount.plus(event.params.amount)
     : balanceConnectorBalance.amount.minus(event.params.amount)
   balanceConnectorBalance.save()
-
-  // eslint-disable-next-line no-constant-condition
-  for (let i: i32 = 0; true; i++) {
-    const executionId = event.transaction.hash.toHexString() + '#' + i.toString()
-    const execution = RelayedExecution.load(executionId)
-    if (execution == null) break
-    if (execution.movements.load().length == 0) {
-      movement.relayedExecution = executionId
-      movement.save()
-    }
-  }
 }
 
 export function handlePaused(event: Paused): void {
@@ -191,22 +173,32 @@ export function getPriceOracle(address: Address): Address {
   return Address.zero()
 }
 
-function getNextMovementId(hash: Bytes): string {
+function getNextMovementId(relayedExecutionId: string): string {
   // eslint-disable-next-line no-constant-condition
   for (let i: i32 = 0; true; i++) {
-    const movementId = hash.toHexString() + '#' + i.toString()
+    const movementId = relayedExecutionId + '#' + i.toString()
     if (Movement.load(movementId) == null) return movementId
   }
 
-  throw Error('Could not find next movement ID')
+  throw Error('Could not find next Movement ID')
 }
 
-function getNextSmartVaultCallId(hash: Bytes): string {
+function getNextSmartVaultCallId(relayedExecutionId: string): string {
   // eslint-disable-next-line no-constant-condition
   for (let i: i32 = 0; true; i++) {
-    const smartVaultCallId = hash.toHexString() + '#' + i.toString()
+    const smartVaultCallId = relayedExecutionId + '#' + i.toString()
     if (SmartVaultCall.load(smartVaultCallId) == null) return smartVaultCallId
   }
 
-  throw Error('Could not find next smartVaultCall ID')
+  throw Error('Could not find next SmartVaultCall ID')
+}
+
+function getNextRelayedExecutionId(hash: Bytes): string {
+  // eslint-disable-next-line no-constant-condition
+  for (let i: i32 = 0; true; i++) {
+    const executionId = hash.toHexString() + '#' + i.toString()
+    if (RelayedExecution.load(executionId) == null) return executionId
+  }
+
+  throw Error('Could not find next RelayedExecution ID')
 }

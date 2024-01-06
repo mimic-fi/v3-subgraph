@@ -248,7 +248,7 @@ type Movement @entity {
   added: Boolean!
   connector: String!
   smartVault: SmartVault!
-  relayedExecution: RelayedExecution
+  relayedExecution: RelayedExecution!
 }
 
 type SmartVaultCall @entity {
@@ -259,7 +259,7 @@ type SmartVaultCall @entity {
   type: SmartVaultCallType!
   fee: BigInt!
   smartVault: SmartVault!
-  relayedExecution: RelayedExecution
+  relayedExecution: RelayedExecution!
 }
 
 enum SmartVaultCallType {

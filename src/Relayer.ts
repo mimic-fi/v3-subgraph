@@ -149,6 +149,8 @@ export function loadOrCreateRelayedTransaction(
   smartVault: string,
   event: ethereum.Event
 ): RelayedTransaction {
+  // Relayers cannot execute tasks from multiple smart vaults in a single transaction
+  // Therefore, using the transaction hash to identify a relayed transaction is correct
   const transactionId = event.transaction.hash.toHexString()
   let transaction = RelayedTransaction.load(transactionId)
 
