@@ -189,7 +189,7 @@ templates:
           file: ./node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json
       eventHandlers:
         - event: Paused()
-          handler: handlePause
+          handler: handlePaused
         - event: Unpaused()
           handler: handleUnpaused
         - event: PriceOracleSet(indexed address)
