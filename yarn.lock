@@ -999,15 +999,15 @@
     "@openzeppelin/contracts" "4.7.0"
     solmate "^6.7.0"
 
-"@mimic-fi/v3-relayer@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@mimic-fi/v3-relayer/-/v3-relayer-0.1.1.tgz#01e8d5e8defc3ab47f8da321a92791075b305031"
-  integrity sha512-JG9hVbVgPA6IpszgPV2E0ZxEaNkHw8GrDPCeH4HjJuAtfl2nrYsDMSGoZqg+MxeuT4KeGrfX2LmlJCHPLamSag==
+"@mimic-fi/v3-relayer@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@mimic-fi/v3-relayer/-/v3-relayer-0.2.0.tgz#626ce61a32a0d5e5bb27bf649fdb4a1f32bcc408"
+  integrity sha512-46YTuMbGv4DUso7/J/gjkEcBsxgovYX0KlNBnnaYxv5ITm1I5nqmnkWfiz2VQ9s6+Wn5LgZEPU6VWpR5d0fliQ==
   dependencies:
     "@mimic-fi/v3-helpers" "0.1.0"
     "@mimic-fi/v3-smart-vault" "0.1.0"
     "@mimic-fi/v3-tasks" "0.1.0"
-    "@openzeppelin/contracts" "4.7.0"
+    "@openzeppelin/contracts" "4.9.3"
 
 "@mimic-fi/v3-smart-vault@0.1.0":
   version "0.1.0"

@@ -9,7 +9,7 @@ import {
   SmartVaultMaxQuotaSet,
   TaskExecuted,
   Withdrawn,
-} from '../types/Relayer/Relayer'
+} from '../types/Relayer_2/Relayer'
 import {
   Movement,
   RelayedExecution,
