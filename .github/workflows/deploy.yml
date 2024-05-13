@@ -16,7 +16,8 @@ jobs:
         uses: ./.github/actions/setup
       - name: Deploy Arbitrum
         env:
-          GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
+          GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+          VERSION_LABEL: ${{ github.sha }}
         run: yarn deploy:arbitrum
 
   deploy-aurora:
@@ -42,7 +43,8 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Avalanche
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+            VERSION_LABEL: ${{ github.sha }}
           run: yarn deploy:avalanche
 
   deploy-base:
@@ -82,7 +84,8 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Fantom
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+            VERSION_LABEL: ${{ github.sha }}
           run: yarn deploy:fantom
 
   deploy-gnosis:
@@ -95,7 +98,8 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Gnosis
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+            VERSION_LABEL: ${{ github.sha }}
           run: yarn deploy:gnosis
 
   deploy-mainnet:
@@ -108,7 +112,8 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Mainnet
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+            VERSION_LABEL: ${{ github.sha }}
           run: yarn deploy:mainnet
 
   deploy-optimism:
@@ -121,7 +126,8 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Optimism
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+            VERSION_LABEL: ${{ github.sha }}
           run: yarn deploy:optimism
 
   deploy-polygon:
@@ -134,7 +140,8 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy Polygon
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+            VERSION_LABEL: ${{ github.sha }}
           run: yarn deploy:polygon
 
   deploy-zkevm:
