@@ -1,7 +1,9 @@
 import { Address, BigInt, ethereum, log } from '@graphprotocol/graph-ts'
 
 import {
+  DefaultCollectorSet,
   Deposited,
+  ExecutorSet,
   GasPaid,
   QuotaPaid,
   Relayer,
@@ -11,10 +13,12 @@ import {
   Withdrawn,
 } from '../types/Relayer_2/Relayer'
 import {
+  Executor,
   Movement,
   RelayedExecution,
   RelayedTransaction,
   RelayerConfig,
+  RelayerDefaultConfig,
   SmartVault,
   SmartVaultCall,
   Task,
@@ -27,6 +31,13 @@ export function handleDeposited(event: Deposited): void {
   const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
   relayerConfig.balance = relayerConfig.balance.plus(event.params.amount)
   relayerConfig.save()
+}
+
+export function handleExecutorSet(event: ExecutorSet): void {
+  const relayerDefaultConfig = loadOrCreateRelayerDefaultConfig(event.address.toHexString())
+  const executor = loadOrCreateExecutor(event.params.executor.toHexString(), relayerDefaultConfig)
+  executor.allowed = event.params.allowed
+  executor.save()
 }
 
 export function handleGasPaid(event: GasPaid): void {
@@ -59,6 +70,13 @@ export function handleSmartVaultCollectorSet(event: SmartVaultCollectorSet): voi
   if (feeCollector == Address.zero().toHexString()) feeCollector = getDefaultFeeCollector(event.address)
   relayerConfig.feeCollector = feeCollector
   relayerConfig.save()
+}
+
+export function handleDefaultSmartVaulCollectorSet(event: DefaultCollectorSet): void {
+  const relayerDefaultConfig = loadOrCreateRelayerDefaultConfig(event.address.toHexString())
+  const defaultCollector = event.params.collector.toHexString()
+  relayerDefaultConfig.defaultFeeCollector = defaultCollector
+  relayerDefaultConfig.save()
 }
 
 export function handleSmartVaultMaxQuotaSet(event: SmartVaultMaxQuotaSet): void {
@@ -186,4 +204,27 @@ export function loadOrCreateRelayerConfig(smartVaultId: string, relayer: Address
   }
 
   return relayerConfig
+}
+
+export function loadOrCreateRelayerDefaultConfig(relayerId: string): RelayerDefaultConfig {
+  let relayer = RelayerDefaultConfig.load(relayerId)
+
+  if (relayer === null) {
+    relayer = new RelayerDefaultConfig(relayerId)
+  }
+
+  return relayer
+}
+
+export function loadOrCreateExecutor(executorId: string, relayerDefaultConfig: RelayerDefaultConfig): Executor {
+  let executor = Executor.load(executorId)
+
+  if (executor === null) {
+    executor = new Executor(executorId)
+    executor.relayerDefaultConfig = relayerDefaultConfig.id
+    executor.allowed = false
+    executor.save()
+  }
+
+  return executor
 }

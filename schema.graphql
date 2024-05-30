@@ -37,6 +37,18 @@ type RelayerConfig @entity {
   quotaUsed: BigInt!
 }
 
+type RelayerDefaultConfig @entity {
+  id: ID!
+  defaultFeeCollector: String
+  executors: [Executor!] @derivedFrom(field: "relayerDefaultConfig")
+}
+
+type Executor @entity {
+  id: ID!
+  relayerDefaultConfig: RelayerDefaultConfig!
+  allowed: Boolean!
+}
+
 type SmartVaultFee @entity {
   id: ID!
   smartVault: SmartVault!
