@@ -59,6 +59,6 @@ export function getNetworkId(): BigInt {
   if (isGnosis()) return BigInt.fromI32(100)
   if (isZkEvm()) return BigInt.fromI32(1101)
   if (isBase()) return BigInt.fromI32(8453)
-  if (isAurora()) return BigInt.fromI32(1313161555)
+  if (isAurora()) return BigInt.fromI32(1313161554)
   return BigInt.fromI32(0)
 }
