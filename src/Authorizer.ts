@@ -4,6 +4,8 @@ import { Permission, PermissionParam, Task } from '../types/schema'
 import { Authorized, Authorizer as AuthorizerContract, Unauthorized } from '../types/templates/Authorizer/Authorizer'
 import { getFunctionNameForSelector } from './permissions/index'
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 export function handleAuthorized(event: Authorized): void {
   const permissionId = getPermissionId(event.address, event.params.who, event.params.where, event.params.what)
   const existsPermission = Permission.load(permissionId) != null
