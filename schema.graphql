@@ -137,13 +137,11 @@ type TaskConfig @entity {
   defaultMaxSlippage: BigInt
   defaultDestinationChain: BigInt
   defaultMaxBridgeFee: MaxBridgeFee
-  customTokenThresholds: [CustomTokenThreshold!]
-    @derivedFrom(field: "taskConfig")
+  customTokenThresholds: [CustomTokenThreshold!] @derivedFrom(field: "taskConfig")
   customVolumeLimits: [CustomVolumeLimit!] @derivedFrom(field: "taskConfig")
   customTokenOuts: [CustomTokenOut!] @derivedFrom(field: "taskConfig")
   customMaxSlippages: [CustomMaxSlippage!] @derivedFrom(field: "taskConfig")
-  customDestinationChains: [CustomDestinationChain!]
-    @derivedFrom(field: "taskConfig")
+  customDestinationChains: [CustomDestinationChain!] @derivedFrom(field: "taskConfig")
   customMaxBridgeFees: [CustomMaxBridgeFee!] @derivedFrom(field: "taskConfig")
 }
 
