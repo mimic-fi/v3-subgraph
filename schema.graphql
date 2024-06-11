@@ -29,6 +29,7 @@ type SmartVault @entity {
 
 type RelayerConfig @entity {
   id: ID!
+  relayer: Relayer!
   smartVault: SmartVault!
   feeCollector: String!
   balance: BigInt!
@@ -37,8 +38,22 @@ type RelayerConfig @entity {
   quotaUsed: BigInt!
 }
 
+type Relayer @entity {
+  id: ID!
+  feeCollector: String
+  executors: [String!]!
+  configs: [RelayerConfig!] @derivedFrom(field: "relayer")
+}
+
+type FeeController @entity {
+  id: ID!
+  feeCollector: String!
+  configs: [SmartVaultFee!] @derivedFrom(field: "feeController")
+}
+
 type SmartVaultFee @entity {
   id: ID!
+  feeController: FeeController!
   smartVault: SmartVault!
   feeCollector: String!
   feePercentage: BigInt!
@@ -106,7 +121,7 @@ type Task @entity {
   taskConfig: TaskConfig @derivedFrom(field: "task")
 }
 
-type TaskConfig @entity{
+type TaskConfig @entity {
   id: ID!
   task: Task!
   nextBalanceConnector: String!
@@ -146,7 +161,7 @@ type GasLimits @entity {
   txCostLimit: BigInt!
 }
 
-type TimeLock @entity{
+type TimeLock @entity {
   id: ID!
   taskConfig: TaskConfig!
   mode: TimeLockMode!
@@ -217,7 +232,7 @@ type CustomDestinationChain @entity {
   destinationChain: BigInt!
 }
 
-type CustomMaxBridgeFee  @entity {
+type CustomMaxBridgeFee @entity {
   id: ID!
   taskConfig: TaskConfig!
   token: ERC20!

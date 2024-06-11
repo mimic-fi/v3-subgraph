@@ -1,19 +1,24 @@
-import { Address, BigInt, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 import {
+  DefaultFeeCollectorSet,
   FeeCollectorSet,
-  FeeController,
   FeePercentageSet,
   MaxFeePercentageSet,
 } from '../types/FeeController/FeeController'
-import { SmartVaultFee } from '../types/schema'
+import { FeeController, SmartVaultFee } from '../types/schema'
 
 export function handleFeeCollectorSet(event: FeeCollectorSet): void {
   const smartVaultFee = loadOrCreateSmartVaultFee(event.params.smartVault.toHexString(), event.address)
-  let feeCollector = event.params.collector.toHexString()
-  feeCollector = event.params.collector.equals(Address.zero()) ? getDefaultFeeCollector(event.address) : feeCollector
+  const feeCollector = event.params.collector.toHexString()
   smartVaultFee.feeCollector = feeCollector
   smartVaultFee.save()
+}
+
+export function handleDefaultFeeCollectorSet(event: DefaultFeeCollectorSet): void {
+  const feeController = loadOrCreateFeeController(event.address)
+  feeController.feeCollector = event.params.collector.toHexString()
+  feeController.save()
 }
 
 export function handleFeePercentageSet(event: FeePercentageSet): void {
@@ -28,27 +33,29 @@ export function handleMaxFeePercentageSet(event: MaxFeePercentageSet): void {
   smartVaultFee.save()
 }
 
-function getDefaultFeeCollector(address: Address): string {
-  const contract = FeeController.bind(address)
-  const feeControllerCall = contract.try_defaultFeeCollector()
-  if (!feeControllerCall.reverted) {
-    return feeControllerCall.value.toHexString()
-  }
-
-  log.warning('feeController() call reverted for {}', [address.toHexString()])
-  return 'Unknown'
-}
-
 export function loadOrCreateSmartVaultFee(smartVaultFeeId: string, address: Address): SmartVaultFee {
   let smartVaultFee = SmartVaultFee.load(address.toHexString())
 
   if (smartVaultFee == null) {
     smartVaultFee = new SmartVaultFee(smartVaultFeeId)
+    smartVaultFee.feeController = loadOrCreateFeeController(address).id
     smartVaultFee.smartVault = smartVaultFeeId
-    smartVaultFee.feeCollector = getDefaultFeeCollector(address)
+    smartVaultFee.feeCollector = Address.zero().toHexString()
     smartVaultFee.feePercentage = BigInt.zero()
     smartVaultFee.maxFeePercentage = BigInt.zero()
     smartVaultFee.save()
   }
   return smartVaultFee
+}
+
+export function loadOrCreateFeeController(address: Address): FeeController {
+  let feeController = FeeController.load(address.toHexString())
+
+  if (feeController === null) {
+    feeController = new FeeController(address.toHexString())
+    feeController.feeCollector = Address.zero().toHexString()
+    feeController.save()
+  }
+
+  return feeController
 }

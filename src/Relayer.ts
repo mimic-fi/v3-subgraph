@@ -1,10 +1,11 @@
 import { Address, BigInt, ethereum, log } from '@graphprotocol/graph-ts'
 
 import {
+  DefaultCollectorSet,
   Deposited,
+  ExecutorSet,
   GasPaid,
   QuotaPaid,
-  Relayer,
   SmartVaultCollectorSet,
   SmartVaultMaxQuotaSet,
   TaskExecuted,
@@ -14,6 +15,7 @@ import {
   Movement,
   RelayedExecution,
   RelayedTransaction,
+  Relayer,
   RelayerConfig,
   SmartVault,
   SmartVaultCall,
@@ -27,6 +29,18 @@ export function handleDeposited(event: Deposited): void {
   const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
   relayerConfig.balance = relayerConfig.balance.plus(event.params.amount)
   relayerConfig.save()
+}
+
+export function handleExecutorSet(event: ExecutorSet): void {
+  const relayer = loadOrCreateRelayer(event.address)
+  const executors = relayer.executors
+  const executor = event.params.executor.toHexString()
+  const index = executors.indexOf(executor)
+
+  if (event.params.allowed && index < 0) executors.push(executor)
+  else if (!event.params.allowed && index >= 0) executors.splice(index, 1)
+  relayer.executors = executors
+  relayer.save()
 }
 
 export function handleGasPaid(event: GasPaid): void {
@@ -55,10 +69,14 @@ export function handleQuotaPaid(event: QuotaPaid): void {
 
 export function handleSmartVaultCollectorSet(event: SmartVaultCollectorSet): void {
   const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
-  let feeCollector = event.params.collector.toHexString()
-  if (feeCollector == Address.zero().toHexString()) feeCollector = getDefaultFeeCollector(event.address)
-  relayerConfig.feeCollector = feeCollector
+  relayerConfig.feeCollector = event.params.collector.toHexString()
   relayerConfig.save()
+}
+
+export function handleDefaultDefaultCollectorSet(event: DefaultCollectorSet): void {
+  const relayer = loadOrCreateRelayer(event.address)
+  relayer.feeCollector = event.params.collector.toHexString()
+  relayer.save()
 }
 
 export function handleSmartVaultMaxQuotaSet(event: SmartVaultMaxQuotaSet): void {
@@ -132,18 +150,6 @@ export function getSmartVault(address: Address): Address {
   return Address.zero()
 }
 
-function getDefaultFeeCollector(address: Address): string {
-  const contract = Relayer.bind(address)
-  const feeCollectorCall = contract.try_defaultCollector()
-
-  if (!feeCollectorCall.reverted) {
-    return feeCollectorCall.value.toHexString()
-  }
-
-  log.warning('defaultCollector() call reverted for {}', [address.toHexString()])
-  return 'Unknown'
-}
-
 export function loadOrCreateRelayedTransaction(
   environment: string,
   smartVault: string,
@@ -176,8 +182,9 @@ export function loadOrCreateRelayerConfig(smartVaultId: string, relayer: Address
 
   if (relayerConfig === null) {
     relayerConfig = new RelayerConfig(smartVaultId)
+    relayerConfig.relayer = loadOrCreateRelayer(relayer).id
     relayerConfig.smartVault = smartVaultId
-    relayerConfig.feeCollector = getDefaultFeeCollector(relayer)
+    relayerConfig.feeCollector = Address.zero().toHexString()
     relayerConfig.balance = BigInt.zero()
     relayerConfig.maxQuota = BigInt.zero()
     relayerConfig.nativeToken = loadOrCreateNativeToken().id
@@ -186,4 +193,17 @@ export function loadOrCreateRelayerConfig(smartVaultId: string, relayer: Address
   }
 
   return relayerConfig
+}
+
+export function loadOrCreateRelayer(address: Address): Relayer {
+  let relayer = Relayer.load(address.toHexString())
+
+  if (relayer === null) {
+    relayer = new Relayer(address.toHexString())
+    relayer.feeCollector = Address.zero().toHexString()
+    relayer.executors = []
+    relayer.save()
+  }
+
+  return relayer
 }
