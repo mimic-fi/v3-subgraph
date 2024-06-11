@@ -97,6 +97,10 @@ dataSources:
           handler: handleTaskExecuted
         - event: Withdrawn(indexed address,uint256)
           handler: handleWithdrawn
+        - event: DefaultCollectorSet(indexed address)
+          handler: handleDefaultDefaultCollectorSet
+        - event: ExecutorSet(indexed address,bool)
+          handler: handleExecutorSet
       file: ./src/Relayer.ts
   - kind: ethereum/contract
     name: Relayer_2
@@ -135,6 +139,10 @@ dataSources:
           handler: handleTaskExecuted
         - event: Withdrawn(indexed address,uint256)
           handler: handleWithdrawn
+        - event: DefaultCollectorSet(indexed address)
+          handler: handleDefaultDefaultCollectorSet
+        - event: ExecutorSet(indexed address,bool)
+          handler: handleExecutorSet
       file: ./src/Relayer.ts
   - kind: ethereum/contract
     name: FeeController
