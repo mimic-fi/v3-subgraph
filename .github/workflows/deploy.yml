@@ -30,7 +30,8 @@ jobs:
         uses: ./.github/actions/setup
       - name: Deploy Aurora
         env:
-          GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
+          GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+          VERSION_LABEL: ${{ github.sha }}
         run: yarn deploy:aurora
 
   deploy-avalanche:
@@ -71,7 +72,8 @@ jobs:
           uses: ./.github/actions/setup
         - name: Deploy BSC
           env:
-            GRAPH_KEY: ${{ secrets.GRAPH_HOSTED_KEY }}
+            GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+            VERSION_LABEL: ${{ github.sha }}
           run: yarn deploy:bsc
 
   deploy-fantom:
