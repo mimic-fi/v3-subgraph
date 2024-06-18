@@ -24,7 +24,7 @@ type SmartVault @entity {
   tasks: [Task!] @derivedFrom(field: "smartVault")
   movements: [Movement!] @derivedFrom(field: "smartVault")
   smartVaultCalls: [SmartVaultCall!] @derivedFrom(field: "smartVault")
-  relayerconfig: RelayerConfig @derivedFrom(field: "smartVault")
+  relayerConfigs: [RelayerConfig!] @derivedFrom(field: "smartVault")
 }
 
 type RelayerConfig @entity {
