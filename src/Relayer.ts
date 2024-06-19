@@ -26,7 +26,7 @@ import { loadOrCreateNativeToken } from './ERC20'
 import { rateNativeInUsd } from './PriceOracle'
 
 export function handleDeposited(event: Deposited): void {
-  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
+  const relayerConfig = loadOrCreateRelayerConfig(event.address, event.params.smartVault)
   relayerConfig.balance = relayerConfig.balance.plus(event.params.amount)
   relayerConfig.save()
 }
@@ -44,7 +44,7 @@ export function handleExecutorSet(event: ExecutorSet): void {
 }
 
 export function handleGasPaid(event: GasPaid): void {
-  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
+  const relayerConfig = loadOrCreateRelayerConfig(event.address, event.params.smartVault)
   relayerConfig.balance = relayerConfig.balance.minus(event.params.amount.minus(event.params.quota))
   relayerConfig.quotaUsed = relayerConfig.quotaUsed.plus(event.params.quota)
   relayerConfig.save()
@@ -61,14 +61,14 @@ export function handleGasPaid(event: GasPaid): void {
 }
 
 export function handleQuotaPaid(event: QuotaPaid): void {
-  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
+  const relayerConfig = loadOrCreateRelayerConfig(event.address, event.params.smartVault)
   const quotaPaidAmount = event.params.amount
   relayerConfig.quotaUsed = relayerConfig.quotaUsed.minus(quotaPaidAmount)
   relayerConfig.save()
 }
 
 export function handleSmartVaultCollectorSet(event: SmartVaultCollectorSet): void {
-  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
+  const relayerConfig = loadOrCreateRelayerConfig(event.address, event.params.smartVault)
   relayerConfig.feeCollector = event.params.collector.toHexString()
   relayerConfig.save()
 }
@@ -80,7 +80,7 @@ export function handleDefaultDefaultCollectorSet(event: DefaultCollectorSet): vo
 }
 
 export function handleSmartVaultMaxQuotaSet(event: SmartVaultMaxQuotaSet): void {
-  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
+  const relayerConfig = loadOrCreateRelayerConfig(event.address, event.params.smartVault)
   relayerConfig.maxQuota = event.params.maxQuota
   relayerConfig.save()
 }
@@ -133,7 +133,7 @@ export function handleTaskExecuted(event: TaskExecuted): void {
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
-  const relayerConfig = loadOrCreateRelayerConfig(event.params.smartVault.toHexString(), event.address)
+  const relayerConfig = loadOrCreateRelayerConfig(event.address, event.params.smartVault)
   relayerConfig.balance = relayerConfig.balance.minus(event.params.amount)
   relayerConfig.save()
 }
@@ -177,13 +177,14 @@ export function loadOrCreateRelayedTransaction(
   return transaction
 }
 
-export function loadOrCreateRelayerConfig(smartVaultId: string, relayer: Address): RelayerConfig {
-  let relayerConfig = RelayerConfig.load(smartVaultId)
+export function loadOrCreateRelayerConfig(relayer: Address, smartVault: Address): RelayerConfig {
+  const relayerConfigId = relayer.toHexString() + '/sv/' + smartVault.toHexString()
+  let relayerConfig = RelayerConfig.load(relayerConfigId)
 
   if (relayerConfig === null) {
-    relayerConfig = new RelayerConfig(smartVaultId)
+    relayerConfig = new RelayerConfig(relayerConfigId)
     relayerConfig.relayer = loadOrCreateRelayer(relayer).id
-    relayerConfig.smartVault = smartVaultId
+    relayerConfig.smartVault = smartVault.toHexString()
     relayerConfig.feeCollector = Address.zero().toHexString()
     relayerConfig.balance = BigInt.zero()
     relayerConfig.maxQuota = BigInt.zero()
