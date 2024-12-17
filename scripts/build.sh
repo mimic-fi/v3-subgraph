@@ -241,3 +241,4 @@ fi
 echo "Generating graph types"
 rm -rf ./types && yarn graph codegen -o types
 yarn graph build
+yarn graph publish
