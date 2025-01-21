@@ -146,6 +146,20 @@ jobs:
             VERSION_LABEL: ${{ github.sha }}
           run: yarn deploy:polygon
 
+  deploy-sonic:
+      name: Deploy Sonic
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Set up environment
+          uses: ./.github/actions/setup
+        - name: Deploy Sonic
+          env:
+            GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+            VERSION_LABEL: ${{ github.sha }}
+          run: yarn deploy:sonic
+          
   deploy-zkevm:
       name: Deploy zkEVM
       runs-on: ubuntu-latest

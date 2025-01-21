@@ -93,6 +93,15 @@ relayer_3_polygon=0x9E0A538749A486bbF127F8848a6f2CF4e1e92DbD
 feeController_polygon=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_polygon=49350048
 
+# Sonic
+registry_sonic=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_sonic=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_1_sonic=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+relayer_2_sonic=0x54FC6E302043aAF56154e8B4A7F01645eDAdA906
+relayer_3_sonic=0x9E0A538749A486bbF127F8848a6f2CF4e1e92DbD
+feeController_sonic=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_sonic=1988191
+
 # zkEVM
 registry_zkevm=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
 deployer_zkevm=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
@@ -103,9 +112,9 @@ feeController_zkevm=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_zkevm=6788022
 
 # Validate network
-networks=(arbitrum aurora avalanche base bsc fantom gnosis mainnet optimism polygon zkevm)
+networks=(arbitrum aurora avalanche base bsc fantom gnosis mainnet optimism polygon sonic zkevm)
 if [[ -z $NETWORK || ! " ${networks[@]} " =~ " ${NETWORK} " ]]; then
-  echo 'Please make sure the network provided is either: arbitrum, aurora, avalanche, base, bsc, fantom, gnosis, mainnet, optimism, polygon, or zkevm.'
+  echo 'Please make sure the network provided is either: arbitrum, aurora, avalanche, base, bsc, fantom, gnosis, mainnet, optimism, polygon, sonic, or zkevm.'
   exit 1
 fi
 

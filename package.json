@@ -15,6 +15,7 @@
     "build:mainnet": "NETWORK=mainnet ./scripts/build.sh",
     "build:optimism": "NETWORK=optimism ./scripts/build.sh",
     "build:polygon": "NETWORK=polygon ./scripts/build.sh",
+    "build:sonic": "NETWORK=sonic ./scripts/build.sh",
     "build:zkevm": "NETWORK=zkevm ./scripts/build.sh",
     "deploy:arbitrum": "NETWORK=arbitrum ./scripts/deploy.sh",
     "deploy:aurora": "NETWORK=aurora ./scripts/deploy.sh",
@@ -26,6 +27,7 @@
     "deploy:mainnet": "NETWORK=mainnet ./scripts/deploy.sh",
     "deploy:optimism": "NETWORK=optimism ./scripts/deploy.sh",
     "deploy:polygon": "NETWORK=polygon ./scripts/deploy.sh",
+    "deploy:sonic": "NETWORK=sonic ./scripts/build.sh",
     "deploy:zkevm": "NETWORK=zkevm ./scripts/deploy.sh"
   },
   "dependencies": {
