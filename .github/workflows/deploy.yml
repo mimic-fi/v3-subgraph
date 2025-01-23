@@ -62,6 +62,20 @@ jobs:
             GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
           run: yarn deploy:base
 
+  deploy-blast:
+      name: Deploy Blast
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Set up environment
+          uses: ./.github/actions/setup
+        - name: Deploy Blast
+          env:
+            VERSION_LABEL: ${{ github.sha }}
+            GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+          run: yarn deploy:blast
+
   deploy-bsc:
       name: Deploy BSC
       runs-on: ubuntu-latest
@@ -117,6 +131,20 @@ jobs:
             GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
             VERSION_LABEL: ${{ github.sha }}
           run: yarn deploy:mainnet
+
+  deploy-mode:
+    name: Deploy Mode
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up environment
+        uses: ./.github/actions/setup
+      - name: Deploy Mode
+        env:
+          GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+          VERSION_LABEL: ${{ github.sha }}
+        run: yarn deploy:mode
 
   deploy-optimism:
       name: Deploy Optimism

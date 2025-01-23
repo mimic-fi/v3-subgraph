@@ -39,6 +39,15 @@ relayer_3_base=0x9E0A538749A486bbF127F8848a6f2CF4e1e92DbD
 feeController_base=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_base=5957564
 
+# Blast
+registry_blast=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_blast=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_1_blast=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+relayer_2_blast=0x54FC6E302043aAF56154e8B4A7F01645eDAdA906
+relayer_3_blast=0x9E0A538749A486bbF127F8848a6f2CF4e1e92DbD
+feeController_blast=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_blast=12945654
+
 # BSC
 registry_bsc=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
 deployer_bsc=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
@@ -74,6 +83,15 @@ relayer_2_mainnet=0x54FC6E302043aAF56154e8B4A7F01645eDAdA906
 relayer_3_mainnet=0x9E0A538749A486bbF127F8848a6f2CF4e1e92DbD
 feeController_mainnet=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_mainnet=18386855
+
+# Mode
+registry_mode=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_mode=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_1_mode=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+relayer_2_mode=0x54FC6E302043aAF56154e8B4A7F01645eDAdA906
+relayer_3_mode=0x9E0A538749A486bbF127F8848a6f2CF4e1e92DbD
+feeController_mode=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_mode=17840787
 
 # Optimism
 registry_optimism=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
@@ -112,9 +130,9 @@ feeController_zkevm=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_zkevm=6788022
 
 # Validate network
-networks=(arbitrum aurora avalanche base bsc fantom gnosis mainnet optimism polygon sonic zkevm)
+networks=(arbitrum aurora avalanche base blast bsc fantom gnosis mainnet mode optimism polygon sonic zkevm)
 if [[ -z $NETWORK || ! " ${networks[@]} " =~ " ${NETWORK} " ]]; then
-  echo 'Please make sure the network provided is either: arbitrum, aurora, avalanche, base, bsc, fantom, gnosis, mainnet, optimism, polygon, sonic, or zkevm.'
+  echo 'Please make sure the network provided is either: arbitrum, aurora, avalanche, base, blast, bsc, fantom, gnosis, mainnet, mode, optimism, polygon, sonic, or zkevm.'
   exit 1
 fi
 

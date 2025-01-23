@@ -1,7 +1,17 @@
 import { BigInt, dataSource } from '@graphprotocol/graph-ts'
 
 export function isEthNetwork(): boolean {
-  return isMainnet() || isArbitrum() || isOptimism() || isBase() || isZkEvm() || isAurora() || isSonic()
+  return (
+    isMainnet() ||
+    isArbitrum() ||
+    isOptimism() ||
+    isBase() ||
+    isZkEvm() ||
+    isAurora() ||
+    isSonic() ||
+    isBlast() ||
+    isMode()
+  )
 }
 
 export function isMainnet(): boolean {
@@ -52,6 +62,14 @@ export function isSonic(): boolean {
   return dataSource.network() == 'sonic'
 }
 
+export function isBlast(): boolean {
+  return dataSource.network() == 'blast'
+}
+
+export function isMode(): boolean {
+  return dataSource.network() == 'mode'
+}
+
 export function getNetworkId(): BigInt {
   if (isMainnet()) return BigInt.fromI32(1)
   if (isArbitrum()) return BigInt.fromI32(42161)
@@ -65,5 +83,7 @@ export function getNetworkId(): BigInt {
   if (isBase()) return BigInt.fromI32(8453)
   if (isAurora()) return BigInt.fromI32(1313161554)
   if (isSonic()) return BigInt.fromI32(146)
+  if (isBlast()) return BigInt.fromI32(81457)
+  if (isMode()) return BigInt.fromI32(34443)
   return BigInt.fromI32(0)
 }
