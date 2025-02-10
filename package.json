@@ -31,7 +31,7 @@
     "deploy:mode": "NETWORK=mode ./scripts/deploy.sh",
     "deploy:optimism": "NETWORK=optimism ./scripts/deploy.sh",
     "deploy:polygon": "NETWORK=polygon ./scripts/deploy.sh",
-    "deploy:sonic": "NETWORK=sonic ./scripts/build.sh",
+    "deploy:sonic": "NETWORK=sonic ./scripts/deploy.sh",
     "deploy:zkevm": "NETWORK=zkevm ./scripts/deploy.sh"
   },
   "dependencies": {

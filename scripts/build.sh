@@ -145,6 +145,10 @@ elif [[ "$NETWORK" = "arbitrum" ]]; then
   ENV='arbitrum-one'
 elif [[ "$NETWORK" = "zkevm" ]]; then
   ENV='polygon-zkevm'
+elif [[ "$NETWORK" = "blast" ]]; then
+  ENV='blast-mainnet'
+elif [[ "$NETWORK" = "mode" ]]; then
+  ENV='mode-mainnet'
 else
   ENV=${NETWORK}
 fi
