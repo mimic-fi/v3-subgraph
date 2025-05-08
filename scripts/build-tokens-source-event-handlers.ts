@@ -1,5 +1,7 @@
 import * as fs from 'fs'
-import { load, dump } from 'js-yaml'
+import { dump, load } from 'js-yaml'
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 const SUBGRAPH_YML = 'subgraph.yaml'
 const HANDLER_NAME = 'handleTokensSourceSet'
@@ -25,7 +27,7 @@ function injectEventHandlers(): void {
   const taskTemplate = manifest.templates.find((t: any) => t.name === 'Task')
   if (!taskTemplate) throw new Error('Task template not found')
 
-  TOKENS_SOURCE_SET_EVENTS.forEach(event => {
+  TOKENS_SOURCE_SET_EVENTS.forEach((event) => {
     taskTemplate.mapping.eventHandlers.push({ event: `${event}(indexed address)`, handler: HANDLER_NAME })
   })
 
@@ -38,7 +40,7 @@ function buildCustomEventsAbi(): void {
   const abi = JSON.parse(file)
   const existingNames = new Set(abi.map((entry) => entry.name))
 
-  TOKENS_SOURCE_SET_EVENTS.forEach(event => {
+  TOKENS_SOURCE_SET_EVENTS.forEach((event) => {
     if (existingNames.has(event)) return
     abi.push({
       name: event,
