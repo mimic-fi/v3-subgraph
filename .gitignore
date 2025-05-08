@@ -3,4 +3,5 @@ types
 node_modules
 subgraph.yaml
 /src/permissions/dictionary.ts
+/abis/IAllTasksWithTokensSourceSetEvents.json
 *.log
