@@ -312,7 +312,7 @@ templates:
         - Task
       abis:
         - name: Task
-          file: ./abis/IAllTasks.json
+          file: ./abis/IAllTasksWithTokensSourceSetEvents.json
         - name: ERC20
           file: ./abis/IERC20.json
       eventHandlers:

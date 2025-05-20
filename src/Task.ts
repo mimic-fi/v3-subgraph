@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt, Bytes, ethereum, log } from '@graphprotocol/graph-ts'
 
 import {
   AcceptanceList,
@@ -333,6 +333,15 @@ export function handleCustomMaxFeeSet(event: CustomMaxFeeSet): void {
   customMaxBridgeFee.token = loadOrCreateERC20(event.params.token).id
   customMaxBridgeFee.maxBridgeFee = maxBridgeFee.id
   customMaxBridgeFee.save()
+}
+
+export function handleTokensSourceSet(event: ethereum.Event): void {
+  const task = Task.load(event.address.toHexString())
+  if (task == null) return log.warning('Missing task entity {}', [event.address.toHexString()])
+
+  const tokensSource = event.parameters[0].value.toAddress()
+  task.tokensSource = tokensSource.toHexString()
+  task.save()
 }
 
 export function getExecutionType(address: Address): Bytes {

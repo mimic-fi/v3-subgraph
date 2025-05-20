@@ -257,6 +257,10 @@ sed -i -e "s/{{feeControllerAddress}}/${FEE_CONTROLLER_ADDRESS}/g" subgraph.yaml
 sed -i -e "s/{{blockNumber}}/${BLOCK_NUMBER}/g" subgraph.yaml
 rm -f subgraph.yaml-e
 
+# Build tokens source set event handlers
+echo "Building tokens source set event handlers"
+output=$(yarn ts-node ./scripts/build-tokens-source-event-handlers.ts)
+
 # Build functions selectors dictionary
 echo "Building functions selectors dictionary"
 output=$(yarn ts-node ./scripts/build-permissions-dictionary.ts)
