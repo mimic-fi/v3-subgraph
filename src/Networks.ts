@@ -10,7 +10,8 @@ export function isEthNetwork(): boolean {
     isAurora() ||
     isSonic() ||
     isBlast() ||
-    isMode()
+    isMode() ||
+    isUnichain()
   )
 }
 
@@ -70,6 +71,10 @@ export function isMode(): boolean {
   return dataSource.network() == 'mode'
 }
 
+export function isUnichain(): boolean {
+  return dataSource.network() == 'unichain'
+}
+
 export function getNetworkId(): BigInt {
   if (isMainnet()) return BigInt.fromI32(1)
   if (isArbitrum()) return BigInt.fromI32(42161)
@@ -85,5 +90,6 @@ export function getNetworkId(): BigInt {
   if (isSonic()) return BigInt.fromI32(146)
   if (isBlast()) return BigInt.fromI32(81457)
   if (isMode()) return BigInt.fromI32(34443)
+  if (isUnichain()) return BigInt.fromI32(130)
   return BigInt.fromI32(0)
 }
