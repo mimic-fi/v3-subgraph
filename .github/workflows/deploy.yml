@@ -187,6 +187,20 @@ jobs:
             GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
             VERSION_LABEL: ${{ github.sha }}
           run: yarn deploy:sonic
+
+  deploy-unichain:
+        name: Deploy Unichain
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v3
+          - name: Set up environment
+            uses: ./.github/actions/setup
+          - name: Deploy Sonic
+            env:
+              GRAPH_KEY: ${{ secrets.GRAPH_STUDIO_KEY }}
+              VERSION_LABEL: ${{ github.sha }}
+            run: yarn deploy:unichain
           
   deploy-zkevm:
       name: Deploy zkEVM

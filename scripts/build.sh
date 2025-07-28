@@ -120,6 +120,15 @@ relayer_3_sonic=0x9E0A538749A486bbF127F8848a6f2CF4e1e92DbD
 feeController_sonic=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_sonic=2879191
 
+# Unichain
+registry_unichain=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
+deployer_unichain=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
+relayer_1_unichain=0xD7252C026c3cA28D73B4DeeF62FE6ADe86eC17A9
+relayer_2_unichain=0x54FC6E302043aAF56154e8B4A7F01645eDAdA906
+relayer_3_unichain=0x9E0A538749A486bbF127F8848a6f2CF4e1e92DbD
+feeController_unichain=0x88586bfc840b99680c8cc753a36b51999608b1f6
+block_unichain=22707554
+
 # zkEVM
 registry_zkevm=0x1675BF3F75046aCd131caD845eb8FF3Bed49a643
 deployer_zkevm=0x849B7B1102B0dcf6eC10f98b81C8D1c38f7cbf24
@@ -130,9 +139,9 @@ feeController_zkevm=0x88586bfc840b99680c8cc753a36b51999608b1f6
 block_zkevm=6788022
 
 # Validate network
-networks=(arbitrum aurora avalanche base blast bsc fantom gnosis mainnet mode optimism polygon sonic zkevm)
+networks=(arbitrum aurora avalanche base blast bsc fantom gnosis mainnet mode optimism polygon sonic unichain zkevm)
 if [[ -z $NETWORK || ! " ${networks[@]} " =~ " ${NETWORK} " ]]; then
-  echo 'Please make sure the network provided is either: arbitrum, aurora, avalanche, base, blast, bsc, fantom, gnosis, mainnet, mode, optimism, polygon, sonic, or zkevm.'
+  echo 'Please make sure the network provided is either: arbitrum, aurora, avalanche, base, blast, bsc, fantom, gnosis, mainnet, mode, optimism, polygon, sonic, unichain, or zkevm.'
   exit 1
 fi
 
