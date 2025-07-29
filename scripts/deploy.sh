@@ -15,6 +15,11 @@ fi
 # Define subgraph name
 if [[ "$NETWORK" = "base" || "$NETWORK" = "zkevm" ]]; then
   NAME=mimic-v3-$NETWORK
+<<<<<<< Updated upstream
+=======
+elif [[ "$NETWORK" = "unichain" ]]; then
+  NAME=v-3-$NETWORK
+>>>>>>> Stashed changes
 else
   NAME=v3-$NETWORK
 fi
